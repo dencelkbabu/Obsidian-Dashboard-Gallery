@@ -552,27 +552,7 @@ const colCenter = mainGrid.createDiv({ cls: "ocean-col-center" });
 const colRight = mainGrid.createDiv({ cls: "ocean-col-right" });
 
 // ── LEFT COLUMN ──────────────────────────────
-// 1. JUMP BACK IN (Atlas Widget)
-const jumpCard = colLeft.createDiv({ cls: "ocean-card" });
-const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
-jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
-
-const jumpList = jumpCard.createDiv({ cls: "ocean-jump-list" });
-const recentFiles = Utils.getRecentlyOpened(3);
-
-if (recentFiles.length > 0) {
-    recentFiles.forEach(path => {
-        const item = jumpList.createDiv({ cls: "ocean-jump-item" });
-        const ico = item.createDiv({ cls: "ocean-jump-icon" });
-        Utils.icon(ico, "corner-up-left", "↩");
-        item.createSpan({ text: path.split("/").pop().replace(".md", "") });
-        item.onclick = () => app.workspace.openLinkText(path, "", false);
-    });
-} else {
-    jumpList.createDiv({ text: "No recently opened notes", attr: { style: "font-size:0.8rem; color:var(--ocean-muted);" } });
-}
-
-// 2. BROWSE BY TOPIC (Atlas Widget)
+// 1. BROWSE BY TOPIC (Atlas Widget - Top)
 const tagCard = colLeft.createDiv({ cls: "ocean-card ocean-tag-card" });
 const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
 tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
@@ -642,6 +622,26 @@ function renderTopicTags() {
     });
 }
 renderTopicTags();
+
+// 2. JUMP BACK IN (Atlas Widget - Bottom)
+const jumpCard = colLeft.createDiv({ cls: "ocean-card" });
+const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
+jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
+
+const jumpList = jumpCard.createDiv({ cls: "ocean-jump-list" });
+const recentFiles = Utils.getRecentlyOpened(3);
+
+if (recentFiles.length > 0) {
+    recentFiles.forEach(path => {
+        const item = jumpList.createDiv({ cls: "ocean-jump-item" });
+        const ico = item.createDiv({ cls: "ocean-jump-icon" });
+        Utils.icon(ico, "corner-up-left", "↩");
+        item.createSpan({ text: path.split("/").pop().replace(".md", "") });
+        item.onclick = () => app.workspace.openLinkText(path, "", false);
+    });
+} else {
+    jumpList.createDiv({ text: "No recently opened notes", attr: { style: "font-size:0.8rem; color:var(--ocean-muted);" } });
+}
 
 // ── CENTER COLUMN: RECENTLY EDITED NOTES (MAX SPACE) ─────────
 const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
