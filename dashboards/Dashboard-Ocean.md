@@ -22,8 +22,29 @@ const LS = {
     habits: "ocean-habits",
     cards: "ocean-cards",
     targets: "ocean-targets-v2",
-    scratchpad: "ocean-scratchpad-v1"
+    scratchpad: "ocean-scratchpad-v1",
+    settings: "ocean-master-settings-v1"
 };
+
+const defaultSettings = {
+    widgets: {
+        targets: true,
+        tasks: true,
+        topics: true,
+        jump: true,
+        recent: true,
+        scratchpad: true,
+        collections: true,
+        actions: true,
+        habits: true
+    },
+    gridHeight: 550,
+    recentLimit: 50,
+    tagLimit: 35
+};
+
+let masterSettings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}"));
+masterSettings.widgets = Object.assign({}, defaultSettings.widgets, masterSettings.widgets || {});
 
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
 let bannerSubtitle = localStorage.getItem(LS.subtitle) || "";
@@ -282,47 +303,251 @@ const completedTasksCount = allTasks ? allTasks.where(t => t.completed).length :
     cube.createDiv({ cls: "ocean-stat-lab", text: st.l });
 });
 
-setBtn.onclick = () => {
+setBtn.onclick = () => openMasterSettingsModal();
+
+function openMasterSettingsModal() {
     const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
-    const modal = overlay.createDiv({ cls: "ocean-modal" });
-    modal.createDiv({ cls: "ocean-modal-title", text: "⚙️ Edit Dashboard Header" });
+    const modal = overlay.createDiv({ cls: "ocean-modal ocean-settings-modal" });
+    
+    // Header
+    const hdr = modal.createDiv({ cls: "ocean-settings-hdr" });
+    hdr.createDiv({ cls: "ocean-modal-title", text: "⚙️ DASHBOARD MASTER SETTINGS" });
+    const closeIcon = hdr.createDiv({ cls: "ocean-settings-close", text: "✕" });
+    closeIcon.onclick = () => overlay.remove();
 
-    modal.createDiv({ text: "Dashboard Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: bannerTitle } });
+    // Tab Switcher
+    const tabsRow = modal.createDiv({ cls: "ocean-settings-tabs" });
+    const tabWidgetsBtn = tabsRow.createDiv({ cls: "ocean-settings-tab active", text: "🎛️ WIDGETS" });
+    const tabGeneralBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "⚙️ GENERAL" });
+    const tabDataBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "💾 DATA & BACKUP" });
 
-    modal.createDiv({ text: "Subtitle / Motto:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const subInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: bannerSubtitle } });
+    const contentArea = modal.createDiv({ cls: "ocean-settings-content" });
 
-    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
-    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
+    // TAB 1: WIDGETS
+    const widgetsPanel = contentArea.createDiv({ cls: "ocean-settings-panel active" });
+    widgetsPanel.createDiv({ cls: "ocean-settings-desc", text: "Toggle individual widgets on/off. Surrounding cards will dynamically stretch or collapse." });
 
-    cancel.onclick = () => overlay.remove();
-    save.onclick = () => {
+    const widgetDefs = [
+        { key: "targets", icon: "🎯", name: "Active Targets & Countdowns", desc: "Panoramic runway showing milestone countdowns" },
+        { key: "tasks", icon: "⚡", name: "Live Tasks & Pending Notes", desc: "Panoramic feed of notes tagged #pending, #todo, and checklists" },
+        { key: "topics", icon: "🏷️", name: "Browse by Topic (Tag Cloud)", desc: "Left column tag pill directory with sorting & pin support" },
+        { key: "jump", icon: "↩️", name: "Jump Back In (Recent Notes)", desc: "Left column quick shortcuts to recently opened notes" },
+        { key: "recent", icon: "📄", name: "Recently Edited Feed", desc: "Middle column live feed of recent notes with search" },
+        { key: "scratchpad", icon: "📝", name: "Persistent Scratchpad", desc: "Middle column auto-saving temporary notepad" },
+        { key: "collections", icon: "🗂️", name: "Collection Cards Directory", desc: "Right column custom bookmark cards to workspaces" },
+        { key: "actions", icon: "⚡", name: "System Quick Actions", desc: "Right column Obsidian command launcher buttons" },
+        { key: "habits", icon: "🧬", name: "Bio-Metrics Habit Tracker", desc: "Bottom weekly habit consistency bar and 7-day checkboxes" }
+    ];
+
+    const widgetGrid = widgetsPanel.createDiv({ cls: "ocean-settings-toggle-grid" });
+    const tempWidgets = Object.assign({}, masterSettings.widgets);
+
+    widgetDefs.forEach(w => {
+        const item = widgetGrid.createDiv({ cls: "ocean-settings-toggle-item" });
+        const textWrap = item.createDiv({ cls: "ocean-toggle-text-wrap" });
+        textWrap.createDiv({ cls: "ocean-toggle-name", text: `${w.icon} ${w.name}` });
+        textWrap.createDiv({ cls: "ocean-toggle-sub", text: w.desc });
+
+        const toggleSwitch = item.createDiv({ cls: "ocean-toggle-switch" + (tempWidgets[w.key] ? " active" : "") });
+        toggleSwitch.createDiv({ cls: "ocean-toggle-knob" });
+
+        toggleSwitch.onclick = () => {
+            tempWidgets[w.key] = !tempWidgets[w.key];
+            toggleSwitch.classList.toggle("active", tempWidgets[w.key]);
+        };
+    });
+
+    // TAB 2: GENERAL
+    const generalPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
+    generalPanel.createDiv({ cls: "ocean-settings-desc", text: "Customize dashboard branding, layout heights, and limits." });
+
+    generalPanel.createDiv({ text: "Dashboard Banner Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+    const titleInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { value: bannerTitle } });
+
+    generalPanel.createDiv({ text: "Subtitle / Motto:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const subInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { value: bannerSubtitle, placeholder: "Leave empty for dynamic time greeting" } });
+
+    generalPanel.createDiv({ text: "Bento Grid Height (px):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const heightInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.gridHeight || 550), min: "400", max: "1000", step: "25" } });
+
+    generalPanel.createDiv({ text: "Max Recent Notes to Load:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const limitInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.recentLimit || 50), min: "10", max: "150", step: "5" } });
+
+    generalPanel.createDiv({ text: "Max Topic Tags to Load:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const tagLimitInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.tagLimit || 35), min: "10", max: "100", step: "5" } });
+
+    // TAB 3: DATA & BACKUP
+    const dataPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
+    dataPanel.createDiv({ cls: "ocean-settings-desc", text: "Reset individual component caches or backup/restore your dashboard configuration." });
+
+    const dataBtnGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
+
+    // Reset Targets
+    const resetTargetsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🎯 Reset Targets to Placeholders" });
+    resetTargetsBtn.onclick = () => {
+        savedTargets = [
+            { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
+            { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
+            { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
+        ];
+        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+        new Notice("🎯 Targets reset to default placeholders!");
+    };
+
+    // Reset Collections
+    const resetCardsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🗂️ Reset Collection Cards to Placeholders" });
+    resetCardsBtn.onclick = () => {
+        savedCards = [
+            { title: "Project Alpha", subtitle: "Active Workspace & Tasks", emoji: "🚀", link: "" },
+            { title: "Knowledge Base", subtitle: "Core Notes & Wiki Hub", emoji: "📚", link: "" },
+            { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
+            { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
+        ];
+        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+        new Notice("🗂️ Collection cards reset to default placeholders!");
+    };
+
+    // Reset Habits
+    const resetHabitsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧬 Reset Habit Tracker to Defaults" });
+    resetHabitsBtn.onclick = () => {
+        savedHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
+        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+        new Notice("🧬 Habit tracker reset to defaults!");
+    };
+
+    // Clear Scratchpad
+    const clearScratchBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Persistent Scratchpad" });
+    clearScratchBtn.onclick = () => {
+        localStorage.setItem(LS.scratchpad, "");
+        new Notice("🧹 Scratchpad buffer cleared!");
+    };
+
+    // Export Settings JSON
+    const exportBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn primary", text: "💾 Export Config JSON (Copy)" });
+    exportBtn.onclick = () => {
+        const fullBackup = {
+            version: "ocean-v1",
+            date: new Date().toISOString(),
+            settings: masterSettings,
+            title: localStorage.getItem(LS.title) || bannerTitle,
+            subtitle: localStorage.getItem(LS.subtitle) || bannerSubtitle,
+            targets: savedTargets,
+            cards: savedCards,
+            habits: savedHabits,
+            pinnedNotes: pinnedNotes,
+            pinnedTags: pinnedTags,
+            scratchpad: localStorage.getItem(LS.scratchpad) || ""
+        };
+        navigator.clipboard.writeText(JSON.stringify(fullBackup, null, 2));
+        new Notice("💾 Copied complete Dashboard configuration to clipboard!");
+    };
+
+    // Import Settings JSON
+    const importBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "📥 Import Config JSON" });
+    importBtn.onclick = () => {
+        const jsonInput = prompt("Paste your exported Dashboard Ocean JSON configuration here:");
+        if (!jsonInput) return;
+        try {
+            const parsed = JSON.parse(jsonInput);
+            if (parsed.settings) localStorage.setItem(LS.settings, JSON.stringify(parsed.settings));
+            if (parsed.title) localStorage.setItem(LS.title, parsed.title);
+            if (parsed.subtitle !== undefined) localStorage.setItem(LS.subtitle, parsed.subtitle);
+            if (parsed.targets) localStorage.setItem(LS.targets, JSON.stringify(parsed.targets));
+            if (parsed.cards) localStorage.setItem(LS.cards, JSON.stringify(parsed.cards));
+            if (parsed.habits) localStorage.setItem(LS.habits, JSON.stringify(parsed.habits));
+            if (parsed.pinnedNotes) localStorage.setItem(LS.pinnedNotes, JSON.stringify(parsed.pinnedNotes));
+            if (parsed.pinnedTags) localStorage.setItem(LS.pinnedTags, JSON.stringify(parsed.pinnedTags));
+            if (parsed.scratchpad !== undefined) localStorage.setItem(LS.scratchpad, parsed.scratchpad);
+            new Notice("✨ Dashboard configuration imported successfully! Reloading...");
+            overlay.remove();
+            setTimeout(() => {
+                const activeView = app.workspace.getActiveViewOfType(tp => true);
+                if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            }, 300);
+        } catch(e) {
+            new Notice(`⚠️ Invalid JSON: ${e.message}`);
+        }
+    };
+
+    // Factory Reset
+    const factoryResetBtn = dataBtnGrid.createEl("button", {
+        cls: "ocean-btn",
+        text: "⚠️ Factory Reset Entire Dashboard",
+        attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4); margin-top:8px;" }
+    });
+    factoryResetBtn.onclick = () => {
+        if (!confirm("Are you sure you want to reset the entire dashboard to pristine factory settings? All custom targets, cards, scratchpad, and settings will be reset.")) return;
+        Object.values(LS).forEach(k => localStorage.removeItem(k));
+        new Notice("✨ Factory reset complete! Reloading...");
+        overlay.remove();
+        setTimeout(() => {
+            const activeView = app.workspace.getActiveViewOfType(tp => true);
+            if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+        }, 300);
+    };
+
+    // Tab Navigation Logic
+    tabWidgetsBtn.onclick = () => {
+        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
+        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        tabWidgetsBtn.classList.add("active");
+        widgetsPanel.classList.add("active");
+    };
+
+    tabGeneralBtn.onclick = () => {
+        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
+        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        tabGeneralBtn.classList.add("active");
+        generalPanel.classList.add("active");
+    };
+
+    tabDataBtn.onclick = () => {
+        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
+        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        tabDataBtn.classList.add("active");
+        dataPanel.classList.add("active");
+    };
+
+    // Bottom Action Row
+    const bottomRow = modal.createDiv({ cls: "ocean-modal-btns", attr: { style: "margin-top:18px;" } });
+    const cancelBtn = bottomRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+    const saveApplyBtn = bottomRow.createEl("button", { cls: "ocean-btn primary", text: "💾 Save & Apply" });
+
+    cancelBtn.onclick = () => overlay.remove();
+    saveApplyBtn.onclick = () => {
+        masterSettings.widgets = tempWidgets;
+        masterSettings.gridHeight = parseInt(heightInp.value, 10) || 550;
+        masterSettings.recentLimit = parseInt(limitInp.value, 10) || 50;
+        masterSettings.tagLimit = parseInt(tagLimitInp.value, 10) || 35;
+
         bannerTitle = titleInp.value.trim() || "DASHBOARD OCEAN";
         bannerSubtitle = subInp.value.trim();
+
         localStorage.setItem(LS.title, bannerTitle);
         localStorage.setItem(LS.subtitle, bannerSubtitle);
-        heroTitleEl.innerText = bannerTitle;
-        heroSubEl.innerText = bannerSubtitle || `${Utils.getGreeting()} — Systems active & ready.`;
-        overlay.remove();
-    };
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-};
+        localStorage.setItem(LS.settings, JSON.stringify(masterSettings));
 
-// ══════════════════════════════════════════════
+        new Notice("✨ Master settings applied! Reloading...");
+        overlay.remove();
+
+        setTimeout(() => {
+            const activeView = app.workspace.getActiveViewOfType(tp => true);
+            if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+        }, 200);
+    };
+
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+}
+
 // ══════════════════════════════════════════════
 // 1.5 DUAL RUNWAY: TARGETS (LEFT) & TASKS (RIGHT)
 // ══════════════════════════════════════════════
-const runwayGrid = container.createDiv({ cls: "ocean-runway-grid" });
+const showTargets = masterSettings.widgets.targets !== false;
+const showTasks = masterSettings.widgets.tasks !== false;
 
-// ── LEFT RUNWAY: TARGETS & COUNTDOWNS ────────
-const targetsCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
-const targetsHdr = targetsCard.createDiv({ cls: "ocean-runway-hdr" });
-targetsHdr.createDiv({ cls: "ocean-card-title", text: "🎯 TARGETS & COUNTDOWNS" });
-
-const addTargetBtn = targetsHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
-const runwayTrack = targetsCard.createDiv({ cls: "ocean-targets-track" });
+let runwayGrid = null;
+let runwayTrack = null;
+let tasksTrack = null;
 
 const enableHorizontalWheel = (el) => {
     if (!el) return;
@@ -333,7 +558,33 @@ const enableHorizontalWheel = (el) => {
         }
     }, { passive: false });
 };
-enableHorizontalWheel(runwayTrack);
+
+if (showTargets || showTasks) {
+    runwayGrid = container.createDiv({ cls: "ocean-runway-grid" });
+    if (!showTargets || !showTasks) {
+        runwayGrid.style.gridTemplateColumns = "1fr";
+    }
+
+    if (showTargets) {
+        const targetsCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
+        const targetsHdr = targetsCard.createDiv({ cls: "ocean-runway-hdr" });
+        targetsHdr.createDiv({ cls: "ocean-card-title", text: "🎯 TARGETS & COUNTDOWNS" });
+
+        const addTargetBtn = targetsHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
+        runwayTrack = targetsCard.createDiv({ cls: "ocean-targets-track" });
+        enableHorizontalWheel(runwayTrack);
+        addTargetBtn.onclick = () => showTargetModal();
+    }
+
+    if (showTasks) {
+        const tasksCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
+        const tasksHdr = tasksCard.createDiv({ cls: "ocean-runway-hdr" });
+        tasksHdr.createDiv({ cls: "ocean-card-title", text: "⚡ LIVE TASKS / PENDING" });
+
+        tasksTrack = tasksCard.createDiv({ cls: "ocean-targets-track" });
+        enableHorizontalWheel(tasksTrack);
+    }
+}
 
 function renderTargets() {
     runwayTrack.innerHTML = "";
@@ -447,9 +698,6 @@ function showTargetModal(targetToEdit = null, idx = null) {
         };
     }
 
-    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Target" });
-
     cancel.onclick = () => overlay.remove();
     save.onclick = () => {
         const title = titleInp.value.trim();
@@ -474,24 +722,18 @@ function showTargetModal(targetToEdit = null, idx = null) {
             savedTargets.push(newTarget);
         }
         localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
-        renderTargets();
+        if (showTargets && runwayTrack) renderTargets();
         overlay.remove();
     };
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 }
 
-addTargetBtn.onclick = () => showTargetModal();
-renderTargets();
-
-// ── RIGHT RUNWAY: LIVE TASKS & PENDING FEED ──
-const tasksCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
-const tasksHdr = tasksCard.createDiv({ cls: "ocean-runway-hdr" });
-tasksHdr.createDiv({ cls: "ocean-card-title", text: "⚡ LIVE TASKS / PENDING" });
-
-const tasksTrack = tasksCard.createDiv({ cls: "ocean-targets-track" });
-enableHorizontalWheel(tasksTrack);
+if (showTargets && runwayTrack) {
+    renderTargets();
+}
 
 function renderLiveTasks() {
+    if (!tasksTrack) return;
     tasksTrack.innerHTML = "";
 
     // 1. Query notes with #pending or #todo
@@ -638,534 +880,595 @@ function renderLiveTasks() {
         });
     }
 }
-renderLiveTasks();
+
+if (showTasks && tasksTrack) {
+    renderLiveTasks();
+}
 
 // ══════════════════════════════════════════════
 // 2. MAIN 3-COLUMN BENTO GRID
 // ══════════════════════════════════════════════
-const mainGrid = container.createDiv({ cls: "ocean-grid" });
-const colLeft = mainGrid.createDiv({ cls: "ocean-col-left" });
-const colCenter = mainGrid.createDiv({ cls: "ocean-col-center" });
-const colRight = mainGrid.createDiv({ cls: "ocean-col-right" });
+const showTopics = masterSettings.widgets.topics !== false;
+const showJump = masterSettings.widgets.jump !== false;
+const showRecent = masterSettings.widgets.recent !== false;
+const showScratchpad = masterSettings.widgets.scratchpad !== false;
+const showCollections = masterSettings.widgets.collections !== false;
+const showActions = masterSettings.widgets.actions !== false;
 
-// ── LEFT COLUMN ──────────────────────────────
-// 1. BROWSE BY TOPIC (Atlas Widget - Top)
-const tagCard = colLeft.createDiv({ cls: "ocean-card ocean-tag-card" });
-const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
-tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
+const hasLeft = showTopics || showJump;
+const hasCenter = showRecent || showScratchpad;
+const hasRight = showCollections || showActions;
 
-const sortBtn = tagHdr.createDiv({
-    cls: "ocean-tag-sort-btn",
-    text: tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z",
-    attr: { title: "Click to toggle sort: Count vs A-Z (Right-click tags to Pin/Unpin)" }
-});
+let renderRecentNotesFn = null;
 
-sortBtn.onclick = () => {
-    tagSortMode = tagSortMode === "count" ? "name" : "count";
-    localStorage.setItem(LS.tagSort, tagSortMode);
-    sortBtn.textContent = tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z";
-    renderTopicTags();
-};
+if (hasLeft || hasCenter || hasRight) {
+    const mainGrid = container.createDiv({ cls: "ocean-grid" });
+    if (masterSettings.gridHeight) {
+        mainGrid.style.height = `${masterSettings.gridHeight}px`;
+    }
 
-const tagWrap = tagCard.createDiv({ cls: "ocean-tag-wrap" });
+    // Dynamic 3-Column Template
+    let colTemplates = [];
+    if (hasLeft) colTemplates.push("1fr");
+    if (hasCenter) colTemplates.push(hasLeft && hasRight ? "3fr" : (hasLeft || hasRight ? "2fr" : "1fr"));
+    if (hasRight) colTemplates.push("1fr");
+    mainGrid.style.gridTemplateColumns = colTemplates.join(" ");
 
-function renderTopicTags() {
-    tagWrap.innerHTML = "";
-    
-    // All Notes pill
-    const allPill = tagWrap.createDiv({ cls: "ocean-tag-pill" + (activeTag === "__all__" ? " active" : "") });
-    allPill.createSpan({ text: "All Notes" });
-    allPill.onclick = () => {
-        activeTag = "__all__";
-        localStorage.setItem(LS.tag, activeTag);
-        renderTopicTags();
-        renderRecentNotes();
-    };
+    // ── LEFT COLUMN ──────────────────────────────
+    if (hasLeft) {
+        const colLeft = mainGrid.createDiv({ cls: "ocean-col-left" });
 
-    const tags = Utils.getProcessedTags(35);
-    tags.forEach(({ tag, count, pinned }) => {
-        const pill = tagWrap.createDiv({
-            cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") + (pinned ? " pinned" : ""),
-            attr: { title: `${pinned ? "Pinned tag" : "Tag"}: ${tag} (${count} notes). Right-click to toggle pin.` }
-        });
+        // 1. BROWSE BY TOPIC (Atlas Widget - Top)
+        if (showTopics) {
+            const tagCard = colLeft.createDiv({ cls: "ocean-card ocean-tag-card" });
+            const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
+            tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
 
-        if (pinned) {
-            pill.createSpan({ cls: "ocean-pin-icon", text: "📌" });
-        }
+            const sortBtn = tagHdr.createDiv({
+                cls: "ocean-tag-sort-btn",
+                text: tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z",
+                attr: { title: "Click to toggle sort: Count vs A-Z (Right-click tags to Pin/Unpin)" }
+            });
 
-        pill.createSpan({ text: tag });
-        pill.createSpan({ cls: "ocean-tag-count", text: String(count) });
+            sortBtn.onclick = () => {
+                tagSortMode = tagSortMode === "count" ? "name" : "count";
+                localStorage.setItem(LS.tagSort, tagSortMode);
+                sortBtn.textContent = tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z";
+                renderTopicTags();
+            };
 
-        pill.onclick = () => {
-            activeTag = tag;
-            localStorage.setItem(LS.tag, activeTag);
+            const tagWrap = tagCard.createDiv({ cls: "ocean-tag-wrap" });
+
+            function renderTopicTags() {
+                tagWrap.innerHTML = "";
+                
+                // All Notes pill
+                const allPill = tagWrap.createDiv({ cls: "ocean-tag-pill" + (activeTag === "__all__" ? " active" : "") });
+                allPill.createSpan({ text: "All Notes" });
+                allPill.onclick = () => {
+                    activeTag = "__all__";
+                    localStorage.setItem(LS.tag, activeTag);
+                    renderTopicTags();
+                    if (renderRecentNotesFn) renderRecentNotesFn();
+                };
+
+                const tags = Utils.getProcessedTags(masterSettings.tagLimit || 35);
+                tags.forEach(({ tag, count, pinned }) => {
+                    const pill = tagWrap.createDiv({
+                        cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") + (pinned ? " pinned" : ""),
+                        attr: { title: `${pinned ? "Pinned tag" : "Tag"}: ${tag} (${count} notes). Right-click to toggle pin.` }
+                    });
+
+                    if (pinned) {
+                        pill.createSpan({ cls: "ocean-pin-icon", text: "📌" });
+                    }
+
+                    pill.createSpan({ text: tag });
+                    pill.createSpan({ cls: "ocean-tag-count", text: String(count) });
+
+                    pill.onclick = () => {
+                        activeTag = tag;
+                        localStorage.setItem(LS.tag, activeTag);
+                        renderTopicTags();
+                        if (renderRecentNotesFn) renderRecentNotesFn();
+                    };
+
+                    // Right-click to toggle Pin / Unpin
+                    pill.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        if (pinnedTags.includes(tag)) {
+                            pinnedTags = pinnedTags.filter(t => t !== tag);
+                            new Notice(`📍 Unpinned ${tag}`);
+                        } else {
+                            pinnedTags.push(tag);
+                            new Notice(`📌 Pinned ${tag}`);
+                        }
+                        localStorage.setItem(LS.pinnedTags, JSON.stringify(pinnedTags));
+                        renderTopicTags();
+                    };
+                });
+            }
             renderTopicTags();
+        }
+
+        // 2. JUMP BACK IN (Atlas Widget - Bottom)
+        if (showJump) {
+            const jumpCard = colLeft.createDiv({ cls: "ocean-card" });
+            const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
+            jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
+
+            const jumpList = jumpCard.createDiv({ cls: "ocean-jump-list" });
+            const recentFiles = Utils.getRecentlyOpened(3);
+
+            if (recentFiles.length > 0) {
+                recentFiles.forEach(path => {
+                    const item = jumpList.createDiv({ cls: "ocean-jump-item" });
+                    const ico = item.createDiv({ cls: "ocean-jump-icon" });
+                    Utils.icon(ico, "corner-up-left", "↩");
+                    item.createSpan({ text: path.split("/").pop().replace(".md", "") });
+                    item.onclick = () => app.workspace.openLinkText(path, "", false);
+                });
+            } else {
+                jumpList.createDiv({ text: "No recently opened notes", attr: { style: "font-size:0.8rem; color:var(--ocean-muted);" } });
+            }
+        }
+    }
+
+    // ── CENTER COLUMN ────────────────────────────
+    if (hasCenter) {
+        const colCenter = mainGrid.createDiv({ cls: "ocean-col-center" });
+        if (!showRecent || !showScratchpad) {
+            colCenter.style.gridTemplateColumns = "1fr";
+        }
+
+        // 1. RECENTLY EDITED NOTES
+        if (showRecent) {
+            const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
+            const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
+            const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
+
+            let noteSearchQuery = "";
+            const recentSearchInput = recentHdr.createEl("input", {
+                cls: "ocean-search-input",
+                attr: { type: "text", placeholder: "🔍 SEARCH", spellcheck: "false" }
+            });
+
+            recentSearchInput.oninput = () => {
+                noteSearchQuery = recentSearchInput.value;
+                renderRecentNotes();
+            };
+
+            const notesList = recentCard.createDiv({ cls: "ocean-notes-list" });
+
+            function renderRecentNotes() {
+                notesList.innerHTML = "";
+                recentTitleEl.textContent = activeTag === "__all__" 
+                    ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
+                    : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
+                
+                const notes = Utils.getNotes(masterSettings.recentLimit || 50, noteSearchQuery);
+                if (notes.length === 0) {
+                    notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
+                    return;
+                }
+
+                notes.forEach(({ page: p, isPinned }) => {
+                    const row = notesList.createDiv({
+                        cls: "ocean-note-row" + (isPinned ? " pinned" : ""),
+                        attr: { title: `${isPinned ? "Pinned note" : "Note"}: ${p.file.name}. Right-click to toggle pin.` }
+                    });
+
+                    const info = row.createDiv({ cls: "ocean-note-info" });
+                    const nameRow = info.createDiv({ cls: "ocean-note-name-row" });
+                    
+                    if (isPinned) {
+                        nameRow.createSpan({ cls: "ocean-pin-icon", text: "📌" });
+                    }
+                    nameRow.createSpan({ cls: "ocean-note-name", text: p.file.name });
+                    info.createDiv({ cls: "ocean-note-folder", text: p.file.folder || "Vault Root" });
+
+                    row.createDiv({ cls: "ocean-note-time", text: Utils.relTime(p.file.mtime) });
+                    row.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
+
+                    // Right-click to toggle Pin / Unpin
+                    row.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        if (pinnedNotes.includes(p.file.path)) {
+                            pinnedNotes = pinnedNotes.filter(path => path !== p.file.path);
+                            new Notice(`📍 Unpinned ${p.file.name}`);
+                        } else {
+                            pinnedNotes.push(p.file.path);
+                            new Notice(`📌 Pinned ${p.file.name}`);
+                        }
+                        localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
+                        renderRecentNotes();
+                    };
+                });
+            }
+            renderRecentNotesFn = renderRecentNotes;
             renderRecentNotes();
-        };
-
-        // Right-click to toggle Pin / Unpin
-        pill.oncontextmenu = (e) => {
-            e.preventDefault();
-            if (pinnedTags.includes(tag)) {
-                pinnedTags = pinnedTags.filter(t => t !== tag);
-                new Notice(`📍 Unpinned ${tag}`);
-            } else {
-                pinnedTags.push(tag);
-                new Notice(`📌 Pinned ${tag}`);
-            }
-            localStorage.setItem(LS.pinnedTags, JSON.stringify(pinnedTags));
-            renderTopicTags();
-        };
-    });
-}
-renderTopicTags();
-
-// 2. JUMP BACK IN (Atlas Widget - Bottom)
-const jumpCard = colLeft.createDiv({ cls: "ocean-card" });
-const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
-jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
-
-const jumpList = jumpCard.createDiv({ cls: "ocean-jump-list" });
-const recentFiles = Utils.getRecentlyOpened(3);
-
-if (recentFiles.length > 0) {
-    recentFiles.forEach(path => {
-        const item = jumpList.createDiv({ cls: "ocean-jump-item" });
-        const ico = item.createDiv({ cls: "ocean-jump-icon" });
-        Utils.icon(ico, "corner-up-left", "↩");
-        item.createSpan({ text: path.split("/").pop().replace(".md", "") });
-        item.onclick = () => app.workspace.openLinkText(path, "", false);
-    });
-} else {
-    jumpList.createDiv({ text: "No recently opened notes", attr: { style: "font-size:0.8rem; color:var(--ocean-muted);" } });
-}
-
-// ── CENTER COLUMN: RECENTLY EDITED NOTES (MAX SPACE) ─────────
-const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
-const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
-const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
-
-let noteSearchQuery = "";
-const recentSearchInput = recentHdr.createEl("input", {
-    cls: "ocean-search-input",
-    attr: { type: "text", placeholder: "🔍 SEARCH", spellcheck: "false" }
-});
-
-recentSearchInput.oninput = () => {
-    noteSearchQuery = recentSearchInput.value;
-    renderRecentNotes();
-};
-
-const notesList = recentCard.createDiv({ cls: "ocean-notes-list" });
-
-function renderRecentNotes() {
-    notesList.innerHTML = "";
-    recentTitleEl.textContent = activeTag === "__all__" 
-        ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
-        : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
-    
-    const notes = Utils.getNotes(50, noteSearchQuery);
-    if (notes.length === 0) {
-        notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
-        return;
-    }
-
-    notes.forEach(({ page: p, isPinned }) => {
-        const row = notesList.createDiv({
-            cls: "ocean-note-row" + (isPinned ? " pinned" : ""),
-            attr: { title: `${isPinned ? "Pinned note" : "Note"}: ${p.file.name}. Right-click to toggle pin.` }
-        });
-
-        const info = row.createDiv({ cls: "ocean-note-info" });
-        const nameRow = info.createDiv({ cls: "ocean-note-name-row" });
-        
-        if (isPinned) {
-            nameRow.createSpan({ cls: "ocean-pin-icon", text: "📌" });
         }
-        nameRow.createSpan({ cls: "ocean-note-name", text: p.file.name });
-        info.createDiv({ cls: "ocean-note-folder", text: p.file.folder || "Vault Root" });
 
-        row.createDiv({ cls: "ocean-note-time", text: Utils.relTime(p.file.mtime) });
-        row.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
+        // 2. PERSISTENT SCRATCHPAD
+        if (showScratchpad) {
+            const scratchpadCard = colCenter.createDiv({ cls: "ocean-card ocean-scratchpad-card" });
+            const scratchpadHdr = scratchpadCard.createDiv({ cls: "ocean-card-hdr" });
+            scratchpadHdr.createDiv({ cls: "ocean-card-title", text: "📝 QUICK SCRATCHPAD" });
 
-        // Right-click to toggle Pin / Unpin
-        row.oncontextmenu = (e) => {
-            e.preventDefault();
-            if (pinnedNotes.includes(p.file.path)) {
-                pinnedNotes = pinnedNotes.filter(path => path !== p.file.path);
-                new Notice(`📍 Unpinned ${p.file.name}`);
-            } else {
-                pinnedNotes.push(p.file.path);
-                new Notice(`📌 Pinned ${p.file.name}`);
-            }
-            localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
-            renderRecentNotes();
-        };
-    });
-}
-renderRecentNotes();
+            const scratchActions = scratchpadHdr.createDiv({ cls: "ocean-scratchpad-hdr-actions" });
+            const saveIndicator = scratchActions.createSpan({ cls: "ocean-scratchpad-stat", text: "● Saved" });
+            const copyScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📋 COPY", attr: { title: "Copy to Clipboard" } });
+            const clearScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "🧹 CLEAR", attr: { title: "Clear Scratchpad" } });
+            const toDailyBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📤 DAILY", attr: { title: "Append to Today's Daily Note" } });
 
-// 2. PERSISTENT SCRATCHPAD (Center Bottom)
-const scratchpadCard = colCenter.createDiv({ cls: "ocean-card ocean-scratchpad-card" });
-const scratchpadHdr = scratchpadCard.createDiv({ cls: "ocean-card-hdr" });
-scratchpadHdr.createDiv({ cls: "ocean-card-title", text: "📝 QUICK SCRATCHPAD" });
+            const scratchTextarea = scratchpadCard.createEl("textarea", {
+                cls: "ocean-scratchpad-textarea",
+                attr: {
+                    placeholder: "Type quick thoughts, markdown snippets, or temporary tasks... (Auto-saves continuously)"
+                }
+            });
 
-const scratchActions = scratchpadHdr.createDiv({ cls: "ocean-scratchpad-hdr-actions" });
-const saveIndicator = scratchActions.createSpan({ cls: "ocean-scratchpad-stat", text: "● Saved" });
-const copyScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📋 COPY", attr: { title: "Copy to Clipboard" } });
-const clearScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "🧹 CLEAR", attr: { title: "Clear Scratchpad" } });
-const toDailyBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📤 DAILY", attr: { title: "Append to Today's Daily Note" } });
+            let savedScratchText = localStorage.getItem(LS.scratchpad) || "";
+            scratchTextarea.value = savedScratchText;
 
-const scratchTextarea = scratchpadCard.createEl("textarea", {
-    cls: "ocean-scratchpad-textarea",
-    attr: {
-        placeholder: "Type quick thoughts, markdown snippets, or temporary tasks... (Auto-saves continuously)"
-    }
-});
+            let saveTimeout = null;
+            scratchTextarea.oninput = () => {
+                saveIndicator.textContent = "● Saving...";
+                saveIndicator.style.color = "#fbbf24";
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    localStorage.setItem(LS.scratchpad, scratchTextarea.value);
+                    saveIndicator.textContent = "● Saved";
+                    saveIndicator.style.color = "var(--ocean-muted)";
+                }, 300);
+            };
 
-let savedScratchText = localStorage.getItem(LS.scratchpad) || "";
-scratchTextarea.value = savedScratchText;
+            copyScratchBtn.onclick = () => {
+                const text = scratchTextarea.value.trim();
+                if (!text) {
+                    new Notice("Scratchpad is empty");
+                    return;
+                }
+                navigator.clipboard.writeText(text);
+                new Notice("📋 Copied scratchpad to clipboard!");
+            };
 
-let saveTimeout = null;
-scratchTextarea.oninput = () => {
-    saveIndicator.textContent = "● Saving...";
-    saveIndicator.style.color = "#fbbf24";
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-        localStorage.setItem(LS.scratchpad, scratchTextarea.value);
-        saveIndicator.textContent = "● Saved";
-        saveIndicator.style.color = "var(--ocean-muted)";
-    }, 300);
-};
+            clearScratchBtn.onclick = () => {
+                if (!scratchTextarea.value.trim()) return;
+                scratchTextarea.value = "";
+                localStorage.setItem(LS.scratchpad, "");
+                new Notice("🧹 Scratchpad cleared");
+            };
 
-copyScratchBtn.onclick = () => {
-    const text = scratchTextarea.value.trim();
-    if (!text) {
-        new Notice("Scratchpad is empty");
-        return;
-    }
-    navigator.clipboard.writeText(text);
-    new Notice("📋 Copied scratchpad to clipboard!");
-};
+            toDailyBtn.onclick = async () => {
+                const text = scratchTextarea.value.trim();
+                if (!text) {
+                    new Notice("Scratchpad is empty");
+                    return;
+                }
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+                const dailyPath = `Daily/${dateStr}.md`;
+                
+                let file = app.vault.getAbstractFileByPath(dailyPath);
+                if (!file) {
+                    file = app.vault.getAbstractFileByPath(`${dateStr}.md`);
+                }
 
-clearScratchBtn.onclick = () => {
-    if (!scratchTextarea.value.trim()) return;
-    scratchTextarea.value = "";
-    localStorage.setItem(LS.scratchpad, "");
-    new Notice("🧹 Scratchpad cleared");
-};
-
-toDailyBtn.onclick = async () => {
-    const text = scratchTextarea.value.trim();
-    if (!text) {
-        new Notice("Scratchpad is empty");
-        return;
-    }
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    const dailyPath = `Daily/${dateStr}.md`;
-    
-    let file = app.vault.getAbstractFileByPath(dailyPath);
-    if (!file) {
-        file = app.vault.getAbstractFileByPath(`${dateStr}.md`);
-    }
-
-    try {
-        if (file) {
-            const existing = await app.vault.read(file);
-            await app.vault.modify(file, `${existing}\n\n### Scratchpad Note (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})\n${text}\n`);
-            new Notice(`📤 Appended scratchpad to ${file.name}!`);
-        } else {
-            await app.vault.create(dailyPath, `# ${dateStr}\n\n### Scratchpad Note\n${text}\n`);
-            new Notice(`📤 Created ${dailyPath} and saved scratchpad!`);
+                try {
+                    if (file) {
+                        const existing = await app.vault.read(file);
+                        await app.vault.modify(file, `${existing}\n\n### Scratchpad Note (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})\n${text}\n`);
+                        new Notice(`📤 Appended scratchpad to ${file.name}!`);
+                    } else {
+                        await app.vault.create(dailyPath, `# ${dateStr}\n\n### Scratchpad Note\n${text}\n`);
+                        new Notice(`📤 Created ${dailyPath} and saved scratchpad!`);
+                    }
+                } catch(e) {
+                    new Notice(`Notice: ${e.message}`);
+                }
+            };
         }
-    } catch(e) {
-        new Notice(`Notice: ${e.message}`);
     }
-};
 
-// ── RIGHT COLUMN: 1. COLLECTION CARDS (FIRST) ────────────────
-const colCardSection = colRight.createDiv({ cls: "ocean-card" });
-const colHdr = colCardSection.createDiv({ cls: "ocean-card-hdr" });
-colHdr.createDiv({ cls: "ocean-card-title", text: "🗂️ COLLECTION" });
+    // ── RIGHT COLUMN ─────────────────────────────
+    if (hasRight) {
+        const colRight = mainGrid.createDiv({ cls: "ocean-col-right" });
 
-const addColBtn = colHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD CARD" });
-const collectionContainer = colCardSection.createDiv({ cls: "ocean-collection-container" });
+        // 1. COLLECTION CARDS
+        if (showCollections) {
+            const colCardSection = colRight.createDiv({ cls: "ocean-card" });
+            const colHdr = colCardSection.createDiv({ cls: "ocean-card-hdr" });
+            colHdr.createDiv({ cls: "ocean-card-title", text: "🗂️ COLLECTION" });
 
-function renderCollectionCards() {
-    collectionContainer.innerHTML = "";
-    savedCards.forEach((c, idx) => {
-        const cardEl = collectionContainer.createDiv({ cls: "ocean-col-card" });
-        
-        cardEl.createDiv({ cls: "ocean-col-card-emoji", text: c.emoji || "📁" });
+            const addColBtn = colHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD CARD" });
+            const collectionContainer = colCardSection.createDiv({ cls: "ocean-collection-container" });
 
-        const info = cardEl.createDiv({ cls: "ocean-col-card-info" });
-        info.createDiv({ cls: "ocean-col-card-title", text: c.title });
-        if (c.subtitle) info.createDiv({ cls: "ocean-col-card-sub", text: c.subtitle });
+            function renderCollectionCards() {
+                collectionContainer.innerHTML = "";
+                savedCards.forEach((c, idx) => {
+                    const cardEl = collectionContainer.createDiv({ cls: "ocean-col-card" });
+                    
+                    cardEl.createDiv({ cls: "ocean-col-card-emoji", text: c.emoji || "📁" });
 
-        const actions = cardEl.createDiv({ cls: "ocean-col-card-actions" });
-        const editBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✎", attr: { title: "Edit Card" } });
-        const delBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✕", attr: { title: "Delete Card" } });
+                    const info = cardEl.createDiv({ cls: "ocean-col-card-info" });
+                    info.createDiv({ cls: "ocean-col-card-title", text: c.title });
+                    if (c.subtitle) info.createDiv({ cls: "ocean-col-card-sub", text: c.subtitle });
 
-        editBtn.onclick = (e) => { e.stopPropagation(); showCardModal(c, idx); };
-        delBtn.onclick = (e) => {
-            e.stopPropagation();
-            savedCards.splice(idx, 1);
-            localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                    const actions = cardEl.createDiv({ cls: "ocean-col-card-actions" });
+                    const editBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✎", attr: { title: "Edit Card" } });
+                    const delBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✕", attr: { title: "Delete Card" } });
+
+                    editBtn.onclick = (e) => { e.stopPropagation(); showCardModal(c, idx); };
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        savedCards.splice(idx, 1);
+                        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                        renderCollectionCards();
+                    };
+
+                    cardEl.onclick = () => {
+                        if (c.link) app.workspace.openLinkText(c.link, "", false);
+                    };
+                });
+            }
+
+            function showCardModal(cardToEdit = null, idx = null) {
+                const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+                const modal = overlay.createDiv({ cls: "ocean-modal" });
+                modal.createDiv({ cls: "ocean-modal-title", text: cardToEdit ? "✎ Edit Card" : "➕ Add Collection Card" });
+
+                modal.createDiv({ text: "Card Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+                const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? cardToEdit.title : "", placeholder: "E.g.: Academic Hub" } });
+
+                modal.createDiv({ text: "Subtitle / Tagline:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+                const subInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.subtitle || "") : "", placeholder: "E.g.: Notes & Syllabus" } });
+
+                modal.createDiv({ text: "Emoji Icon:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+                const emojiInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.emoji || "📁") : "📁", placeholder: "📁" } });
+
+                modal.createDiv({ text: "Target Note Link (Path):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+                const linkInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.link || "") : "", placeholder: "E.g.: Academics/BCom/BCom" } });
+
+                const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+                
+                if (cardToEdit !== null && idx !== null) {
+                    const delModalBtn = btnRow.createEl("button", {
+                        cls: "ocean-btn",
+                        text: "🗑️ Delete",
+                        attr: { style: "margin-right:auto; color:var(--ocean-rose);" }
+                    });
+                    delModalBtn.onclick = () => {
+                        savedCards.splice(idx, 1);
+                        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                        renderCollectionCards();
+                        new Notice(`🗑️ Deleted ${cardToEdit.title}`);
+                        overlay.remove();
+                    };
+                }
+
+                const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+                const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Card" });
+
+                cancel.onclick = () => overlay.remove();
+                save.onclick = () => {
+                    const title = titleInp.value.trim();
+                    if (!title) {
+                        new Notice("⚠️ Card title is required");
+                        return;
+                    }
+                    const newCard = {
+                        title: title,
+                        subtitle: subInp.value.trim(),
+                        emoji: emojiInp.value.trim() || "📁",
+                        link: linkInp.value.trim()
+                    };
+
+                    if (cardToEdit !== null && idx !== null) {
+                        savedCards[idx] = newCard;
+                    } else {
+                        savedCards.push(newCard);
+                    }
+                    localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                    renderCollectionCards();
+                    overlay.remove();
+                };
+                overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            }
+
+            addColBtn.onclick = () => showCardModal();
             renderCollectionCards();
-        };
+        }
 
-        cardEl.onclick = () => {
-            if (c.link) app.workspace.openLinkText(c.link, "", false);
-        };
-    });
-}
+        // 2. SYSTEM QUICK ACTIONS
+        if (showActions) {
+            const actionsSection = colRight.createDiv({ cls: "ocean-card ocean-actions-card" });
+            const actHdr = actionsSection.createDiv({ cls: "ocean-card-hdr" });
+            actHdr.createDiv({ cls: "ocean-card-title", text: "⚡ SYSTEM ACTIONS" });
 
-function showCardModal(cardToEdit = null, idx = null) {
-    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
-    const modal = overlay.createDiv({ cls: "ocean-modal" });
-    modal.createDiv({ cls: "ocean-modal-title", text: cardToEdit ? "✎ Edit Card" : "➕ Add Collection Card" });
+            const actGrid = actionsSection.createDiv({ cls: "ocean-act-grid" });
 
-    modal.createDiv({ text: "Card Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? cardToEdit.title : "", placeholder: "E.g.: Academic Hub" } });
+            const SYS_ACTIONS = [
+                { icon: "search",      lbl: "Omni-Search",cmd: "switcher:open",  em: "🔍" },
+                { icon: "calendar",    lbl: "Daily",      cmd: "daily-notes",   em: "📅" },
+                { icon: "graph",       lbl: "Graph",      cmd: "graph:open",    em: "🕸️" },
+                { icon: "file-plus",   lbl: "New Note",   cmd: "file-explorer:new-file", em: "📝" },
+                { icon: "settings",    lbl: "Settings",   cmd: "app:open-settings", em: "⚙️" },
+                { icon: "bookmark",    lbl: "Bookmarks",  cmd: "bookmarks:open", em: "🔖" }
+            ];
 
-    modal.createDiv({ text: "Subtitle / Tagline:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const subInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.subtitle || "") : "", placeholder: "E.g.: Notes & Syllabus" } });
+            SYS_ACTIONS.forEach(act => {
+                const btn = actGrid.createDiv({ cls: "ocean-act-btn" });
+                const ico = btn.createDiv({ cls: "ocean-act-icon" });
+                Utils.icon(ico, act.icon, act.em);
+                btn.createDiv({ cls: "ocean-act-lbl", text: act.lbl });
 
-    modal.createDiv({ text: "Emoji Icon:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const emojiInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.emoji || "📁") : "📁", placeholder: "📁" } });
+                btn.onclick = () => {
+                    if (act.lbl === "Daily") {
+                        const today = new Date();
+                        const dateStr = today.toISOString().split("T")[0];
+                        const fileName = `daily/${dateStr}.md`;
+                        const existingFile = app.vault.getAbstractFileByPath(fileName);
+                        if (existingFile) {
+                            app.workspace.openLinkText(fileName, "", false);
+                        } else {
+                            try { app.commands.executeCommandById("daily-notes"); }
+                            catch(e) { app.workspace.openLinkText(dateStr, "", false); }
+                        }
+                        return;
+                    }
 
-    modal.createDiv({ text: "Target Note Link (Path):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const linkInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.link || "") : "", placeholder: "E.g.: Academics/BCom/BCom" } });
-
-    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
-    
-    if (cardToEdit !== null && idx !== null) {
-        const delModalBtn = btnRow.createEl("button", {
-            cls: "ocean-btn",
-            text: "🗑️ Delete",
-            attr: { style: "margin-right:auto; color:var(--ocean-rose);" }
-        });
-        delModalBtn.onclick = () => {
-            savedCards.splice(idx, 1);
-            localStorage.setItem(LS.cards, JSON.stringify(savedCards));
-            renderCollectionCards();
-            new Notice(`🗑️ Deleted ${cardToEdit.title}`);
-            overlay.remove();
-        };
+                    try {
+                        if (app.commands.commands[act.cmd]) {
+                            app.commands.executeCommandById(act.cmd);
+                        } else if (act.fallbackCmd && app.commands.commands[act.fallbackCmd]) {
+                            app.commands.executeCommandById(act.fallbackCmd);
+                        } else {
+                            new Notice(`Command for ${act.lbl} triggered`);
+                        }
+                    } catch(e) {
+                        new Notice(`Failed to execute ${act.lbl}`);
+                    }
+                };
+            });
+        }
     }
-
-    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Card" });
-
-    cancel.onclick = () => overlay.remove();
-    save.onclick = () => {
-        const title = titleInp.value.trim();
-        if (!title) return;
-        const newCard = {
-            title: title,
-            subtitle: subInp.value.trim(),
-            emoji: emojiInp.value.trim() || "📁",
-            link: linkInp.value.trim()
-        };
-
-        if (cardToEdit !== null && idx !== null) {
-            savedCards[idx] = newCard;
-        } else {
-            savedCards.push(newCard);
-        }
-        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
-        renderCollectionCards();
-        overlay.remove();
-    };
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
 }
-
-addColBtn.onclick = () => showCardModal();
-renderCollectionCards();
-
-// ── RIGHT COLUMN: 2. SYSTEM QUICK ACTIONS (AFTER COLLECTION) ─
-const sysCard = colRight.createDiv({ cls: "ocean-card" });
-const sysHdr = sysCard.createDiv({ cls: "ocean-card-hdr" });
-sysHdr.createDiv({ cls: "ocean-card-title", text: "⚡ SYSTEM QUICK ACTIONS" });
-
-const actGrid = sysCard.createDiv({ cls: "ocean-act-grid" });
-const SYS_ACTIONS = [
-    { icon: "search",      lbl: "Omnisearch", cmd: "omnisearch:show-modal", fallbackCmd: "global-search:open", em: "🔍" },
-    { icon: "calendar",    lbl: "Daily",      cmd: "daily-notes", em: "📅" },
-    { icon: "share-2",     lbl: "Graph",      cmd: "graph:open", em: "🕸️" },
-    { icon: "file-plus",   lbl: "New Note",   cmd: "file-explorer:new-file", em: "➕" },
-    { icon: "terminal",    lbl: "Commands",   cmd: "command-palette:open", em: "⌘" },
-    { icon: "bookmark",    lbl: "Bookmarks",  cmd: "bookmarks:open", em: "🔖" }
-];
-
-SYS_ACTIONS.forEach(act => {
-    const btn = actGrid.createDiv({ cls: "ocean-act-btn" });
-    const ico = btn.createDiv({ cls: "ocean-act-icon" });
-    Utils.icon(ico, act.icon, act.em);
-    btn.createDiv({ cls: "ocean-act-lbl", text: act.lbl });
-
-    btn.onclick = () => {
-        if (act.lbl === "Daily") {
-            const today = new Date();
-            const dateStr = today.toISOString().split("T")[0];
-            const fileName = `daily/${dateStr}.md`;
-            const existingFile = app.vault.getAbstractFileByPath(fileName);
-            if (existingFile) {
-                app.workspace.openLinkText(fileName, "", false);
-            } else {
-                try { app.commands.executeCommandById("daily-notes"); }
-                catch(e) { app.workspace.openLinkText(dateStr, "", false); }
-            }
-            return;
-        }
-
-        try {
-            if (app.commands.commands[act.cmd]) {
-                app.commands.executeCommandById(act.cmd);
-            } else if (act.fallbackCmd && app.commands.commands[act.fallbackCmd]) {
-                app.commands.executeCommandById(act.fallbackCmd);
-            } else {
-                new Notice(`Command for ${act.lbl} triggered`);
-            }
-        } catch(e) {
-            new Notice(`Failed to execute ${act.lbl}`);
-        }
-    };
-});
 
 // ══════════════════════════════════════════════
 // 3. BIO-METRICS (WEEKLY) (Zen Habits Tracker)
 // ══════════════════════════════════════════════
-const habitsCard = container.createDiv({ cls: "ocean-card ocean-habits-card" });
-const habHdr = habitsCard.createDiv({ cls: "ocean-card-hdr" });
-habHdr.createDiv({ cls: "ocean-card-title", text: "🧬 BIO-METRICS (WEEKLY CONSISTENCY)" });
+if (masterSettings.widgets.habits !== false) {
+    const habitsCard = container.createDiv({ cls: "ocean-card ocean-habits-card" });
+    const habHdr = habitsCard.createDiv({ cls: "ocean-card-hdr" });
+    habHdr.createDiv({ cls: "ocean-card-title", text: "🧬 BIO-METRICS (WEEKLY CONSISTENCY)" });
 
-const addHabitBtn = habHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD HABIT" });
+    const addHabitBtn = habHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD HABIT" });
 
-const barWrap = habitsCard.createDiv({ cls: "ocean-consistency-bar-wrap" });
-const barFill = barWrap.createDiv({ cls: "ocean-consistency-bar-fill" });
+    const barWrap = habitsCard.createDiv({ cls: "ocean-consistency-bar-wrap" });
+    const barFill = barWrap.createDiv({ cls: "ocean-consistency-bar-fill" });
 
-const habitGrid = habitsCard.createDiv({ cls: "ocean-habit-grid" });
+    const habitGrid = habitsCard.createDiv({ cls: "ocean-habit-grid" });
 
-function updateConsistencyBar() {
-    const stats = Utils.getHabitStats();
-    barFill.style.width = `${stats.percent}%`;
-}
+    function updateConsistencyBar() {
+        const stats = Utils.getHabitStats();
+        barFill.style.width = `${stats.percent}%`;
+    }
 
-function openEditHabitModal(h, idx) {
-    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
-    const modal = overlay.createDiv({ cls: "ocean-modal" });
-    modal.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
+    function openEditHabitModal(h, idx) {
+        const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+        const modal = overlay.createDiv({ cls: "ocean-modal" });
+        modal.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
 
-    const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: h } });
-    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
-    const delBtn = btnRow.createEl("button", { cls: "ocean-btn", text: "🗑️ Delete", attr: { style: "margin-right:auto; color:var(--ocean-rose);" } });
-    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
+        const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: h } });
+        const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+        const delBtn = btnRow.createEl("button", { cls: "ocean-btn", text: "🗑️ Delete", attr: { style: "margin-right:auto; color:var(--ocean-rose);" } });
+        const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+        const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
 
-    cancel.onclick = () => overlay.remove();
-    delBtn.onclick = () => {
-        savedHabits.splice(idx, 1);
-        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-        renderHabitsTracker();
-        updateConsistencyBar();
-        new Notice(`🗑️ Deleted ${h}`);
-        overlay.remove();
-    };
-    save.onclick = () => {
-        const updated = inp.value.trim();
-        if (updated) {
-            savedHabits[idx] = updated;
-            localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-            renderHabitsTracker();
-            updateConsistencyBar();
-        }
-        overlay.remove();
-    };
-    overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
-}
-
-function renderHabitsTracker() {
-    habitGrid.innerHTML = "";
-    savedHabits.forEach((h, idx) => {
-        const row = habitGrid.createDiv({ cls: "ocean-habit-row" });
-        
-        const leftWrap = row.createDiv({ cls: "ocean-habit-left" });
-        leftWrap.createDiv({ cls: "ocean-habit-title", text: h });
-
-        const actions = leftWrap.createDiv({ cls: "ocean-habit-actions" });
-        const editBtn = actions.createDiv({ cls: "ocean-habit-act-btn", text: "✎", attr: { title: "Edit Habit" } });
-        const delBtn = actions.createDiv({ cls: "ocean-habit-act-btn del", text: "✕", attr: { title: "Delete Habit" } });
-
-        editBtn.onclick = (e) => { e.stopPropagation(); openEditHabitModal(h, idx); };
-        delBtn.onclick = (e) => {
-            e.stopPropagation();
+        cancel.onclick = () => overlay.remove();
+        delBtn.onclick = () => {
             savedHabits.splice(idx, 1);
             localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
             renderHabitsTracker();
             updateConsistencyBar();
             new Notice(`🗑️ Deleted ${h}`);
+            overlay.remove();
         };
-
-        // Right click to edit or delete
-        row.oncontextmenu = (e) => {
-            e.preventDefault();
-            openEditHabitModal(h, idx);
-        };
-
-        const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
-        const todayDayIndex = ((new Date().getDay() + 6) % 7) + 1; // 1 = Monday, 7 = Sunday
-
-        const dotGrid = row.createDiv({ cls: "ocean-dot-grid" });
-        for (let day = 1; day <= 7; day++) {
-            const key = `ocean-h-${h}-${day}`;
-            const isToday = day === todayDayIndex;
-            const isActive = !!localStorage.getItem(key);
-
-            const dot = dotGrid.createDiv({
-                cls: "ocean-dot" + (isActive ? " active" : "") + (isToday ? " today" : ""),
-                text: DAYS[day - 1],
-                attr: { title: `${isToday ? "Today • " : ""}${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day - 1]}` }
-            });
-
-            dot.onclick = () => {
-                dot.classList.toggle("active");
-                if (localStorage.getItem(key)) {
-                    localStorage.removeItem(key);
-                } else {
-                    localStorage.setItem(key, "1");
-                }
+        save.onclick = () => {
+            const updated = inp.value.trim();
+            if (updated) {
+                savedHabits[idx] = updated;
+                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                renderHabitsTracker();
                 updateConsistencyBar();
+            }
+            overlay.remove();
+        };
+        overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+    }
+
+    function renderHabitsTracker() {
+        habitGrid.innerHTML = "";
+        savedHabits.forEach((h, idx) => {
+            const row = habitGrid.createDiv({ cls: "ocean-habit-row" });
+            
+            const leftWrap = row.createDiv({ cls: "ocean-habit-left" });
+            leftWrap.createDiv({ cls: "ocean-habit-title", text: h });
+
+            const actions = leftWrap.createDiv({ cls: "ocean-habit-actions" });
+            const editBtn = actions.createDiv({ cls: "ocean-habit-act-btn", text: "✎", attr: { title: "Edit Habit" } });
+            const delBtn = actions.createDiv({ cls: "ocean-habit-act-btn del", text: "✕", attr: { title: "Delete Habit" } });
+
+            editBtn.onclick = (e) => { e.stopPropagation(); openEditHabitModal(h, idx); };
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                savedHabits.splice(idx, 1);
+                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                renderHabitsTracker();
+                updateConsistencyBar();
+                new Notice(`🗑️ Deleted ${h}`);
             };
-        }
-    });
-    updateConsistencyBar();
-}
 
-addHabitBtn.onclick = () => {
-    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
-    const modal = overlay.createDiv({ cls: "ocean-modal" });
-    modal.createDiv({ cls: "ocean-modal-title", text: "➕ Add New Weekly Metric" });
+            // Right click to edit or delete
+            row.oncontextmenu = (e) => {
+                e.preventDefault();
+                openEditHabitModal(h, idx);
+            };
 
-    const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { placeholder: "E.g.: 45 min German Reading" } });
-    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
-    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Add Metric" });
+            const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+            const todayDayIndex = ((new Date().getDay() + 6) % 7) + 1; // 1 = Monday, 7 = Sunday
 
-    cancel.onclick = () => overlay.remove();
-    save.onclick = () => {
-        const val = inp.value.trim();
-        if (val) {
-            savedHabits.push(val);
-            localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-            renderHabitsTracker();
-            updateConsistencyBar();
-        }
-        overlay.remove();
+            const dotGrid = row.createDiv({ cls: "ocean-dot-grid" });
+            for (let day = 1; day <= 7; day++) {
+                const key = `ocean-h-${h}-${day}`;
+                const isToday = day === todayDayIndex;
+                const isActive = !!localStorage.getItem(key);
+
+                const dot = dotGrid.createDiv({
+                    cls: "ocean-dot" + (isActive ? " active" : "") + (isToday ? " today" : ""),
+                    text: DAYS[day - 1],
+                    attr: { title: `${isToday ? "Today • " : ""}${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day - 1]}` }
+                });
+
+                dot.onclick = () => {
+                    dot.classList.toggle("active");
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                    } else {
+                        localStorage.setItem(key, "1");
+                    }
+                    updateConsistencyBar();
+                };
+            }
+        });
+        updateConsistencyBar();
+    }
+
+    addHabitBtn.onclick = () => {
+        const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+        const modal = overlay.createDiv({ cls: "ocean-modal" });
+        modal.createDiv({ cls: "ocean-modal-title", text: "➕ Add New Weekly Metric" });
+
+        const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { placeholder: "E.g.: 45 min German Reading" } });
+        const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+        const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+        const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Add Metric" });
+
+        cancel.onclick = () => overlay.remove();
+        save.onclick = () => {
+            const val = inp.value.trim();
+            if (val) {
+                savedHabits.push(val);
+                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                renderHabitsTracker();
+                updateConsistencyBar();
+            }
+            overlay.remove();
+        };
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     };
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-};
 
-renderHabitsTracker();
+    renderHabitsTracker();
+}
 ```
