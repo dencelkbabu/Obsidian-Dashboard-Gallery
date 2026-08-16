@@ -528,7 +528,7 @@ function renderLiveTasks() {
 
     // Render Tagged Notes (Primary)
     pendingNotes.forEach(({ page: p, tag }) => {
-        const capsule = tasksTrack.createDiv({ cls: "ocean-task-capsule" });
+        const capsule = tasksTrack.createDiv({ cls: "ocean-target-capsule" });
         capsule.createDiv({ cls: "ocean-target-emoji", text: "📝" });
 
         const info = capsule.createDiv({ cls: "ocean-target-info" });
@@ -539,13 +539,44 @@ function renderLiveTasks() {
         const tagType = tag.toLowerCase().replace("#", "");
         metaRow.createSpan({ cls: `ocean-task-tag-badge ${tagType === "pending" ? "pending" : "todo"}`, text: tag });
 
+        const actions = capsule.createDiv({ cls: "ocean-target-actions" });
+        const checkBtn = actions.createDiv({
+            cls: "ocean-col-card-btn ocean-task-complete-btn",
+            text: "✓",
+            attr: { title: `Mark Done: Remove ${tag} tag from note` }
+        });
+
+        checkBtn.onclick = async (e) => {
+            e.stopPropagation();
+            try {
+                const file = app.vault.getAbstractFileByPath(p.file.path);
+                if (!file) return;
+                const content = await app.vault.read(file);
+                const tagBare = tag.replace("#", "");
+                
+                // Remove tag from inline or yaml
+                const regexInline = new RegExp(`#${tagBare}\\b`, "gi");
+                const regexYamlList = new RegExp(`^\\s*-\\s*#?${tagBare}\\s*$\\n?`, "gim");
+                
+                let newContent = content
+                    .replace(regexYamlList, "")
+                    .replace(regexInline, "");
+
+                await app.vault.modify(file, newContent);
+                new Notice(`🎉 Cleared ${tag} from ${p.file.name}!`);
+                setTimeout(() => renderLiveTasks(), 250);
+            } catch(err) {
+                new Notice(`Error updating note: ${err.message}`);
+            }
+        };
+
         capsule.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
     });
 
     // Render Checklist Tasks (Secondary)
     if (todoTasks && todoTasks.length > 0) {
         todoTasks.forEach(t => {
-            const capsule = tasksTrack.createDiv({ cls: "ocean-task-capsule" });
+            const capsule = tasksTrack.createDiv({ cls: "ocean-target-capsule" });
             capsule.createDiv({ cls: "ocean-target-emoji", text: "☑️" });
 
             const info = capsule.createDiv({ cls: "ocean-target-info" });
@@ -558,6 +589,47 @@ function renderLiveTasks() {
                 metaRow.createSpan({ cls: "ocean-target-date", text: (t.link.fileName || "") + (timeStr ? ` • ${timeStr}` : "") });
             }
             metaRow.createSpan({ cls: "ocean-task-tag-badge todo", text: "TODO" });
+
+            const actions = capsule.createDiv({ cls: "ocean-target-actions" });
+            const checkBtn = actions.createDiv({
+                cls: "ocean-col-card-btn ocean-task-complete-btn",
+                text: "✓",
+                attr: { title: "Mark task completed" }
+            });
+
+            checkBtn.onclick = async (e) => {
+                e.stopPropagation();
+                try {
+                    if (!t.link || !t.link.path) return;
+                    const file = app.vault.getAbstractFileByPath(t.link.path);
+                    if (!file) return;
+                    const content = await app.vault.read(file);
+                    const lines = content.split("\n");
+                    let modified = false;
+
+                    if (typeof t.line === "number" && lines[t.line] && lines[t.line].includes("- [ ]")) {
+                        lines[t.line] = lines[t.line].replace("- [ ]", "- [x]");
+                        modified = true;
+                    } else {
+                        const cleanText = t.text.trim();
+                        for (let i = 0; i < lines.length; i++) {
+                            if (lines[i].includes("- [ ]") && (lines[i].includes(cleanText) || cleanText.includes(lines[i].replace(/^.*-\s*\[\s*\]\s*/, "").trim()))) {
+                                lines[i] = lines[i].replace("- [ ]", "- [x]");
+                                modified = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (modified) {
+                        await app.vault.modify(file, lines.join("\n"));
+                        new Notice(`✅ Task completed!`);
+                        setTimeout(() => renderLiveTasks(), 250);
+                    }
+                } catch(err) {
+                    new Notice(`Error completing task: ${err.message}`);
+                }
+            };
 
             capsule.onclick = () => {
                 if (t.link) app.workspace.openLinkText(t.link.path, "", false);

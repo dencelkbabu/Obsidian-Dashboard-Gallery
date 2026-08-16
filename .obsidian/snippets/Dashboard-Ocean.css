@@ -362,6 +362,9 @@ body.theme-light {
     align-items: center;
     gap: 12px;
     padding: 10px 16px;
+    min-height: 60px;
+    height: 60px;
+    box-sizing: border-box;
     background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: var(--ocean-radius-sm);
@@ -369,7 +372,7 @@ body.theme-light {
     transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
     flex-shrink: 0;
     position: relative;
-    max-width: 320px;
+    max-width: 340px;
 }
 
 .ocean-target-capsule:hover,
@@ -378,17 +381,75 @@ body.theme-light {
     background: var(--ocean-hover-tint);
 }
 
-.ocean-target-capsule:hover .ocean-target-actions {
+.ocean-target-capsule:hover .ocean-target-actions,
+.ocean-task-capsule:hover .ocean-task-actions {
     opacity: 1;
 }
 
+.ocean-target-actions,
+.ocean-task-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+    margin-left: 6px;
+}
+
+.ocean-col-card-btn,
+.ocean-task-complete-btn {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: var(--ocean-hover-tint);
+    border: 1px solid var(--ocean-border);
+    color: var(--ocean-muted);
+    cursor: pointer;
+    font-size: 0.74rem;
+    transition: all 0.15s ease;
+}
+
+.ocean-col-card-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
+.ocean-task-complete-btn {
+    background: rgba(52, 211, 153, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    font-weight: 700;
+}
+
+.ocean-task-complete-btn:hover {
+    background: #34d399;
+    color: #0d1117;
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+    transform: scale(1.08);
+}
+
+.ocean-task-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    height: 19px;
+    line-height: 19px;
+}
+
 .ocean-task-tag-badge {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
     font-family: var(--ocean-font-mono);
-    padding: 2px 6px;
+    padding: 1px 6px;
     border-radius: 4px;
     letter-spacing: 0.3px;
+    flex-shrink: 0;
+    line-height: 1.2;
 }
 
 .ocean-task-tag-badge.pending {
@@ -664,7 +725,8 @@ body.theme-light {
 .ocean-target-info {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    justify-content: center;
+    gap: 4px;
     flex: 1;
     min-width: 0;
 }
@@ -676,12 +738,14 @@ body.theme-light {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2;
 }
 
 .ocean-target-meta {
     display: flex;
     align-items: center;
     gap: 8px;
+    line-height: 1.2;
 }
 
 .ocean-target-date {
