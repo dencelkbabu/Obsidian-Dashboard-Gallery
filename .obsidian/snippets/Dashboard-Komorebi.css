@@ -12,34 +12,34 @@
    DESIGN TOKENS
    ────────────────────────────────────────────── */
 :root {
-  --komo-base:          #0d0e14;
-  --komo-surface:       #111218;
-  --komo-overlay:       #181920;
-  --komo-raised:        #1e1f29;
-  --komo-border:        rgba(203, 166, 247, 0.13);
-  --komo-border-hover:  rgba(203, 166, 247, 0.32);
+  --komo-base: #0d0e14;
+  --komo-surface: #111218;
+  --komo-overlay: #181920;
+  --komo-raised: #1e1f29;
+  --komo-border: rgba(203, 166, 247, 0.13);
+  --komo-border-hover: rgba(203, 166, 247, 0.32);
   --komo-border-sakura: rgba(245, 194, 231, 0.26);
 
-  --komo-sakura:   #f5c2e7;
+  --komo-sakura: #f5c2e7;
   --komo-lavender: #cba6f7;
-  --komo-teal:     #89dceb;
-  --komo-yellow:   #f9e2af;
-  --komo-red:      #f38ba8;
-  --komo-green:    #a6e3a1;
-  --komo-peach:    #fab387;
+  --komo-teal: #89dceb;
+  --komo-yellow: #f9e2af;
+  --komo-red: #f38ba8;
+  --komo-green: #a6e3a1;
+  --komo-peach: #fab387;
 
-  --komo-text:    #cdd6f4;
-  --komo-sub:     #a6adc8;
-  --komo-muted:   #585b70;
-  --komo-faint:   #313244;
+  --komo-text: #cdd6f4;
+  --komo-sub: #a6adc8;
+  --komo-muted: #585b70;
+  --komo-faint: #313244;
 
-  --komo-font:    'JetBrains Mono', 'Noto Sans JP', monospace;
+  --komo-font: 'JetBrains Mono', 'Noto Sans JP', monospace;
   --komo-font-jp: 'Noto Sans JP', sans-serif;
 
-  --komo-radius:  3px;
-  --komo-gap:     14px;
-  --komo-pad:     18px;
-  --komo-shadow:  0 2px 20px rgba(0,0,0,0.45);
+  --komo-radius: 3px;
+  --komo-gap: 14px;
+  --komo-pad: 18px;
+  --komo-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
 }
 
 /* FORCE THE NOTE CONTAINERS TO BE WIDE */
@@ -67,13 +67,20 @@
   padding: 0 4px;
 }
 
-.komo-header-block { padding-top: 4px; }
-.komo-bottom-block { padding-bottom: 20px; }
+.komo-header-block {
+  padding-top: 4px;
+}
+
+.komo-bottom-block {
+  padding-bottom: 20px;
+}
 
 /* Kill Obsidian paragraph margins inside our blocks */
 .komo-header-block p,
 .komo-grid-block p,
-.komo-bottom-block p { margin: 0 !important; }
+.komo-bottom-block p {
+  margin: 0 !important;
+}
 
 /* ──────────────────────────────────────────────
    HEADER BLOCK
@@ -96,7 +103,8 @@
 .komo-header::before {
   content: '桜';
   position: absolute;
-  right: -20px; bottom: -40px;
+  right: -20px;
+  bottom: -40px;
   font-size: 180px;
   color: var(--komo-sakura);
   opacity: 0.018;
@@ -129,8 +137,14 @@
   -webkit-text-fill-color: unset;
 }
 
-.komo-title:focus { border-color: var(--komo-border-sakura); }
-.komo-title::before { content: '> '; color: var(--komo-muted); }
+.komo-title:focus {
+  border-color: var(--komo-border-sakura);
+}
+
+.komo-title::before {
+  content: '> ';
+  color: var(--komo-muted);
+}
 
 .komo-mantra {
   font-size: 0.72rem;
@@ -143,8 +157,13 @@
   transition: color 0.2s;
 }
 
-.komo-mantra:focus { color: var(--komo-sub); }
-.komo-mantra::before { content: '// '; }
+.komo-mantra:focus {
+  color: var(--komo-sub);
+}
+
+.komo-mantra::before {
+  content: '// ';
+}
 
 /* Clock (center) */
 .komo-clock-block {
@@ -170,9 +189,15 @@
   letter-spacing: 0.02em;
 }
 
-.komo-sep { opacity: 0.4; margin: 0 4px; }
+.komo-sep {
+  opacity: 0.4;
+  margin: 0 4px;
+}
 
-.komo-date-en { color: var(--komo-faint); opacity: 0.7; }
+.komo-date-en {
+  color: var(--komo-faint);
+  opacity: 0.7;
+}
 
 /* Header right */
 .komo-header-right {
@@ -222,7 +247,9 @@
   transition: border-color 0.2s;
 }
 
-.komo-pill:hover { border-color: var(--komo-border-hover); }
+.komo-pill:hover {
+  border-color: var(--komo-border-hover);
+}
 
 .komo-pill-num {
   font-size: 1.05rem;
@@ -257,10 +284,12 @@
   transition: border-color 0.2s;
 }
 
-.komo-card:hover { border-color: var(--komo-border-hover); }
+.komo-card:hover {
+  border-color: var(--komo-border-hover);
+}
 
-.komo-music-card { 
-  padding: 0 !important; 
+.komo-music-card {
+  padding: 0 !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
@@ -400,8 +429,10 @@
 .markdown-preview-view .komo-focus *,
 .markdown-reading-view .komo-focus *,
 .view-content .komo-focus *,
-.komo-focus div, .komo-focus p,
-.komo-focus span, .komo-focus font {
+.komo-focus div,
+.komo-focus p,
+.komo-focus span,
+.komo-focus font {
   font-family: 'Noto Sans JP', sans-serif !important;
   font-size: 1.1rem !important;
   font-weight: 400 !important;
@@ -420,7 +451,9 @@
 }
 
 /* System quick actions */
-.komo-sys-card .komo-label { margin-bottom: 10px; }
+.komo-sys-card .komo-label {
+  margin-bottom: 10px;
+}
 
 .komo-act-grid {
   display: grid;
@@ -455,7 +488,10 @@
   justify-content: center;
 }
 
-.komo-act-icon svg { width: 15px; height: 15px; }
+.komo-act-icon svg {
+  width: 15px;
+  height: 15px;
+}
 
 .komo-act-lbl {
   font-size: 0.57rem;
@@ -464,7 +500,9 @@
   text-align: center;
 }
 
-.komo-act-btn:hover .komo-act-lbl { color: var(--komo-sub); }
+.komo-act-btn:hover .komo-act-lbl {
+  color: var(--komo-sub);
+}
 
 /* ──────────────────────────────────────────────
    BIG WIDGETS (WEATHER + MUSIC)
@@ -475,7 +513,10 @@
 }
 
 /* Weather Big */
-.komo-weather-card { flex: 1; }
+.komo-weather-card {
+  flex: 1;
+}
+
 .komo-weather-content {
   display: flex;
   flex-direction: column;
@@ -495,8 +536,15 @@
   transition: opacity 0.15s;
 }
 
-.komo-weather-settings:hover { opacity: 1; color: var(--komo-sakura); }
-.komo-weather-settings svg { width: 12px; height: 12px; }
+.komo-weather-settings:hover {
+  opacity: 1;
+  color: var(--komo-sakura);
+}
+
+.komo-weather-settings svg {
+  width: 12px;
+  height: 12px;
+}
 
 .komo-weather-setup {
   text-align: center;
@@ -507,7 +555,9 @@
   transition: color 0.15s;
 }
 
-.komo-weather-setup:hover { color: var(--komo-sakura); }
+.komo-weather-setup:hover {
+  color: var(--komo-sakura);
+}
 
 .komo-weather-main-big {
   display: flex;
@@ -565,7 +615,9 @@
   gap: var(--komo-gap);
 }
 
-.komo-cards-card { flex: 1; }
+.komo-cards-card {
+  flex: 1;
+}
 
 .komo-cards-hdr {
   display: flex;
@@ -574,7 +626,9 @@
   margin-bottom: 12px;
 }
 
-.komo-cards-hdr .komo-label { margin-bottom: 0; }
+.komo-cards-hdr .komo-label {
+  margin-bottom: 0;
+}
 
 .komo-add-card-btn {
   font-size: 0.6rem;
@@ -603,8 +657,14 @@
   scrollbar-color: var(--komo-faint) transparent;
 }
 
-.komo-cards-container::-webkit-scrollbar { width: 4px; }
-.komo-cards-container::-webkit-scrollbar-thumb { background: var(--komo-faint); border-radius: 2px; }
+.komo-cards-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.komo-cards-container::-webkit-scrollbar-thumb {
+  background: var(--komo-faint);
+  border-radius: 2px;
+}
 
 .komo-cards-big {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -638,7 +698,7 @@
 
 .komo-related-card:hover {
   border-color: var(--komo-border-hover);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .komo-card-img-wrap {
@@ -725,7 +785,9 @@
   transition: opacity 0.15s;
 }
 
-.komo-related-card:hover .komo-card-actions { opacity: 1; }
+.komo-related-card:hover .komo-card-actions {
+  opacity: 1;
+}
 
 .komo-card-action {
   width: 22px;
@@ -747,10 +809,15 @@
   background: var(--komo-raised);
 }
 
-.komo-card-del:hover { color: var(--komo-red); border-color: var(--komo-red); }
+.komo-card-del:hover {
+  color: var(--komo-red);
+  border-color: var(--komo-red);
+}
 
 /* Card modal styles */
-.komo-card-modal { min-width: 380px; }
+.komo-card-modal {
+  min-width: 380px;
+}
 
 .komo-card-form {
   display: flex;
@@ -796,8 +863,14 @@
   transition: all 0.15s;
 }
 
-.komo-color-dot:hover { transform: scale(1.1); }
-.komo-color-dot.active { border-color: var(--komo-text); box-shadow: 0 0 8px rgba(255,255,255,0.2); }
+.komo-color-dot:hover {
+  transform: scale(1.1);
+}
+
+.komo-color-dot.active {
+  border-color: var(--komo-text);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
 
 /* ──────────────────────────────────────────────
    RIGHT COLUMN — CALENDAR ONLY
@@ -809,9 +882,13 @@
 }
 
 /* Mini Calendar */
-.komo-cal-card .komo-label { margin-bottom: 8px; }
+.komo-cal-card .komo-label {
+  margin-bottom: 8px;
+}
 
-.komo-cal-container { user-select: none; }
+.komo-cal-container {
+  user-select: none;
+}
 
 .komo-cal-nav {
   display: flex;
@@ -829,7 +906,9 @@
   line-height: 1;
 }
 
-.komo-cal-nav-btn:hover { color: var(--komo-sakura); }
+.komo-cal-nav-btn:hover {
+  color: var(--komo-sakura);
+}
 
 .komo-cal-month-label {
   font-size: 0.66rem;
@@ -855,11 +934,15 @@
 
 /* Sunday color */
 .komo-cal-grid .komo-cal-dh:first-child,
-.komo-cal-grid .komo-cal-cell:nth-child(7n+1) { color: var(--komo-red); }
+.komo-cal-grid .komo-cal-cell:nth-child(7n+1) {
+  color: var(--komo-red);
+}
 
 /* Saturday */
 .komo-cal-grid .komo-cal-dh:last-child,
-.komo-cal-grid .komo-cal-cell:nth-child(7n) { color: var(--komo-lavender); }
+.komo-cal-grid .komo-cal-cell:nth-child(7n) {
+  color: var(--komo-lavender);
+}
 
 .komo-cal-cell {
   text-align: center;
@@ -946,8 +1029,14 @@
   scrollbar-color: var(--komo-faint) transparent;
 }
 
-.komo-cal-popup-list::-webkit-scrollbar { width: 3px; }
-.komo-cal-popup-list::-webkit-scrollbar-thumb { background: var(--komo-faint); border-radius: 2px; }
+.komo-cal-popup-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.komo-cal-popup-list::-webkit-scrollbar-thumb {
+  background: var(--komo-faint);
+  border-radius: 2px;
+}
 
 .komo-cal-popup-item {
   display: flex;
@@ -961,7 +1050,10 @@
   transition: all 0.1s;
 }
 
-.komo-cal-popup-item:last-child { border-bottom: none; }
+.komo-cal-popup-item:last-child {
+  border-bottom: none;
+}
+
 .komo-cal-popup-item:hover {
   background: var(--komo-overlay);
   color: var(--komo-text);
@@ -985,7 +1077,10 @@
 /* ──────────────────────────────────────────────
    POMODORO TIMER
    ────────────────────────────────────────────── */
-.komo-pomodoro-card { flex: 1; min-height: 200px; }
+.komo-pomodoro-card {
+  flex: 1;
+  min-height: 200px;
+}
 
 .komo-pomodoro {
   display: flex;
@@ -1089,7 +1184,9 @@
   margin-bottom: 10px;
 }
 
-.komo-habit-hdr .komo-label { margin-bottom: 0; }
+.komo-habit-hdr .komo-label {
+  margin-bottom: 0;
+}
 
 .komo-add-habit-btn {
   font-size: 0.6rem;
@@ -1112,7 +1209,13 @@
   gap: 2px;
 }
 
-.komo-habit-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
+.komo-habit-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
 
 /* Compact rows inside two-column mode */
 .komo-habit-grid-two .komo-week-hdr,
@@ -1121,10 +1224,22 @@
   gap: 2px !important;
 }
 
-.komo-habit-grid-two .komo-habit-name { font-size: 0.65rem; }
-.komo-habit-grid-two .komo-dot { width: 16px !important; height: 16px !important; }
-.komo-habit-grid-two .komo-habit-pct { font-size: 0.58rem; }
-.komo-habit-grid-two .komo-week-hdr-day { font-size: 0.52rem; }
+.komo-habit-grid-two .komo-habit-name {
+  font-size: 0.65rem;
+}
+
+.komo-habit-grid-two .komo-dot {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.komo-habit-grid-two .komo-habit-pct {
+  font-size: 0.58rem;
+}
+
+.komo-habit-grid-two .komo-week-hdr-day {
+  font-size: 0.52rem;
+}
 
 .komo-week-hdr {
   display: grid;
@@ -1136,7 +1251,8 @@
   margin-bottom: 4px;
 }
 
-.komo-week-hdr-day, .komo-week-hdr-pct {
+.komo-week-hdr-day,
+.komo-week-hdr-pct {
   font-size: 0.58rem;
   color: var(--komo-muted);
   text-align: center;
@@ -1153,7 +1269,9 @@
   transition: background 0.12s;
 }
 
-.komo-habit-row:hover { background: var(--komo-overlay); }
+.komo-habit-row:hover {
+  background: var(--komo-overlay);
+}
 
 .komo-habit-name {
   font-size: 0.73rem;
@@ -1167,7 +1285,8 @@
 
 /* Habit dots */
 .komo-dot {
-  width: 20px; height: 20px;
+  width: 20px;
+  height: 20px;
   border: 1px solid var(--komo-border);
   border-radius: 2px;
   cursor: pointer;
@@ -1251,7 +1370,7 @@
 .komo-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   z-index: 9999;
   display: flex;
@@ -1278,7 +1397,10 @@
   opacity: 0.85;
 }
 
-.komo-modal-title::before { content: '// '; color: var(--komo-muted); }
+.komo-modal-title::before {
+  content: '// ';
+  color: var(--komo-muted);
+}
 
 .komo-modal-search {
   width: 100%;
@@ -1296,7 +1418,9 @@
   transition: border-color 0.15s;
 }
 
-.komo-modal-search:focus { border-color: var(--komo-border-sakura); }
+.komo-modal-search:focus {
+  border-color: var(--komo-border-sakura);
+}
 
 .komo-modal-list {
   max-height: 260px;
@@ -1317,8 +1441,15 @@
   font-family: var(--komo-font);
 }
 
-.komo-modal-item:last-child { border-bottom: none; }
-.komo-modal-item:hover { background: var(--komo-overlay); color: var(--komo-text); }
+.komo-modal-item:last-child {
+  border-bottom: none;
+}
+
+.komo-modal-item:hover {
+  background: var(--komo-overlay);
+  color: var(--komo-text);
+}
+
 .komo-modal-item.active {
   color: var(--komo-teal);
   background: rgba(137, 220, 235, 0.05);
@@ -1438,8 +1569,14 @@
   transition: background 0.1s;
 }
 
-.komo-ctx-item:hover { background: var(--komo-overlay); color: var(--komo-text); }
-.komo-ctx-del:hover { color: var(--komo-red) !important; }
+.komo-ctx-item:hover {
+  background: var(--komo-overlay);
+  color: var(--komo-text);
+}
+
+.komo-ctx-del:hover {
+  color: var(--komo-red) !important;
+}
 
 /* ──────────────────────────────────────────────
    MUSIC PLACEHOLDER (mode: none, sin imagen)
@@ -1470,7 +1607,9 @@
   transition: filter 0.3s;
 }
 
-.komo-music-ph:hover .komo-music-ph-hint { filter: blur(0); }
+.komo-music-ph:hover .komo-music-ph-hint {
+  filter: blur(0);
+}
 
 /* ──────────────────────────────────────────────
    LOCAL MUSIC PLAYER
@@ -1534,7 +1673,10 @@
   flex-shrink: 0;
 }
 
-.komo-local-progress:hover { height: 5px; margin: -1px 0; }
+.komo-local-progress:hover {
+  height: 5px;
+  margin: -1px 0;
+}
 
 .komo-local-progress-fill {
   height: 100%;
@@ -1600,7 +1742,9 @@
   color: var(--komo-sakura);
 }
 
-.komo-local-spacer { flex: 1; }
+.komo-local-spacer {
+  flex: 1;
+}
 
 .komo-local-empty {
   flex: 1;
@@ -1629,20 +1773,44 @@
    ANIMATIONS
    ────────────────────────────────────────────── */
 @keyframes komo-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.komo-header-block { animation: komo-fade-in 0.35s ease; }
-.komo-grid-block   { animation: komo-fade-in 0.4s ease 0.05s both; }
-.komo-bottom-block { animation: komo-fade-in 0.45s ease 0.1s both; }
+.komo-header-block {
+  animation: komo-fade-in 0.35s ease;
+}
+
+.komo-grid-block {
+  animation: komo-fade-in 0.4s ease 0.05s both;
+}
+
+.komo-bottom-block {
+  animation: komo-fade-in 0.45s ease 0.1s both;
+}
 
 @keyframes komo-pulse-dot {
-  0%, 100% { box-shadow: 0 0 4px rgba(245,194,231,0.3); }
-  50%       { box-shadow: 0 0 10px rgba(245,194,231,0.6); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(245, 194, 231, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 10px rgba(245, 194, 231, 0.6);
+  }
 }
 
-.komo-dot.on { animation: komo-pulse-dot 2s ease infinite; }
+.komo-dot.on {
+  animation: komo-pulse-dot 2s ease infinite;
+}
 
 /* ──────────────────────────────────────────────
    RESPONSIVE ADJUSTMENTS
@@ -1652,21 +1820,26 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
   }
+
   .komo-clock-block {
     grid-column: 1 / -1;
     order: -1;
     align-items: center;
   }
+
   .komo-grid {
     grid-template-columns: 1fr 1fr;
   }
+
   .komo-col-right {
     display: none;
   }
+
   .komo-week-hdr,
   .komo-habit-row {
     grid-template-columns: 100px repeat(7, 24px) 36px;
   }
+
   .komo-bottom-row {
     grid-template-columns: 1fr;
   }

@@ -40,9 +40,9 @@
     width: 100%;
     height: 100%;
     background-color: #000000;
-    background-image: 
-        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.02) 35px, rgba(255,255,255,.02) 70px),
-        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255,255,255,.02) 35px, rgba(255,255,255,.02) 70px);
+    background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 255, 255, .02) 35px, rgba(255, 255, 255, .02) 70px),
+        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255, 255, 255, .02) 35px, rgba(255, 255, 255, .02) 70px);
     pointer-events: none;
     z-index: 1;
 }
@@ -56,7 +56,7 @@
     margin-bottom: 40px;
     letter-spacing: -0.05em;
     text-transform: uppercase;
-    text-shadow: 
+    text-shadow:
         4px 4px 0px #ff006e,
         8px 8px 0px #8338ec,
         12px 12px 0px #3a86ff;
@@ -362,21 +362,21 @@
 }
 
 .home-final-subcard-reddit {
-    background: rgba(255,69,0,0.1);
+    background: rgba(255, 69, 0, 0.1);
     border-left: 3px solid #FF4500;
 }
 
 .home-final-subcard-reddit:hover {
-    background: rgba(255,69,0,0.2);
+    background: rgba(255, 69, 0, 0.2);
 }
 
 .home-final-subcard-twitter {
-    background: rgba(29,161,242,0.1);
+    background: rgba(29, 161, 242, 0.1);
     border-left: 3px solid #1DA1F2;
 }
 
 .home-final-subcard-twitter:hover {
-    background: rgba(29,161,242,0.2);
+    background: rgba(29, 161, 242, 0.2);
 }
 
 .home-final-subcard-name {
@@ -440,7 +440,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
     transform: rotate(45deg);
     transition: all 0.6s ease;
     pointer-events: none;
@@ -449,7 +449,7 @@
 .home-final-button-text {
     position: relative;
     z-index: 2;
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
 }
 
@@ -477,7 +477,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px);
     pointer-events: none;
 }
 
@@ -536,7 +536,7 @@
 }
 
 .home-final-weather-button {
-    background: rgba(255,255,255,0.2) !important;
+    background: rgba(255, 255, 255, 0.2) !important;
     border: 2px solid #000000 !important;
     border-radius: 8px !important;
     padding: 8px 12px !important;
@@ -557,7 +557,7 @@
 }
 
 .home-final-weather-button:hover {
-    background: rgba(255,255,255,0.3) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
     transform: scale(1.05) !important;
 }
 
@@ -613,7 +613,7 @@
 }
 
 .home-final-weather-grid-item {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     border: 2px solid #000000;
     padding: 8px;
     border-radius: 0px;
@@ -629,7 +629,7 @@
 }
 
 .home-final-weather-warning {
-    background: rgba(255,215,0,0.2);
+    background: rgba(255, 215, 0, 0.2);
     border: 2px solid #FFD700;
     padding: 15px;
     border-radius: 8px;
@@ -675,7 +675,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -790,7 +790,7 @@
 .home-final-input:focus {
     outline: none;
     border-color: #06FFB4;
-    box-shadow: 0 0 10px rgba(6,255,180,0.3);
+    box-shadow: 0 0 10px rgba(6, 255, 180, 0.3);
 }
 
 .home-final-input-spotify {
@@ -799,7 +799,7 @@
 
 .home-final-input-spotify:focus {
     border-color: #1DB954;
-    box-shadow: 0 0 10px rgba(29,185,84,0.3);
+    box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
 }
 
 .home-final-input-weather {
@@ -808,7 +808,7 @@
 
 .home-final-input-weather:focus {
     border-color: #3A86FF;
-    box-shadow: 0 0 10px rgba(58,134,255,0.3);
+    box-shadow: 0 0 10px rgba(58, 134, 255, 0.3);
 }
 
 .home-final-input-reddit {
@@ -817,7 +817,7 @@
 
 .home-final-input-reddit:focus {
     border-color: #FF4500;
-    box-shadow: 0 0 10px rgba(255,69,0,0.3);
+    box-shadow: 0 0 10px rgba(255, 69, 0, 0.3);
 }
 
 .home-final-input-twitter {
@@ -826,7 +826,7 @@
 
 .home-final-input-twitter:focus {
     border-color: #1DA1F2;
-    box-shadow: 0 0 10px rgba(29,161,242,0.3);
+    box-shadow: 0 0 10px rgba(29, 161, 242, 0.3);
 }
 
 .home-final-select-wrapper {
@@ -936,22 +936,22 @@
 }
 
 .home-final-info-box-spotify {
-    background: rgba(29,185,84,0.1);
+    background: rgba(29, 185, 84, 0.1);
     border: 2px solid #1DB954;
 }
 
 .home-final-info-box-weather {
-    background: rgba(58,134,255,0.1);
+    background: rgba(58, 134, 255, 0.1);
     border: 2px solid #3A86FF;
 }
 
 .home-final-info-box-reddit {
-    background: rgba(255,69,0,0.1);
+    background: rgba(255, 69, 0, 0.1);
     border: 2px solid #FF4500;
 }
 
 .home-final-info-box-twitter {
-    background: rgba(29,161,242,0.1);
+    background: rgba(29, 161, 242, 0.1);
     border: 2px solid #1DA1F2;
 }
 
@@ -1001,9 +1001,19 @@
 }
 
 @keyframes homeFinalAlertPulse {
-    0% { transform: translate(-50%, -50%) rotate(-2deg) scale(0.8); opacity: 0; }
-    50% { transform: translate(-50%, -50%) rotate(-2deg) scale(1.1); }
-    100% { transform: translate(-50%, -50%) rotate(-2deg) scale(1); opacity: 1; }
+    0% {
+        transform: translate(-50%, -50%) rotate(-2deg) scale(0.8);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) rotate(-2deg) scale(1.1);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(-2deg) scale(1);
+        opacity: 1;
+    }
 }
 
 .home-final-alert-title {
@@ -1063,20 +1073,20 @@
     padding: 10px 15px;
     cursor: pointer;
     font-weight: 600;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s ease;
 }
 
 .home-final-context-option:hover {
-    background: rgba(6,255,180,0.2);
+    background: rgba(6, 255, 180, 0.2);
 }
 
 .home-final-context-option-reddit:hover {
-    background: rgba(255,69,0,0.2);
+    background: rgba(255, 69, 0, 0.2);
 }
 
 .home-final-context-option-twitter:hover {
-    background: rgba(29,161,242,0.2);
+    background: rgba(29, 161, 242, 0.2);
 }
 
 /* --- MAIN CARDS CONTEXT MENU --- */
@@ -1092,7 +1102,7 @@
 }
 
 .main-card-context-menu:hover {
-    background: rgba(6,255,180,0.1);
+    background: rgba(6, 255, 180, 0.1);
 }
 
 /* --- Popular cities --- */
@@ -1111,23 +1121,29 @@
 
 /* --- ANIMATIONS --- */
 @keyframes homeFinalButtonPulse {
-    0%, 100% { 
-        transform: rotate(-2deg) scale(1) translateY(0); 
+
+    0%,
+    100% {
+        transform: rotate(-2deg) scale(1) translateY(0);
         box-shadow: 8px 8px 0px #000000;
     }
-    50% { 
-        transform: rotate(-2deg) scale(1.1) translateY(-3px); 
+
+    50% {
+        transform: rotate(-2deg) scale(1.1) translateY(-3px);
         box-shadow: 10px 10px 0px #000000;
     }
 }
 
 @keyframes homeFinalCreateButtonPulse {
-    0%, 100% { 
-        transform: rotate(-2deg) scale(1) translateY(0); 
+
+    0%,
+    100% {
+        transform: rotate(-2deg) scale(1) translateY(0);
         box-shadow: 8px 8px 0px #000000;
     }
-    50% { 
-        transform: rotate(-2deg) scale(1.1) translateY(-3px); 
+
+    50% {
+        transform: rotate(-2deg) scale(1.1) translateY(-3px);
         box-shadow: 12px 12px 0px #000000;
     }
 }
@@ -1137,37 +1153,37 @@
     .home-final-title {
         font-size: 2.5rem;
     }
-    
+
     .home-final-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .home-final-widgets-container {
         grid-template-columns: 1fr;
     }
-    
+
     .home-final-create-button {
         width: 60px;
         height: 60px;
         font-size: 2rem;
     }
-    
+
     .home-final-weather-button-container {
         top: 10px !important;
         right: 10px !important;
     }
-    
+
     .home-final-weather-button {
         padding: 6px 10px !important;
         font-size: 0.8rem !important;
     }
-    
+
     .home-final-card-image,
     .home-final-card-placeholder {
         height: 150px;
     }
-    
+
     .home-final-spotify-iframe {
         height: 300px;
     }
