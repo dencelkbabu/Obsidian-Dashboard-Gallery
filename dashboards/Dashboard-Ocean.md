@@ -397,6 +397,22 @@ function showCardModal(cardToEdit = null, idx = null) {
     const linkInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? (cardToEdit.link || "") : "", placeholder: "E.g.: Academics/BCom/BCom" } });
 
     const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+    
+    if (cardToEdit !== null && idx !== null) {
+        const delModalBtn = btnRow.createEl("button", {
+            cls: "ocean-btn",
+            text: "🗑️ Delete",
+            attr: { style: "margin-right:auto; color:var(--ocean-rose);" }
+        });
+        delModalBtn.onclick = () => {
+            savedCards.splice(idx, 1);
+            localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+            renderCollectionCards();
+            new Notice(`🗑️ Deleted ${cardToEdit.title}`);
+            overlay.remove();
+        };
+    }
+
     const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
     const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Card" });
 
@@ -510,44 +526,65 @@ function updateConsistencyBar() {
     barFill.style.width = `${stats.percent}%`;
 }
 
+function openEditHabitModal(h, idx) {
+    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+    const modal = overlay.createDiv({ cls: "ocean-modal" });
+    modal.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
+
+    const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: h } });
+    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+    const delBtn = btnRow.createEl("button", { cls: "ocean-btn", text: "🗑️ Delete", attr: { style: "margin-right:auto; color:var(--ocean-rose);" } });
+    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
+
+    cancel.onclick = () => overlay.remove();
+    delBtn.onclick = () => {
+        savedHabits.splice(idx, 1);
+        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+        renderHabitsTracker();
+        updateConsistencyBar();
+        new Notice(`🗑️ Deleted ${h}`);
+        overlay.remove();
+    };
+    save.onclick = () => {
+        const updated = inp.value.trim();
+        if (updated) {
+            savedHabits[idx] = updated;
+            localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+            renderHabitsTracker();
+            updateConsistencyBar();
+        }
+        overlay.remove();
+    };
+    overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+}
+
 function renderHabitsTracker() {
     habitGrid.innerHTML = "";
     savedHabits.forEach((h, idx) => {
         const row = habitGrid.createDiv({ cls: "ocean-habit-row" });
-        row.createDiv({ cls: "ocean-habit-title", text: h });
+        
+        const leftWrap = row.createDiv({ cls: "ocean-habit-left" });
+        leftWrap.createDiv({ cls: "ocean-habit-title", text: h });
+
+        const actions = leftWrap.createDiv({ cls: "ocean-habit-actions" });
+        const editBtn = actions.createDiv({ cls: "ocean-habit-act-btn", text: "✎", attr: { title: "Edit Habit" } });
+        const delBtn = actions.createDiv({ cls: "ocean-habit-act-btn del", text: "✕", attr: { title: "Delete Habit" } });
+
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditHabitModal(h, idx); };
+        delBtn.onclick = (e) => {
+            e.stopPropagation();
+            savedHabits.splice(idx, 1);
+            localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+            renderHabitsTracker();
+            updateConsistencyBar();
+            new Notice(`🗑️ Deleted ${h}`);
+        };
 
         // Right click to edit or delete
         row.oncontextmenu = (e) => {
             e.preventDefault();
-            const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
-            const modal = overlay.createDiv({ cls: "ocean-modal" });
-            modal.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
-
-            const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: h } });
-            const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
-            const delBtn = btnRow.createEl("button", { cls: "ocean-btn", text: "🗑️ Delete", attr: { style: "margin-right:auto; color:var(--ocean-rose);" } });
-            const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
-            const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
-
-            cancel.onclick = () => overlay.remove();
-            delBtn.onclick = () => {
-                savedHabits.splice(idx, 1);
-                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-                renderHabitsTracker();
-                updateConsistencyBar();
-                overlay.remove();
-            };
-            save.onclick = () => {
-                const updated = inp.value.trim();
-                if (updated) {
-                    savedHabits[idx] = updated;
-                    localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-                    renderHabitsTracker();
-                    updateConsistencyBar();
-                }
-                overlay.remove();
-            };
-            overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+            openEditHabitModal(h, idx);
         };
 
         const dotGrid = row.createDiv({ cls: "ocean-dot-grid" });
