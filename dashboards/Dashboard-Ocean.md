@@ -302,7 +302,7 @@ const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
 jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
 
 const jumpList = jumpCard.createDiv({ cls: "ocean-jump-list" });
-const recentFiles = Utils.getRecentlyOpened();
+const recentFiles = Utils.getRecentlyOpened(3);
 
 if (recentFiles.length > 0) {
     recentFiles.forEach(path => {
@@ -349,7 +349,7 @@ function renderTopicTags() {
         renderRecentNotes();
     };
 
-    const tags = Utils.getProcessedTags(22);
+    const tags = Utils.getProcessedTags(35);
     tags.forEach(({ tag, count, pinned }) => {
         const pill = tagWrap.createDiv({
             cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") + (pinned ? " pinned" : ""),
@@ -465,10 +465,13 @@ function renderCollectionCards() {
     savedCards.forEach((c, idx) => {
         const cardEl = collectionContainer.createDiv({ cls: "ocean-col-card" });
         
-        const topRow = cardEl.createDiv({ cls: "ocean-col-card-top" });
-        topRow.createDiv({ cls: "ocean-col-card-emoji", text: c.emoji || "📁" });
+        cardEl.createDiv({ cls: "ocean-col-card-emoji", text: c.emoji || "📁" });
 
-        const actions = topRow.createDiv({ cls: "ocean-col-card-actions" });
+        const info = cardEl.createDiv({ cls: "ocean-col-card-info" });
+        info.createDiv({ cls: "ocean-col-card-title", text: c.title });
+        if (c.subtitle) info.createDiv({ cls: "ocean-col-card-sub", text: c.subtitle });
+
+        const actions = cardEl.createDiv({ cls: "ocean-col-card-actions" });
         const editBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✎", attr: { title: "Edit Card" } });
         const delBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✕", attr: { title: "Delete Card" } });
 
@@ -479,10 +482,6 @@ function renderCollectionCards() {
             localStorage.setItem(LS.cards, JSON.stringify(savedCards));
             renderCollectionCards();
         };
-
-        const bottomInfo = cardEl.createDiv();
-        bottomInfo.createDiv({ cls: "ocean-col-card-title", text: c.title });
-        if (c.subtitle) bottomInfo.createDiv({ cls: "ocean-col-card-sub", text: c.subtitle });
 
         cardEl.onclick = () => {
             if (c.link) app.workspace.openLinkText(c.link, "", false);

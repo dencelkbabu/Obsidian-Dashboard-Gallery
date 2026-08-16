@@ -327,6 +327,7 @@ body.theme-light {
     .ocean-grid {
         grid-template-columns: 1fr 1fr;
     }
+
     .ocean-col-center {
         grid-column: span 2;
         order: -1;
@@ -337,6 +338,7 @@ body.theme-light {
     .ocean-grid {
         grid-template-columns: 1fr;
     }
+
     .ocean-col-center {
         grid-column: span 1;
         order: 0;
@@ -349,7 +351,6 @@ body.theme-light {
     display: flex;
     flex-direction: column;
     gap: var(--ocean-gap);
-    height: 100%;
     min-width: 0;
 }
 
@@ -481,22 +482,21 @@ body.theme-light {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 8px;
-    flex: 1;
-    max-height: 280px;
+    gap: 6px;
+    max-height: 200px;
     overflow-y: auto;
-    padding-right: 2px;
+    padding-right: 4px;
 }
 
 .ocean-tag-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     padding: 6px 12px;
     background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: 999px;
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     color: var(--ocean-muted);
@@ -554,20 +554,20 @@ body.theme-light {
    7. COLLECTION
    ────────────────────────────────────────────── */
 .ocean-collection-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .ocean-col-card {
     background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: var(--ocean-radius-sm);
-    padding: 12px 14px;
+    padding: 10px 14px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 90px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
     position: relative;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -575,18 +575,21 @@ body.theme-light {
 
 .ocean-col-card:hover {
     border-color: var(--ocean-accent);
-    transform: translateY(-2px);
-}
-
-.ocean-col-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    background: var(--ocean-hover-tint);
 }
 
 .ocean-col-card-emoji {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.ocean-col-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
 }
 
 .ocean-col-card-actions {
@@ -594,6 +597,7 @@ body.theme-light {
     gap: 4px;
     opacity: 0;
     transition: opacity 0.15s ease;
+    flex-shrink: 0;
 }
 
 .ocean-col-card:hover .ocean-col-card-actions {
@@ -620,15 +624,20 @@ body.theme-light {
 }
 
 .ocean-col-card-title {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--ocean-text);
-    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ocean-col-card-sub {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: var(--ocean-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ocean-add-btn {
