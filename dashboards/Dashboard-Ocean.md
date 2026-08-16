@@ -102,9 +102,12 @@ const Utils = {
 };
 
 // ══════════════════════════════════════════════
-// 1. HERO HEADER (Zen Inspired, No Drop Shadow)
-// ══════════════════════════════════════════════
 const header = container.createDiv({ cls: "ocean-header" });
+
+// Banner settings gear button in top-right corner
+const setBtn = header.createDiv({ cls: "ocean-banner-settings-btn", attr: { title: "Edit Header" } });
+Utils.icon(setBtn, "settings", "⚙️");
+
 const heroText = header.createDiv({ cls: "ocean-hero-text" });
 const heroTitleEl = heroText.createEl("h1", { text: bannerTitle });
 const heroSubEl = heroText.createDiv({
@@ -112,25 +115,21 @@ const heroSubEl = heroText.createDiv({
     text: bannerSubtitle || `${Utils.getGreeting()} — Systems active & ready.`
 });
 
-const headerRight = header.createDiv({ cls: "ocean-header-right" });
-
-// Header Quick Stats
-const statsCont = headerRight.createDiv({ cls: "ocean-hero-stats" });
+// Header Stats Cubes
+const statsCont = header.createDiv({ cls: "ocean-hero-stats" });
 const allTasks = dv.pages().file.tasks;
-const openTasksCount = allTasks ? allTasks.where(t => !t.completed).length : 0;
+const completedTasksCount = allTasks ? allTasks.where(t => t.completed).length : 0;
 
 [
     { v: dv.pages().length, l: "Notes" },
-    { v: openTasksCount, l: "Tasks" }
+    { v: completedTasksCount, l: "Achievements" }
 ].forEach(st => {
-    const box = statsCont.createDiv({ cls: "ocean-stat-box" });
-    box.createDiv({ cls: "ocean-stat-val", text: String(st.v) });
-    box.createDiv({ cls: "ocean-stat-label", text: st.l });
+    const cube = statsCont.createDiv({ cls: "ocean-stat-cube" });
+    const topRow = cube.createDiv({ cls: "ocean-stat-top-row" });
+    topRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
+    topRow.createDiv({ cls: "ocean-stat-val", text: String(st.v) });
+    cube.createDiv({ cls: "ocean-stat-lab", text: st.l });
 });
-
-// Settings Button
-const setBtn = headerRight.createDiv({ cls: "ocean-settings-btn", attr: { title: "Edit Header" } });
-Utils.icon(setBtn, "settings", "⚙️");
 
 setBtn.onclick = () => {
     const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
