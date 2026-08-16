@@ -397,6 +397,36 @@ body.theme-light {
     color: var(--ocean-accent);
 }
 
+.ocean-tag-pill.pinned {
+    border-color: rgba(var(--ocean-accent-rgb), 0.4);
+    background: rgba(var(--ocean-accent-rgb), 0.08);
+}
+
+.ocean-pin-icon {
+    font-size: 0.72rem;
+    line-height: 1;
+    margin-right: -2px;
+}
+
+.ocean-tag-sort-btn {
+    padding: 3px 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    border: 1px solid var(--ocean-border);
+    background: var(--ocean-overlay);
+    color: var(--ocean-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.ocean-tag-sort-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
 .ocean-tag-count {
     font-size: 0.72rem;
     opacity: 0.65;

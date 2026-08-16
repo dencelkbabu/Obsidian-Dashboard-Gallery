@@ -16,6 +16,8 @@ const LS = {
     title: "ocean-title",
     subtitle: "ocean-subtitle",
     tag: "ocean-active-tag",
+    tagSort: "ocean-tag-sort",
+    pinnedTags: "ocean-pinned-tags",
     habits: "ocean-habits",
     cards: "ocean-cards"
 };
@@ -23,6 +25,8 @@ const LS = {
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
 let bannerSubtitle = localStorage.getItem(LS.subtitle) || "";
 let activeTag = localStorage.getItem(LS.tag) || "__all__";
+let tagSortMode = localStorage.getItem(LS.tagSort) || "count"; // "count" or "name"
+let pinnedTags = JSON.parse(localStorage.getItem(LS.pinnedTags) || "[]");
 
 const defaultHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
 let savedHabits = JSON.parse(localStorage.getItem(LS.habits)) || defaultHabits;
@@ -58,16 +62,26 @@ const Utils = {
         if (day < 7) return `${day}d ago`;
         return d.toFormat("dd LLL");
     },
-    getTopTags: (limit = 14) => {
+    getProcessedTags: (limit = 24) => {
         const counts = {};
         for (const p of dv.pages()) {
             if (!p.file.tags) continue;
             for (const t of p.file.tags) counts[t] = (counts[t] || 0) + 1;
         }
-        return Object.entries(counts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, limit)
-            .map(([tag, count]) => ({ tag, count }));
+        const allEntries = Object.entries(counts).map(([tag, count]) => ({
+            tag,
+            count,
+            pinned: pinnedTags.includes(tag)
+        }));
+
+        const sortFn = tagSortMode === "name"
+            ? (a, b) => a.tag.localeCompare(b.tag)
+            : (a, b) => b.count - a.count;
+
+        const pinned = allEntries.filter(e => e.pinned).sort(sortFn);
+        const unpinned = allEntries.filter(e => !e.pinned).sort(sortFn);
+
+        return [...pinned, ...unpinned].slice(0, limit);
     },
     getNotes: (limit = 8) => {
         let pages = dv.pages();
@@ -241,8 +255,20 @@ const tagCard = colLeft.createDiv({ cls: "ocean-card" });
 const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
 tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
 
+const sortBtn = tagHdr.createDiv({
+    cls: "ocean-tag-sort-btn",
+    text: tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z",
+    attr: { title: "Click to toggle sort: Count vs A-Z (Right-click tags to Pin/Unpin)" }
+});
+
+sortBtn.onclick = () => {
+    tagSortMode = tagSortMode === "count" ? "name" : "count";
+    localStorage.setItem(LS.tagSort, tagSortMode);
+    sortBtn.textContent = tagSortMode === "count" ? "🔢 Count" : "🔤 A-Z";
+    renderTopicTags();
+};
+
 const tagWrap = tagCard.createDiv({ cls: "ocean-tag-wrap" });
-const topTags = Utils.getTopTags();
 
 function renderTopicTags() {
     tagWrap.innerHTML = "";
@@ -257,15 +283,39 @@ function renderTopicTags() {
         renderRecentNotes();
     };
 
-    topTags.forEach(({ tag, count }) => {
-        const pill = tagWrap.createDiv({ cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") });
+    const tags = Utils.getProcessedTags(24);
+    tags.forEach(({ tag, count, pinned }) => {
+        const pill = tagWrap.createDiv({
+            cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") + (pinned ? " pinned" : ""),
+            attr: { title: `${pinned ? "Pinned tag" : "Tag"}: ${tag} (${count} notes). Right-click to toggle pin.` }
+        });
+
+        if (pinned) {
+            pill.createSpan({ cls: "ocean-pin-icon", text: "📌" });
+        }
+
         pill.createSpan({ text: tag });
         pill.createSpan({ cls: "ocean-tag-count", text: String(count) });
+
         pill.onclick = () => {
             activeTag = tag;
             localStorage.setItem(LS.tag, activeTag);
             renderTopicTags();
             renderRecentNotes();
+        };
+
+        // Right-click to toggle Pin / Unpin
+        pill.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (pinnedTags.includes(tag)) {
+                pinnedTags = pinnedTags.filter(t => t !== tag);
+                new Notice(`📍 Unpinned ${tag}`);
+            } else {
+                pinnedTags.push(tag);
+                new Notice(`📌 Pinned ${tag}`);
+            }
+            localStorage.setItem(LS.pinnedTags, JSON.stringify(pinnedTags));
+            renderTopicTags();
         };
     });
 }
