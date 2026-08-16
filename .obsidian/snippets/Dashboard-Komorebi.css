@@ -42,10 +42,10 @@
   --komo-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
 }
 
-/* FORCE THE NOTE CONTAINERS TO BE WIDE */
+/* FORCE THE NOTE CONTAINERS TO BE FULL-WIDTH & FLUID */
 .dashboard-layout .cm-sizer,
 .dashboard-layout .markdown-preview-sizer {
-  max-width: 1460px !important;
+  max-width: 100% !important;
   width: 100% !important;
 }
 
@@ -62,7 +62,7 @@
 .komo-bottom-block {
   font-family: var(--komo-font) !important;
   color: var(--komo-text);
-  max-width: 1460px;
+  max-width: 100% !important;
   margin: 0 auto;
   padding: 0 4px;
 }

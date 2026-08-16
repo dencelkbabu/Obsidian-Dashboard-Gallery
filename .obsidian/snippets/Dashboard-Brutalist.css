@@ -6,10 +6,10 @@
 /* Import font */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap');
 
-/* FORCE THE NOTE CONTAINERS TO BE WIDE */
+/* FORCE THE NOTE CONTAINERS TO BE FULL-WIDTH & FLUID */
 .dashboard-layout .cm-sizer,
 .dashboard-layout .markdown-preview-sizer {
-    max-width: 1460px !important;
+    max-width: 100% !important;
     width: 100% !important;
 }
 
@@ -70,7 +70,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
     position: relative;
     z-index: 10;

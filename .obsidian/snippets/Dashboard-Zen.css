@@ -23,10 +23,10 @@
     --zos-font-mono: 'JetBrains Mono', monospace;
 }
 
-/* FORCE THE NOTE CONTAINERS TO BE WIDE */
+/* FORCE THE NOTE CONTAINERS TO BE FULL-WIDTH & FLUID */
 .dashboard-layout .cm-sizer,
 .dashboard-layout .markdown-preview-sizer {
-    max-width: 1460px !important;
+    max-width: 100% !important;
     width: 100% !important;
 }
 
@@ -38,7 +38,7 @@
 
 /* Base Styles */
 .zos-dashboard {
-    max-width: 1500px;
+    max-width: 100%;
     margin: 0 auto;
     padding: var(--zos-spacing);
     font-family: var(--zos-font-main);

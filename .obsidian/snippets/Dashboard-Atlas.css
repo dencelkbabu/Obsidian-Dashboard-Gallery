@@ -18,7 +18,7 @@
     --atl-gap: 16px;
     --atl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-    max-width: 1080px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 48px 28px 80px;
     font-family: var(--atl-font);
@@ -27,10 +27,10 @@
     letter-spacing: -0.01em;
 }
 
-/* FORCE THE NOTE CONTAINERS TO BE WIDE */
+/* FORCE THE NOTE CONTAINERS TO BE FULL-WIDTH & FLUID */
 .dashboard-layout .cm-sizer,
 .dashboard-layout .markdown-preview-sizer {
-    max-width: 1460px !important;
+    max-width: 100% !important;
     width: 100% !important;
 }
 
