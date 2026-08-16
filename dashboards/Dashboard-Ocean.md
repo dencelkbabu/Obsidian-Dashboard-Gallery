@@ -149,6 +149,29 @@ const heroSubEl = heroText.createDiv({
     text: bannerSubtitle || `${Utils.getGreeting()} — Systems active & ready.`
 });
 
+// Center Clock Widget (Big HH:MM:SS with Day & Date)
+const clockCont = header.createDiv({ cls: "ocean-header-clock" });
+const timeEl = clockCont.createDiv({ cls: "ocean-clock-time" });
+const dateEl = clockCont.createDiv({ cls: "ocean-clock-date" });
+
+function updateClock() {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, "0");
+    timeEl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    dateEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+updateClock();
+const clockTimer = setInterval(() => {
+    if (!clockCont.isConnected) {
+        clearInterval(clockTimer);
+        return;
+    }
+    updateClock();
+}, 1000);
+
 // Header Stats Cubes
 const statsCont = header.createDiv({ cls: "ocean-hero-stats" });
 const allTasks = dv.pages().file.tasks;
