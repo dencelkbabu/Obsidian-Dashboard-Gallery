@@ -21,7 +21,7 @@ const LS = {
     pinnedNotes: "ocean-pinned-notes",
     habits: "ocean-habits",
     cards: "ocean-cards",
-    targets: "ocean-targets"
+    targets: "ocean-targets-v2"
 };
 
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
