@@ -85,7 +85,7 @@ const Utils = {
 
         return [...pinned, ...unpinned].slice(0, limit);
     },
-    getNotes: (limit = 9, query = "") => {
+    getNotes: (limit = 6, query = "") => {
         let pages = dv.pages();
         if (activeTag !== "__all__") {
             pages = pages.where(p => p.file.tags && p.file.tags.includes(activeTag));
@@ -287,63 +287,16 @@ setBtn.onclick = () => {
 };
 
 // ══════════════════════════════════════════════
-// 2. MAIN 2-COLUMN GRID
+// ══════════════════════════════════════════════
+// 2. MAIN 3-COLUMN BENTO GRID
 // ══════════════════════════════════════════════
 const mainGrid = container.createDiv({ cls: "ocean-grid" });
 const colLeft = mainGrid.createDiv({ cls: "ocean-col-left" });
 const colCenter = mainGrid.createDiv({ cls: "ocean-col-center" });
+const colRight = mainGrid.createDiv({ cls: "ocean-col-right" });
 
-// ── LEFT: SYSTEM ACTIONS (Komorebi + Omnisearch) ─────────────
-const sysCard = colLeft.createDiv({ cls: "ocean-card" });
-const sysHdr = sysCard.createDiv({ cls: "ocean-card-hdr" });
-sysHdr.createDiv({ cls: "ocean-card-title", text: "⚡ SYSTEM QUICK ACTIONS" });
-
-const actGrid = sysCard.createDiv({ cls: "ocean-act-grid" });
-const SYS_ACTIONS = [
-    { icon: "search",      lbl: "Omnisearch", cmd: "omnisearch:show-modal", fallbackCmd: "global-search:open", em: "🔍" },
-    { icon: "calendar",    lbl: "Daily",      cmd: "daily-notes", em: "📅" },
-    { icon: "share-2",     lbl: "Graph",      cmd: "graph:open", em: "🕸️" },
-    { icon: "file-plus",   lbl: "New Note",   cmd: "file-explorer:new-file", em: "➕" },
-    { icon: "terminal",    lbl: "Commands",   cmd: "command-palette:open", em: "⌘" },
-    { icon: "bookmark",    lbl: "Bookmarks",  cmd: "bookmarks:open", em: "🔖" }
-];
-
-SYS_ACTIONS.forEach(act => {
-    const btn = actGrid.createDiv({ cls: "ocean-act-btn" });
-    const ico = btn.createDiv({ cls: "ocean-act-icon" });
-    Utils.icon(ico, act.icon, act.em);
-    btn.createDiv({ cls: "ocean-act-lbl", text: act.lbl });
-
-    btn.onclick = () => {
-        if (act.lbl === "Daily") {
-            const today = new Date();
-            const dateStr = today.toISOString().split("T")[0];
-            const fileName = `daily/${dateStr}.md`;
-            const existingFile = app.vault.getAbstractFileByPath(fileName);
-            if (existingFile) {
-                app.workspace.openLinkText(fileName, "", false);
-            } else {
-                try { app.commands.executeCommandById("daily-notes"); }
-                catch(e) { app.workspace.openLinkText(dateStr, "", false); }
-            }
-            return;
-        }
-
-        try {
-            if (app.commands.commands[act.cmd]) {
-                app.commands.executeCommandById(act.cmd);
-            } else if (act.fallbackCmd && app.commands.commands[act.fallbackCmd]) {
-                app.commands.executeCommandById(act.fallbackCmd);
-            } else {
-                new Notice(`Command for ${act.lbl} triggered`);
-            }
-        } catch(e) {
-            new Notice(`Failed to execute ${act.lbl}`);
-        }
-    };
-});
-
-// ── LEFT: JUMP BACK IN (Atlas Widget) ────────────────────────
+// ── LEFT COLUMN ──────────────────────────────
+// 1. JUMP BACK IN (Atlas Widget)
 const jumpCard = colLeft.createDiv({ cls: "ocean-card" });
 const jumpHdr = jumpCard.createDiv({ cls: "ocean-card-hdr" });
 jumpHdr.createDiv({ cls: "ocean-card-title", text: "↩️ JUMP BACK IN" });
@@ -363,7 +316,7 @@ if (recentFiles.length > 0) {
     jumpList.createDiv({ text: "No recently opened notes", attr: { style: "font-size:0.8rem; color:var(--ocean-muted);" } });
 }
 
-// ── LEFT: BROWSE BY TOPIC (Atlas Widget) ─────────────────────
+// 2. BROWSE BY TOPIC (Atlas Widget)
 const tagCard = colLeft.createDiv({ cls: "ocean-card ocean-tag-card" });
 const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
 tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
@@ -434,8 +387,73 @@ function renderTopicTags() {
 }
 renderTopicTags();
 
-// ── CENTER: COLLECTION CARDS (Komorebi Widget) ───────────────
-const colCardSection = colCenter.createDiv({ cls: "ocean-card" });
+// ── CENTER COLUMN: RECENTLY EDITED NOTES (MAX SPACE) ─────────
+const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
+const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
+const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
+
+let noteSearchQuery = "";
+const recentSearchInput = recentHdr.createEl("input", {
+    cls: "ocean-search-input",
+    attr: { type: "text", placeholder: "🔍 SEARCH", spellcheck: "false" }
+});
+
+recentSearchInput.oninput = () => {
+    noteSearchQuery = recentSearchInput.value;
+    renderRecentNotes();
+};
+
+const notesList = recentCard.createDiv({ cls: "ocean-notes-list" });
+
+function renderRecentNotes() {
+    notesList.innerHTML = "";
+    recentTitleEl.textContent = activeTag === "__all__" 
+        ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
+        : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
+    
+    const notes = Utils.getNotes(noteSearchQuery ? 15 : 6, noteSearchQuery);
+    if (notes.length === 0) {
+        notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
+        return;
+    }
+
+    notes.forEach(({ page: p, isPinned }) => {
+        const row = notesList.createDiv({
+            cls: "ocean-note-row" + (isPinned ? " pinned" : ""),
+            attr: { title: `${isPinned ? "Pinned note" : "Note"}: ${p.file.name}. Right-click to toggle pin.` }
+        });
+
+        const info = row.createDiv({ cls: "ocean-note-info" });
+        const nameRow = info.createDiv({ cls: "ocean-note-name-row" });
+        
+        if (isPinned) {
+            nameRow.createSpan({ cls: "ocean-pin-icon", text: "📌" });
+        }
+        nameRow.createSpan({ cls: "ocean-note-name", text: p.file.name });
+        info.createDiv({ cls: "ocean-note-folder", text: p.file.folder || "Vault Root" });
+
+        row.createDiv({ cls: "ocean-note-time", text: Utils.relTime(p.file.mtime) });
+        row.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
+
+        // Right-click to toggle Pin / Unpin
+        row.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (pinnedNotes.includes(p.file.path)) {
+                pinnedNotes = pinnedNotes.filter(path => path !== p.file.path);
+                new Notice(`📍 Unpinned ${p.file.name}`);
+            } else {
+                pinnedNotes.push(p.file.path);
+                new Notice(`📌 Pinned ${p.file.name}`);
+            }
+            localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
+            renderRecentNotes();
+        };
+    });
+}
+renderRecentNotes();
+
+// ── RIGHT COLUMN: 1. COLLECTION CARDS (FIRST) ────────────────
+const colCardSection = colRight.createDiv({ cls: "ocean-card" });
 const colHdr = colCardSection.createDiv({ cls: "ocean-card-hdr" });
 colHdr.createDiv({ cls: "ocean-card-title", text: "🗂️ COLLECTION" });
 
@@ -535,70 +553,55 @@ function showCardModal(cardToEdit = null, idx = null) {
 addColBtn.onclick = () => showCardModal();
 renderCollectionCards();
 
-// ── CENTER: RECENTLY EDITED NOTES (Atlas Widget) ─────────────
-const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
-const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
-const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
+// ── RIGHT COLUMN: 2. SYSTEM QUICK ACTIONS (AFTER COLLECTION) ─
+const sysCard = colRight.createDiv({ cls: "ocean-card" });
+const sysHdr = sysCard.createDiv({ cls: "ocean-card-hdr" });
+sysHdr.createDiv({ cls: "ocean-card-title", text: "⚡ SYSTEM QUICK ACTIONS" });
 
-let noteSearchQuery = "";
-const recentSearchInput = recentHdr.createEl("input", {
-    cls: "ocean-search-input",
-    attr: { type: "text", placeholder: "🔍 SEARCH", spellcheck: "false" }
-});
+const actGrid = sysCard.createDiv({ cls: "ocean-act-grid" });
+const SYS_ACTIONS = [
+    { icon: "search",      lbl: "Omnisearch", cmd: "omnisearch:show-modal", fallbackCmd: "global-search:open", em: "🔍" },
+    { icon: "calendar",    lbl: "Daily",      cmd: "daily-notes", em: "📅" },
+    { icon: "share-2",     lbl: "Graph",      cmd: "graph:open", em: "🕸️" },
+    { icon: "file-plus",   lbl: "New Note",   cmd: "file-explorer:new-file", em: "➕" },
+    { icon: "terminal",    lbl: "Commands",   cmd: "command-palette:open", em: "⌘" },
+    { icon: "bookmark",    lbl: "Bookmarks",  cmd: "bookmarks:open", em: "🔖" }
+];
 
-recentSearchInput.oninput = () => {
-    noteSearchQuery = recentSearchInput.value;
-    renderRecentNotes();
-};
+SYS_ACTIONS.forEach(act => {
+    const btn = actGrid.createDiv({ cls: "ocean-act-btn" });
+    const ico = btn.createDiv({ cls: "ocean-act-icon" });
+    Utils.icon(ico, act.icon, act.em);
+    btn.createDiv({ cls: "ocean-act-lbl", text: act.lbl });
 
-const notesList = recentCard.createDiv({ cls: "ocean-notes-list" });
-
-function renderRecentNotes() {
-    notesList.innerHTML = "";
-    recentTitleEl.textContent = activeTag === "__all__" 
-        ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
-        : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
-    
-    const notes = Utils.getNotes(noteSearchQuery ? 15 : 8, noteSearchQuery);
-    if (notes.length === 0) {
-        notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
-        return;
-    }
-
-    notes.forEach(({ page: p, isPinned }) => {
-        const row = notesList.createDiv({
-            cls: "ocean-note-row" + (isPinned ? " pinned" : ""),
-            attr: { title: `${isPinned ? "Pinned note" : "Note"}: ${p.file.name}. Right-click to toggle pin.` }
-        });
-
-        const info = row.createDiv({ cls: "ocean-note-info" });
-        const nameRow = info.createDiv({ cls: "ocean-note-name-row" });
-        
-        if (isPinned) {
-            nameRow.createSpan({ cls: "ocean-pin-icon", text: "📌" });
-        }
-        nameRow.createSpan({ cls: "ocean-note-name", text: p.file.name });
-        info.createDiv({ cls: "ocean-note-folder", text: p.file.folder || "Vault Root" });
-
-        row.createDiv({ cls: "ocean-note-time", text: Utils.relTime(p.file.mtime) });
-        row.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
-
-        // Right-click to toggle Pin / Unpin
-        row.oncontextmenu = (e) => {
-            e.preventDefault();
-            if (pinnedNotes.includes(p.file.path)) {
-                pinnedNotes = pinnedNotes.filter(path => path !== p.file.path);
-                new Notice(`📍 Unpinned ${p.file.name}`);
+    btn.onclick = () => {
+        if (act.lbl === "Daily") {
+            const today = new Date();
+            const dateStr = today.toISOString().split("T")[0];
+            const fileName = `daily/${dateStr}.md`;
+            const existingFile = app.vault.getAbstractFileByPath(fileName);
+            if (existingFile) {
+                app.workspace.openLinkText(fileName, "", false);
             } else {
-                pinnedNotes.push(p.file.path);
-                new Notice(`📌 Pinned ${p.file.name}`);
+                try { app.commands.executeCommandById("daily-notes"); }
+                catch(e) { app.workspace.openLinkText(dateStr, "", false); }
             }
-            localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
-            renderRecentNotes();
-        };
-    });
-}
-renderRecentNotes();
+            return;
+        }
+
+        try {
+            if (app.commands.commands[act.cmd]) {
+                app.commands.executeCommandById(act.cmd);
+            } else if (act.fallbackCmd && app.commands.commands[act.fallbackCmd]) {
+                app.commands.executeCommandById(act.fallbackCmd);
+            } else {
+                new Notice(`Command for ${act.lbl} triggered`);
+            }
+        } catch(e) {
+            new Notice(`Failed to execute ${act.lbl}`);
+        }
+    };
+});
 
 // ══════════════════════════════════════════════
 // 3. BIO-METRICS (WEEKLY) (Zen Habits Tracker)
