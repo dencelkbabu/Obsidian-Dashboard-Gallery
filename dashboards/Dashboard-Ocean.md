@@ -72,6 +72,21 @@ const Utils = {
         if (day < 7) return `${day}d ago`;
         return d.toFormat("dd LLL");
     },
+    taskTime: (d) => {
+        if (!d) return "";
+        const m = Math.floor((Date.now() - d.toMillis()) / 60000);
+        const day = Math.floor(m / 1440);
+        const year = d.year || new Date(d.toMillis()).getFullYear();
+        
+        let rel = "";
+        if (m < 1) rel = "just now";
+        else if (m < 60) rel = `${m}m ago`;
+        else if (m < 1440) rel = `${Math.floor(m / 60)}h ago`;
+        else if (day === 1) rel = "1d ago";
+        else rel = `${day}d ago`;
+
+        return `${rel} • ${year}`;
+    },
     getProcessedTags: (limit = 24) => {
         const counts = {};
         for (const p of dv.pages()) {
@@ -296,14 +311,17 @@ setBtn.onclick = () => {
 
 // ══════════════════════════════════════════════
 // ══════════════════════════════════════════════
-// 1.5 PANORAMIC TARGETS RUNWAY (Always-Visible Mission Bar)
+// 1.5 DUAL RUNWAY: TARGETS (LEFT) & TASKS (RIGHT)
 // ══════════════════════════════════════════════
-const runwayCard = container.createDiv({ cls: "ocean-card ocean-runway-card" });
-const runwayHdr = runwayCard.createDiv({ cls: "ocean-runway-hdr" });
-runwayHdr.createDiv({ cls: "ocean-card-title", text: "🎯 ACTIVE TARGETS & COUNTDOWNS" });
+const runwayGrid = container.createDiv({ cls: "ocean-runway-grid" });
 
-const addTargetBtn = runwayHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
-const runwayTrack = runwayCard.createDiv({ cls: "ocean-targets-track" });
+// ── LEFT RUNWAY: TARGETS & COUNTDOWNS ────────
+const targetsCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
+const targetsHdr = targetsCard.createDiv({ cls: "ocean-runway-hdr" });
+targetsHdr.createDiv({ cls: "ocean-card-title", text: "🎯 TARGETS & COUNTDOWNS" });
+
+const addTargetBtn = targetsHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
+const runwayTrack = targetsCard.createDiv({ cls: "ocean-targets-track" });
 
 function renderTargets() {
     runwayTrack.innerHTML = "";
@@ -440,6 +458,90 @@ function showTargetModal(targetToEdit = null, idx = null) {
 
 addTargetBtn.onclick = () => showTargetModal();
 renderTargets();
+
+// ── RIGHT RUNWAY: LIVE TASKS & PENDING FEED ──
+const tasksCard = runwayGrid.createDiv({ cls: "ocean-card ocean-runway-card" });
+const tasksHdr = tasksCard.createDiv({ cls: "ocean-runway-hdr" });
+tasksHdr.createDiv({ cls: "ocean-card-title", text: "⚡ LIVE TASKS / PENDING" });
+
+const tasksTrack = tasksCard.createDiv({ cls: "ocean-targets-track" });
+
+function renderLiveTasks() {
+    tasksTrack.innerHTML = "";
+
+    // 1. Query notes with #pending or #todo
+    let pendingNotes = [];
+    try {
+        const pages = dv.pages("#pending or #todo or #tasks or #task");
+        pages.forEach(p => {
+            const rawTags = (p.file.tags && p.file.tags.values) ? p.file.tags.values : (p.file.tags || []);
+            const tags = Array.isArray(rawTags) ? rawTags : [rawTags];
+            const matching = tags.filter(t => typeof t === "string" && ["#pending", "#todo", "#task", "#tasks"].includes(t.toLowerCase()));
+            if (matching.length > 0) {
+                pendingNotes.push({ page: p, tag: matching[0] });
+            }
+        });
+        pendingNotes.sort((a, b) => (b.page.file.mtime ? b.page.file.mtime.toMillis() : 0) - (a.page.file.mtime ? a.page.file.mtime.toMillis() : 0));
+    } catch(e) {
+        pendingNotes = [];
+    }
+
+    // 2. Query checklist tasks
+    let todoTasks = [];
+    try {
+        todoTasks = dv.pages().file.tasks.where(t => !t.completed).slice(0, 10);
+    } catch(e) {
+        todoTasks = [];
+    }
+
+    if (pendingNotes.length === 0 && (!todoTasks || todoTasks.length === 0)) {
+        tasksTrack.createDiv({
+            text: "No pending tasks. Tag notes with #pending or #todo to track them here!",
+            attr: { style: "font-size:0.82rem; color:var(--ocean-muted); padding:4px;" }
+        });
+        return;
+    }
+
+    // Render Tagged Notes (Primary)
+    pendingNotes.forEach(({ page: p, tag }) => {
+        const capsule = tasksTrack.createDiv({ cls: "ocean-task-capsule" });
+        capsule.createDiv({ cls: "ocean-target-emoji", text: "📝" });
+
+        const info = capsule.createDiv({ cls: "ocean-target-info" });
+        info.createDiv({ cls: "ocean-target-title", text: p.file.name });
+
+        const metaRow = info.createDiv({ cls: "ocean-target-meta" });
+        metaRow.createSpan({ cls: "ocean-target-date", text: Utils.taskTime(p.file.mtime) });
+        const tagType = tag.toLowerCase().replace("#", "");
+        metaRow.createSpan({ cls: `ocean-task-tag-badge ${tagType === "pending" ? "pending" : "todo"}`, text: tag });
+
+        capsule.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
+    });
+
+    // Render Checklist Tasks (Secondary)
+    if (todoTasks && todoTasks.length > 0) {
+        todoTasks.forEach(t => {
+            const capsule = tasksTrack.createDiv({ cls: "ocean-task-capsule" });
+            capsule.createDiv({ cls: "ocean-target-emoji", text: "☑️" });
+
+            const info = capsule.createDiv({ cls: "ocean-target-info" });
+            info.createDiv({ cls: "ocean-target-title", text: t.text.replace(/#\S+/g, "").trim() || "Task item" });
+
+            const metaRow = info.createDiv({ cls: "ocean-target-meta" });
+            if (t.link) {
+                const parentPage = dv.page(t.link.path);
+                const timeStr = parentPage && parentPage.file.mtime ? Utils.taskTime(parentPage.file.mtime) : "";
+                metaRow.createSpan({ cls: "ocean-target-date", text: (t.link.fileName || "") + (timeStr ? ` • ${timeStr}` : "") });
+            }
+            metaRow.createSpan({ cls: "ocean-task-tag-badge todo", text: "TODO" });
+
+            capsule.onclick = () => {
+                if (t.link) app.workspace.openLinkText(t.link.path, "", false);
+            };
+        });
+    }
+}
+renderLiveTasks();
 
 // ══════════════════════════════════════════════
 // 2. MAIN 3-COLUMN BENTO GRID

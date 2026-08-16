@@ -313,51 +313,91 @@ body.theme-light {
 }
 
 /* ──────────────────────────────────────────────
-   1.5 PANORAMIC TARGETS RUNWAY
+   1.5 DUAL RUNWAY: TARGETS (LEFT) & TASKS (RIGHT)
    ────────────────────────────────────────────── */
-.ocean-runway-card {
+.ocean-runway-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ocean-gap);
     margin-bottom: var(--ocean-gap);
-    padding: 12px 18px;
+    align-items: stretch;
+}
+
+@media (max-width: 1000px) {
+    .ocean-runway-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ocean-runway-card {
+    padding: var(--ocean-pad);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    min-width: 0;
+    position: relative;
 }
 
 .ocean-runway-hdr {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 26px;
 }
 
 .ocean-targets-track {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding: 2px 2px 6px 2px;
 }
 
-.ocean-target-capsule {
+.ocean-target-capsule,
+.ocean-task-capsule {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 14px;
+    gap: 12px;
+    padding: 10px 16px;
     background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: var(--ocean-radius-sm);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
     flex-shrink: 0;
     position: relative;
+    max-width: 320px;
 }
 
-.ocean-target-capsule:hover {
+.ocean-target-capsule:hover,
+.ocean-task-capsule:hover {
     border-color: var(--ocean-accent);
     background: var(--ocean-hover-tint);
 }
 
 .ocean-target-capsule:hover .ocean-target-actions {
     opacity: 1;
+}
+
+.ocean-task-tag-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+}
+
+.ocean-task-tag-badge.pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.ocean-task-tag-badge.todo {
+    background: rgba(var(--ocean-accent-rgb), 0.15);
+    color: var(--ocean-accent);
+    border: 1px solid rgba(var(--ocean-accent-rgb), 0.4);
 }
 
 /* ──────────────────────────────────────────────
