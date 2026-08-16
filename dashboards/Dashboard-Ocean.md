@@ -73,6 +73,10 @@ let savedTargets = JSON.parse(localStorage.getItem(LS.targets)) || [
 localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
 
 const container = dv.container.createDiv({ cls: "ocean-dashboard animate-in" });
+const isMobilePlatform = app.isMobile || (typeof Platform !== "undefined" && Platform.isMobile);
+if (isMobilePlatform) {
+    container.classList.add("ocean-is-mobile");
+}
 
 // Helper Utilities
 const Utils = {
@@ -662,7 +666,22 @@ function renderTargets() {
 function showTargetModal(targetToEdit = null, idx = null) {
     const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
     const modal = overlay.createDiv({ cls: "ocean-modal" });
-    modal.createDiv({ cls: "ocean-modal-title", text: targetToEdit ? "✎ Edit Target Milestone" : "🎯 Add Target Milestone" });
+
+    // Header with Title & Close '✕'
+    const modalHdr = modal.createDiv({ cls: "ocean-settings-hdr" });
+    modalHdr.createDiv({ cls: "ocean-modal-title", text: targetToEdit ? "✎ Edit Target Milestone" : "🎯 Add Target Milestone" });
+    const closeBtn = modalHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
+
+    const closeModal = () => {
+        document.removeEventListener("keydown", escHandler);
+        overlay.remove();
+    };
+    closeBtn.onclick = closeModal;
+
+    const escHandler = (ev) => {
+        if (ev.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", escHandler);
 
     modal.createDiv({ text: "Milestone / Target Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
     const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? targetToEdit.title : "", placeholder: "E.g.: Heavy Commercial License Exam" } });
@@ -692,13 +711,16 @@ function showTargetModal(targetToEdit = null, idx = null) {
         delModalBtn.onclick = () => {
             savedTargets.splice(idx, 1);
             localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
-            renderTargets();
+            if (showTargets && runwayTrack) renderTargets();
             new Notice(`🗑️ Deleted target ${targetToEdit.title}`);
-            overlay.remove();
+            closeModal();
         };
     }
 
-    cancel.onclick = () => overlay.remove();
+    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: targetToEdit ? "Save Changes" : "Save Target" });
+
+    cancel.onclick = closeModal;
     save.onclick = () => {
         const title = titleInp.value.trim();
         if (!title) {
@@ -723,9 +745,9 @@ function showTargetModal(targetToEdit = null, idx = null) {
         }
         localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
         if (showTargets && runwayTrack) renderTargets();
-        overlay.remove();
+        closeModal();
     };
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
 }
 
 if (showTargets && runwayTrack) {
@@ -903,16 +925,16 @@ let renderRecentNotesFn = null;
 
 if (hasLeft || hasCenter || hasRight) {
     const mainGrid = container.createDiv({ cls: "ocean-grid" });
-    if (masterSettings.gridHeight) {
-        mainGrid.style.height = `${masterSettings.gridHeight}px`;
-    }
+    if (!isMobilePlatform) {
+        mainGrid.style.setProperty("--ocean-custom-grid-height", `${masterSettings.gridHeight || 550}px`);
 
-    // Dynamic 3-Column Template
-    let colTemplates = [];
-    if (hasLeft) colTemplates.push("1fr");
-    if (hasCenter) colTemplates.push(hasLeft && hasRight ? "3fr" : (hasLeft || hasRight ? "2fr" : "1fr"));
-    if (hasRight) colTemplates.push("1fr");
-    mainGrid.style.gridTemplateColumns = colTemplates.join(" ");
+        // Dynamic 3-Column Template
+        let colTemplates = [];
+        if (hasLeft) colTemplates.push("1fr");
+        if (hasCenter) colTemplates.push(hasLeft && hasRight ? "3fr" : (hasLeft || hasRight ? "2fr" : "1fr"));
+        if (hasRight) colTemplates.push("1fr");
+        mainGrid.style.setProperty("--ocean-custom-cols", colTemplates.join(" "));
+    }
 
     // ── LEFT COLUMN ──────────────────────────────
     if (hasLeft) {
@@ -1216,7 +1238,22 @@ if (hasLeft || hasCenter || hasRight) {
             function showCardModal(cardToEdit = null, idx = null) {
                 const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
                 const modal = overlay.createDiv({ cls: "ocean-modal" });
-                modal.createDiv({ cls: "ocean-modal-title", text: cardToEdit ? "✎ Edit Card" : "➕ Add Collection Card" });
+
+                // Header with Title & Close '✕'
+                const modalHdr = modal.createDiv({ cls: "ocean-settings-hdr" });
+                modalHdr.createDiv({ cls: "ocean-modal-title", text: cardToEdit ? "✎ Edit Card" : "➕ Add Collection Card" });
+                const closeBtn = modalHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
+
+                const closeModal = () => {
+                    document.removeEventListener("keydown", escHandler);
+                    overlay.remove();
+                };
+                closeBtn.onclick = closeModal;
+
+                const escHandler = (ev) => {
+                    if (ev.key === "Escape") closeModal();
+                };
+                document.addEventListener("keydown", escHandler);
 
                 modal.createDiv({ text: "Card Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
                 const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: cardToEdit ? cardToEdit.title : "", placeholder: "E.g.: Academic Hub" } });
@@ -1243,14 +1280,14 @@ if (hasLeft || hasCenter || hasRight) {
                         localStorage.setItem(LS.cards, JSON.stringify(savedCards));
                         renderCollectionCards();
                         new Notice(`🗑️ Deleted ${cardToEdit.title}`);
-                        overlay.remove();
+                        closeModal();
                     };
                 }
 
                 const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
                 const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Card" });
 
-                cancel.onclick = () => overlay.remove();
+                cancel.onclick = closeModal;
                 save.onclick = () => {
                     const title = titleInp.value.trim();
                     if (!title) {
@@ -1271,9 +1308,9 @@ if (hasLeft || hasCenter || hasRight) {
                     }
                     localStorage.setItem(LS.cards, JSON.stringify(savedCards));
                     renderCollectionCards();
-                    overlay.remove();
+                    closeModal();
                 };
-                overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+                overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
             }
 
             addColBtn.onclick = () => showCardModal();
@@ -1358,7 +1395,22 @@ if (masterSettings.widgets.habits !== false) {
     function openEditHabitModal(h, idx) {
         const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
         const modal = overlay.createDiv({ cls: "ocean-modal" });
-        modal.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
+
+        // Header with Title & Close '✕'
+        const modalHdr = modal.createDiv({ cls: "ocean-settings-hdr" });
+        modalHdr.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
+        const closeBtn = modalHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
+
+        const closeModal = () => {
+            document.removeEventListener("keydown", escHandler);
+            overlay.remove();
+        };
+        closeBtn.onclick = closeModal;
+
+        const escHandler = (ev) => {
+            if (ev.key === "Escape") closeModal();
+        };
+        document.addEventListener("keydown", escHandler);
 
         const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: h } });
         const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
@@ -1366,14 +1418,14 @@ if (masterSettings.widgets.habits !== false) {
         const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
         const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save" });
 
-        cancel.onclick = () => overlay.remove();
+        cancel.onclick = closeModal;
         delBtn.onclick = () => {
             savedHabits.splice(idx, 1);
             localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
             renderHabitsTracker();
             updateConsistencyBar();
             new Notice(`🗑️ Deleted ${h}`);
-            overlay.remove();
+            closeModal();
         };
         save.onclick = () => {
             const updated = inp.value.trim();
@@ -1383,9 +1435,9 @@ if (masterSettings.widgets.habits !== false) {
                 renderHabitsTracker();
                 updateConsistencyBar();
             }
-            overlay.remove();
+            closeModal();
         };
-        overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+        overlay.onclick = (ev) => { if (ev.target === overlay) closeModal(); };
     }
 
     function renderHabitsTracker() {
@@ -1448,14 +1500,29 @@ if (masterSettings.widgets.habits !== false) {
     addHabitBtn.onclick = () => {
         const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
         const modal = overlay.createDiv({ cls: "ocean-modal" });
-        modal.createDiv({ cls: "ocean-modal-title", text: "➕ Add New Weekly Metric" });
+
+        // Header with Title & Close '✕'
+        const modalHdr = modal.createDiv({ cls: "ocean-settings-hdr" });
+        modalHdr.createDiv({ cls: "ocean-modal-title", text: "➕ Add New Weekly Metric" });
+        const closeBtn = modalHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
+
+        const closeModal = () => {
+            document.removeEventListener("keydown", escHandler);
+            overlay.remove();
+        };
+        closeBtn.onclick = closeModal;
+
+        const escHandler = (ev) => {
+            if (ev.key === "Escape") closeModal();
+        };
+        document.addEventListener("keydown", escHandler);
 
         const inp = modal.createEl("input", { cls: "ocean-modal-input", attr: { placeholder: "E.g.: 45 min German Reading" } });
         const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
         const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
         const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Add Metric" });
 
-        cancel.onclick = () => overlay.remove();
+        cancel.onclick = closeModal;
         save.onclick = () => {
             const val = inp.value.trim();
             if (val) {
@@ -1464,9 +1531,9 @@ if (masterSettings.widgets.habits !== false) {
                 renderHabitsTracker();
                 updateConsistencyBar();
             }
-            overlay.remove();
+            closeModal();
         };
-        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
     };
 
     renderHabitsTracker();

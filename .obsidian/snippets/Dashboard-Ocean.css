@@ -469,11 +469,11 @@ body.theme-light {
    ────────────────────────────────────────────── */
 .ocean-grid {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-columns: var(--ocean-custom-cols, 1fr 3fr 1fr);
     gap: var(--ocean-gap);
     margin-bottom: var(--ocean-gap);
     align-items: stretch;
-    height: 550px;
+    height: var(--ocean-custom-grid-height, 550px);
 }
 
 @media (max-width: 1180px) {
@@ -1595,4 +1595,640 @@ body.theme-light {
     color: var(--ocean-btn-text);
     border-color: var(--ocean-accent);
     font-weight: 700;
+}
+
+/* ──────────────────────────────────────────────
+   11. COMPREHENSIVE RESPONSIVE & MOBILE DESIGN
+   ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .ocean-header {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .ocean-hero-text,
+    .ocean-header-clock,
+    .ocean-hero-stats {
+        justify-self: center;
+        text-align: center;
+    }
+
+    .ocean-bible-verse-wrap {
+        white-space: normal;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .ocean-grid {
+        grid-template-columns: 1fr 1fr !important;
+        height: auto !important;
+    }
+
+    .ocean-col-center {
+        grid-column: span 2 !important;
+        order: -1;
+        height: auto !important;
+    }
+}
+
+/* Class-based selectors (active on Obsidian Mobile app & phone) */
+.ocean-is-mobile,
+.is-mobile .ocean-dashboard,
+.is-phone .ocean-dashboard {
+    padding: 6px 6px 36px 6px !important;
+}
+
+.ocean-is-mobile .ocean-header,
+.is-mobile .ocean-header,
+.is-phone .ocean-header {
+    padding: 18px 14px !important;
+    gap: 14px !important;
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-hero-text,
+.is-mobile .ocean-hero-text,
+.is-phone .ocean-hero-text {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-hero-text h1,
+.is-mobile .ocean-hero-text h1,
+.is-phone .ocean-hero-text h1 {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+    margin: 0 auto 4px auto !important;
+    word-break: normal !important;
+}
+
+.ocean-is-mobile .ocean-hero-sub,
+.is-mobile .ocean-hero-sub,
+.is-phone .ocean-hero-sub {
+    font-size: 0.82rem !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-header-clock,
+.is-mobile .ocean-header-clock,
+.is-phone .ocean-header-clock {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-clock-time,
+.is-mobile .ocean-clock-time,
+.is-phone .ocean-clock-time {
+    font-size: 2.1rem !important;
+}
+
+.ocean-is-mobile .ocean-clock-date,
+.is-mobile .ocean-clock-date,
+.is-phone .ocean-clock-date {
+    font-size: 0.72rem !important;
+}
+
+.ocean-is-mobile .ocean-bible-verse-wrap,
+.is-mobile .ocean-bible-verse-wrap,
+.is-phone .ocean-bible-verse-wrap {
+    white-space: normal !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    gap: 3px !important;
+}
+
+.ocean-is-mobile .ocean-bible-quote,
+.is-mobile .ocean-bible-quote,
+.is-phone .ocean-bible-quote {
+    font-size: 0.85rem !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-bible-ref,
+.is-mobile .ocean-bible-ref,
+.is-phone .ocean-bible-ref {
+    font-size: 0.75rem !important;
+    text-align: center !important;
+}
+
+.ocean-is-mobile .ocean-hero-stats,
+.is-mobile .ocean-hero-stats,
+.is-phone .ocean-hero-stats {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+}
+
+.ocean-is-mobile .ocean-stat-cube,
+.is-mobile .ocean-stat-cube,
+.is-phone .ocean-stat-cube {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 10px 8px !important;
+    align-items: center !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+}
+
+.ocean-is-mobile .ocean-stat-top-row,
+.is-mobile .ocean-stat-top-row,
+.is-phone .ocean-stat-top-row {
+    justify-content: center !important;
+}
+
+.ocean-is-mobile .ocean-stat-val,
+.is-mobile .ocean-stat-val,
+.is-phone .ocean-stat-val {
+    font-size: 1.4rem !important;
+}
+
+.ocean-is-mobile .ocean-stat-lab,
+.is-mobile .ocean-stat-lab,
+.is-phone .ocean-stat-lab {
+    font-size: 0.65rem !important;
+}
+
+/* Runways on Mobile */
+.ocean-is-mobile .ocean-runway-grid,
+.is-mobile .ocean-runway-grid,
+.is-phone .ocean-runway-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--ocean-gap) !important;
+}
+
+.ocean-is-mobile .ocean-target-capsule,
+.is-mobile .ocean-target-capsule,
+.is-phone .ocean-target-capsule {
+    max-width: 290px !important;
+}
+
+/* Bento Grid on Mobile */
+.ocean-is-mobile .ocean-grid,
+.is-mobile .ocean-grid,
+.is-phone .ocean-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    gap: var(--ocean-gap) !important;
+}
+
+.ocean-is-mobile .ocean-col-left,
+.ocean-is-mobile .ocean-col-center,
+.ocean-is-mobile .ocean-col-right,
+.is-mobile .ocean-col-left,
+.is-mobile .ocean-col-center,
+.is-mobile .ocean-col-right,
+.is-phone .ocean-col-left,
+.is-phone .ocean-col-center,
+.is-phone .ocean-col-right {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    width: 100% !important;
+    gap: var(--ocean-gap) !important;
+}
+
+.ocean-is-mobile .ocean-col-center,
+.is-mobile .ocean-col-center,
+.is-phone .ocean-col-center {
+    order: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ocean-is-mobile .ocean-card,
+.is-mobile .ocean-card,
+.is-phone .ocean-card {
+    height: auto !important;
+    min-height: auto !important;
+    flex: none !important;
+    padding: 14px !important;
+}
+
+.ocean-is-mobile .ocean-card-hdr,
+.is-mobile .ocean-card-hdr,
+.is-phone .ocean-card-hdr {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+}
+
+.ocean-is-mobile .ocean-card-title,
+.is-mobile .ocean-card-title,
+.is-phone .ocean-card-title {
+    font-size: 0.84rem !important;
+}
+
+/* Tag Cloud */
+.ocean-is-mobile .ocean-tag-wrap,
+.is-mobile .ocean-tag-wrap,
+.is-phone .ocean-tag-wrap {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    max-height: 190px !important;
+    overflow-y: auto !important;
+    padding-right: 4px !important;
+}
+
+.ocean-is-mobile .ocean-tag-pill,
+.is-mobile .ocean-tag-pill,
+.is-phone .ocean-tag-pill {
+    padding: 4px 10px !important;
+    font-size: 0.74rem !important;
+}
+
+/* Notes list */
+.ocean-is-mobile .ocean-notes-list,
+.is-mobile .ocean-notes-list,
+.is-phone .ocean-notes-list {
+    max-height: 340px !important;
+    overflow-y: auto !important;
+}
+
+/* Scratchpad */
+.ocean-is-mobile .ocean-scratchpad-hdr-actions,
+.is-mobile .ocean-scratchpad-hdr-actions,
+.is-phone .ocean-scratchpad-hdr-actions {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+}
+
+.ocean-is-mobile .ocean-scratch-btn,
+.is-mobile .ocean-scratch-btn,
+.is-phone .ocean-scratch-btn {
+    padding: 2px 6px !important;
+    font-size: 0.64rem !important;
+    height: 20px !important;
+}
+
+.ocean-is-mobile .ocean-scratchpad-textarea,
+.is-mobile .ocean-scratchpad-textarea,
+.is-phone .ocean-scratchpad-textarea {
+    min-height: 160px !important;
+}
+
+/* Actions Grid */
+.ocean-is-mobile .ocean-act-grid,
+.is-mobile .ocean-act-grid,
+.is-phone .ocean-act-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+}
+
+.ocean-is-mobile .ocean-act-btn,
+.is-mobile .ocean-act-btn,
+.is-phone .ocean-act-btn {
+    padding: 10px 4px !important;
+}
+
+.ocean-is-mobile .ocean-act-icon,
+.is-mobile .ocean-act-icon,
+.is-phone .ocean-act-icon {
+    font-size: 1.25rem !important;
+}
+
+.ocean-is-mobile .ocean-act-lbl,
+.is-mobile .ocean-act-lbl,
+.is-phone .ocean-act-lbl {
+    font-size: 0.65rem !important;
+}
+
+/* Habits on Mobile */
+.ocean-is-mobile .ocean-habit-row,
+.is-mobile .ocean-habit-row,
+.is-phone .ocean-habit-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+}
+
+.ocean-is-mobile .ocean-habit-left,
+.is-mobile .ocean-habit-left,
+.is-phone .ocean-habit-left {
+    width: 100% !important;
+    justify-content: space-between !important;
+}
+
+.ocean-is-mobile .ocean-dot-grid,
+.is-mobile .ocean-dot-grid,
+.is-phone .ocean-dot-grid {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 3px !important;
+}
+
+.ocean-is-mobile .ocean-dot,
+.is-mobile .ocean-dot,
+.is-phone .ocean-dot {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.78rem !important;
+    border-radius: 6px !important;
+}
+
+/* Modals on Mobile */
+.ocean-is-mobile .ocean-modal,
+.is-mobile .ocean-modal,
+.is-phone .ocean-modal {
+    width: 95% !important;
+    padding: 18px !important;
+    max-height: 90vh !important;
+}
+
+.ocean-is-mobile .ocean-settings-modal,
+.is-mobile .ocean-settings-modal,
+.is-phone .ocean-settings-modal {
+    padding: 16px !important;
+}
+
+.ocean-is-mobile .ocean-settings-tabs,
+.is-mobile .ocean-settings-tabs,
+.is-phone .ocean-settings-tabs {
+    flex-direction: row !important;
+    gap: 3px !important;
+}
+
+.ocean-is-mobile .ocean-settings-tab,
+.is-mobile .ocean-settings-tab,
+.is-phone .ocean-settings-tab {
+    padding: 6px 4px !important;
+    font-size: 0.7rem !important;
+}
+
+.ocean-is-mobile .ocean-settings-data-grid,
+.is-mobile .ocean-settings-data-grid,
+.is-phone .ocean-settings-data-grid {
+    grid-template-columns: 1fr !important;
+}
+
+/* Media Query Fallback for Resized Windows */
+@media (max-width: 768px) {
+    .ocean-dashboard {
+        padding: 6px 6px 36px 6px !important;
+    }
+
+    .ocean-header {
+        padding: 18px 14px !important;
+        gap: 14px !important;
+        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    .ocean-hero-text {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ocean-hero-text h1 {
+        font-size: 1.45rem !important;
+        line-height: 1.25 !important;
+        margin: 0 auto 4px auto !important;
+        word-break: normal !important;
+    }
+
+    .ocean-hero-sub {
+        font-size: 0.82rem !important;
+        text-align: center;
+    }
+
+    .ocean-header-clock {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ocean-clock-time {
+        font-size: 2.1rem !important;
+    }
+
+    .ocean-clock-date {
+        font-size: 0.72rem !important;
+    }
+
+    .ocean-bible-verse-wrap {
+        white-space: normal !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        gap: 3px !important;
+    }
+
+    .ocean-bible-quote {
+        font-size: 0.85rem !important;
+        line-height: 1.35 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        text-align: center !important;
+    }
+
+    .ocean-bible-ref {
+        font-size: 0.75rem !important;
+        text-align: center !important;
+    }
+
+    .ocean-hero-stats {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin-top: 4px;
+    }
+
+    .ocean-stat-cube {
+        min-width: 0 !important;
+        width: 100% !important;
+        padding: 10px 8px !important;
+        align-items: center !important;
+        text-align: center !important;
+        border-radius: 12px !important;
+    }
+
+    .ocean-stat-top-row {
+        justify-content: center !important;
+    }
+
+    .ocean-stat-val {
+        font-size: 1.4rem !important;
+    }
+
+    .ocean-stat-lab {
+        font-size: 0.65rem !important;
+    }
+
+    /* Runways on Mobile */
+    .ocean-runway-grid {
+        grid-template-columns: 1fr !important;
+        gap: var(--ocean-gap) !important;
+    }
+
+    .ocean-target-capsule {
+        max-width: 290px !important;
+    }
+
+    /* Bento Grid on Mobile */
+    .ocean-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+        gap: var(--ocean-gap) !important;
+    }
+
+    .ocean-col-left,
+    .ocean-col-center,
+    .ocean-col-right {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+        width: 100% !important;
+        gap: var(--ocean-gap) !important;
+    }
+
+    .ocean-col-center {
+        order: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .ocean-card {
+        height: auto !important;
+        min-height: auto !important;
+        flex: none !important;
+        padding: 14px !important;
+    }
+
+    .ocean-card-hdr {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .ocean-card-title {
+        font-size: 0.84rem !important;
+    }
+
+    /* Tag Cloud */
+    .ocean-tag-wrap {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        max-height: 190px !important;
+        overflow-y: auto !important;
+        padding-right: 4px;
+    }
+
+    .ocean-tag-pill {
+        padding: 4px 10px !important;
+        font-size: 0.74rem !important;
+    }
+
+    /* Notes list */
+    .ocean-notes-list {
+        max-height: 340px !important;
+        overflow-y: auto !important;
+    }
+
+    /* Scratchpad */
+    .ocean-scratchpad-hdr-actions {
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+    }
+
+    .ocean-scratch-btn {
+        padding: 2px 6px !important;
+        font-size: 0.64rem !important;
+        height: 20px !important;
+    }
+
+    .ocean-scratchpad-textarea {
+        min-height: 160px !important;
+    }
+
+    /* Actions Grid */
+    .ocean-act-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .ocean-act-btn {
+        padding: 10px 4px !important;
+    }
+
+    .ocean-act-icon {
+        font-size: 1.25rem !important;
+    }
+
+    .ocean-act-lbl {
+        font-size: 0.65rem !important;
+    }
+
+    /* Habits on Mobile */
+    .ocean-habit-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+    }
+
+    .ocean-habit-left {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+
+    .ocean-dot-grid {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        gap: 3px !important;
+    }
+
+    .ocean-dot {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.78rem !important;
+        border-radius: 6px !important;
+    }
+
+    /* Modals on Mobile */
+    .ocean-modal {
+        width: 95%;
+        padding: 18px;
+        max-height: 90vh;
+    }
+
+    .ocean-settings-modal {
+        padding: 16px;
+    }
+
+    .ocean-settings-tabs {
+        flex-direction: row;
+        gap: 3px;
+    }
+
+    .ocean-settings-tab {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+    }
+
+    .ocean-settings-data-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
