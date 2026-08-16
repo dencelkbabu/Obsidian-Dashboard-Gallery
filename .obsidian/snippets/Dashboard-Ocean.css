@@ -351,6 +351,9 @@ body.theme-light {
     gap: 10px;
     overflow-x: auto;
     padding: 2px 2px 6px 2px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--ocean-accent-rgb), 0.25) transparent;
 }
 
 .ocean-target-capsule,

@@ -44,9 +44,9 @@ let savedCards = JSON.parse(localStorage.getItem(LS.cards)) || [
 localStorage.setItem(LS.cards, JSON.stringify(savedCards));
 
 let savedTargets = JSON.parse(localStorage.getItem(LS.targets)) || [
-    { title: "Heavy License Exam (CE)", date: "2026-09-30", emoji: "🚛", link: "Future" },
-    { title: "German A2 Certification", date: "2027-06-30", emoji: "🇩🇪", link: "Future" },
-    { title: "University Application", date: "2030-05-15", emoji: "🎓", link: "Future" }
+    { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
+    { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
+    { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
 ];
 localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
 
@@ -323,6 +323,17 @@ targetsHdr.createDiv({ cls: "ocean-card-title", text: "🎯 TARGETS & COUNTDOWNS
 const addTargetBtn = targetsHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
 const runwayTrack = targetsCard.createDiv({ cls: "ocean-targets-track" });
 
+const enableHorizontalWheel = (el) => {
+    if (!el) return;
+    el.addEventListener("wheel", (e) => {
+        if (e.deltaY !== 0) {
+            e.preventDefault();
+            el.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+};
+enableHorizontalWheel(runwayTrack);
+
 function renderTargets() {
     runwayTrack.innerHTML = "";
     if (savedTargets.length === 0) {
@@ -465,6 +476,7 @@ const tasksHdr = tasksCard.createDiv({ cls: "ocean-runway-hdr" });
 tasksHdr.createDiv({ cls: "ocean-card-title", text: "⚡ LIVE TASKS / PENDING" });
 
 const tasksTrack = tasksCard.createDiv({ cls: "ocean-targets-track" });
+enableHorizontalWheel(tasksTrack);
 
 function renderLiveTasks() {
     tasksTrack.innerHTML = "";
