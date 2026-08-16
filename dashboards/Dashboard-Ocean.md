@@ -18,6 +18,7 @@ const LS = {
     tag: "ocean-active-tag",
     tagSort: "ocean-tag-sort",
     pinnedTags: "ocean-pinned-tags",
+    pinnedNotes: "ocean-pinned-notes",
     habits: "ocean-habits",
     cards: "ocean-cards"
 };
@@ -27,6 +28,7 @@ let bannerSubtitle = localStorage.getItem(LS.subtitle) || "";
 let activeTag = localStorage.getItem(LS.tag) || "__all__";
 let tagSortMode = localStorage.getItem(LS.tagSort) || "count"; // "count" or "name"
 let pinnedTags = JSON.parse(localStorage.getItem(LS.pinnedTags) || "[]");
+let pinnedNotes = JSON.parse(localStorage.getItem(LS.pinnedNotes) || "[]");
 
 const defaultHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
 let savedHabits = JSON.parse(localStorage.getItem(LS.habits)) || defaultHabits;
@@ -83,12 +85,30 @@ const Utils = {
 
         return [...pinned, ...unpinned].slice(0, limit);
     },
-    getNotes: (limit = 8) => {
+    getNotes: (limit = 9, query = "") => {
         let pages = dv.pages();
         if (activeTag !== "__all__") {
             pages = pages.where(p => p.file.tags && p.file.tags.includes(activeTag));
         }
-        return pages.sort(p => p.file.mtime, "desc").slice(0, limit);
+
+        if (query && query.trim()) {
+            const q = query.trim().toLowerCase();
+            pages = pages.where(p => 
+                p.file.name.toLowerCase().includes(q) || 
+                (p.file.folder && p.file.folder.toLowerCase().includes(q)) ||
+                (p.file.tags && p.file.tags.some(t => t.toLowerCase().includes(q)))
+            );
+        }
+
+        const allPages = pages.array().map(p => ({
+            page: p,
+            isPinned: pinnedNotes.includes(p.file.path)
+        }));
+
+        const pinned = allPages.filter(p => p.isPinned).sort((a, b) => b.page.file.mtime - a.page.file.mtime);
+        const unpinned = allPages.filter(p => !p.isPinned).sort((a, b) => b.page.file.mtime - a.page.file.mtime);
+
+        return [...pinned, ...unpinned].slice(0, limit);
     },
     getRecentlyOpened: (limit = 5) => {
         try {
@@ -411,26 +431,62 @@ const recentCard = colCenter.createDiv({ cls: "ocean-card" });
 const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
 const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
 
+let noteSearchQuery = "";
+const recentSearchInput = recentHdr.createEl("input", {
+    cls: "ocean-search-input",
+    attr: { type: "text", placeholder: "🔍 SEARCH", spellcheck: "false" }
+});
+
+recentSearchInput.oninput = () => {
+    noteSearchQuery = recentSearchInput.value;
+    renderRecentNotes();
+};
+
 const notesList = recentCard.createDiv({ cls: "ocean-notes-list" });
 
 function renderRecentNotes() {
     notesList.innerHTML = "";
-    recentTitleEl.textContent = activeTag === "__all__" ? "📄 RECENTLY EDITED" : `📄 NOTES IN ${activeTag.toUpperCase()}`;
+    recentTitleEl.textContent = activeTag === "__all__" 
+        ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
+        : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
     
-    const notes = Utils.getNotes(7);
+    const notes = Utils.getNotes(noteSearchQuery ? 15 : 8, noteSearchQuery);
     if (notes.length === 0) {
         notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
         return;
     }
 
-    notes.forEach(p => {
-        const row = notesList.createDiv({ cls: "ocean-note-row" });
+    notes.forEach(({ page: p, isPinned }) => {
+        const row = notesList.createDiv({
+            cls: "ocean-note-row" + (isPinned ? " pinned" : ""),
+            attr: { title: `${isPinned ? "Pinned note" : "Note"}: ${p.file.name}. Right-click to toggle pin.` }
+        });
+
         const info = row.createDiv({ cls: "ocean-note-info" });
-        info.createDiv({ cls: "ocean-note-name", text: p.file.name });
+        const nameRow = info.createDiv({ cls: "ocean-note-name-row" });
+        
+        if (isPinned) {
+            nameRow.createSpan({ cls: "ocean-pin-icon", text: "📌" });
+        }
+        nameRow.createSpan({ cls: "ocean-note-name", text: p.file.name });
         info.createDiv({ cls: "ocean-note-folder", text: p.file.folder || "Vault Root" });
 
         row.createDiv({ cls: "ocean-note-time", text: Utils.relTime(p.file.mtime) });
         row.onclick = () => app.workspace.openLinkText(p.file.path, "", false);
+
+        // Right-click to toggle Pin / Unpin
+        row.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (pinnedNotes.includes(p.file.path)) {
+                pinnedNotes = pinnedNotes.filter(path => path !== p.file.path);
+                new Notice(`📍 Unpinned ${p.file.name}`);
+            } else {
+                pinnedNotes.push(p.file.path);
+                new Notice(`📌 Pinned ${p.file.name}`);
+            }
+            localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
+            renderRecentNotes();
+        };
     });
 }
 renderRecentNotes();

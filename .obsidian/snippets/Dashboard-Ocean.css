@@ -542,6 +542,52 @@ body.theme-light {
     gap: 8px;
 }
 
+.ocean-search-input {
+    background: var(--ocean-overlay) !important;
+    border: 1px solid var(--ocean-border) !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    color: var(--ocean-text) !important;
+    outline: none !important;
+    font-family: var(--ocean-font-body) !important;
+    width: 170px !important;
+    min-width: 170px !important;
+    flex: 0 0 170px !important;
+    box-sizing: border-box !important;
+    will-change: width, min-width, border-color, box-shadow;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                min-width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                flex-basis 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                border-color 0.25s ease, 
+                background 0.25s ease, 
+                box-shadow 0.25s ease !important;
+}
+
+.ocean-search-input:hover {
+    border-color: var(--ocean-border-hover) !important;
+}
+
+.ocean-search-input:focus,
+.ocean-search-input:focus-visible {
+    border-color: var(--ocean-accent) !important;
+    width: 250px !important;
+    min-width: 250px !important;
+    flex: 0 0 250px !important;
+    background: var(--ocean-surface) !important;
+    box-shadow: 0 0 0 2px rgba(var(--ocean-accent-rgb), 0.18) !important;
+}
+
+.ocean-search-input::placeholder {
+    color: var(--ocean-muted);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.ocean-search-input:focus::placeholder {
+    opacity: 0.4;
+}
+
 .ocean-note-row {
     display: flex;
     align-items: center;
@@ -559,10 +605,21 @@ body.theme-light {
     background: var(--ocean-hover-tint);
 }
 
+.ocean-note-row.pinned {
+    border-color: rgba(var(--ocean-accent-rgb), 0.4);
+    background: rgba(var(--ocean-accent-rgb), 0.06);
+}
+
 .ocean-note-info {
     display: flex;
     flex-direction: column;
     gap: 3px;
+}
+
+.ocean-note-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .ocean-note-name {
