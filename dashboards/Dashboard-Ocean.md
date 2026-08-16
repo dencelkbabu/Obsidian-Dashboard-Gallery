@@ -271,7 +271,7 @@ if (recentFiles.length > 0) {
 }
 
 // ── LEFT: BROWSE BY TOPIC (Atlas Widget) ─────────────────────
-const tagCard = colLeft.createDiv({ cls: "ocean-card" });
+const tagCard = colLeft.createDiv({ cls: "ocean-card ocean-tag-card" });
 const tagHdr = tagCard.createDiv({ cls: "ocean-card-hdr" });
 tagHdr.createDiv({ cls: "ocean-card-title", text: "🏷️ BROWSE BY TOPIC" });
 
@@ -303,7 +303,7 @@ function renderTopicTags() {
         renderRecentNotes();
     };
 
-    const tags = Utils.getProcessedTags(24);
+    const tags = Utils.getProcessedTags(22);
     tags.forEach(({ tag, count, pinned }) => {
         const pill = tagWrap.createDiv({
             cls: "ocean-tag-pill" + (activeTag === tag ? " active" : "") + (pinned ? " pinned" : ""),
@@ -443,7 +443,7 @@ addColBtn.onclick = () => showCardModal();
 renderCollectionCards();
 
 // ── CENTER: RECENTLY EDITED NOTES (Atlas Widget) ─────────────
-const recentCard = colCenter.createDiv({ cls: "ocean-card" });
+const recentCard = colCenter.createDiv({ cls: "ocean-card ocean-recent-card" });
 const recentHdr = recentCard.createDiv({ cls: "ocean-card-hdr" });
 const recentTitleEl = recentHdr.createDiv({ cls: "ocean-card-title", text: "📄 RECENTLY EDITED" });
 
