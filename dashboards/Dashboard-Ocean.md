@@ -21,7 +21,8 @@ const LS = {
     pinnedNotes: "ocean-pinned-notes",
     habits: "ocean-habits",
     cards: "ocean-cards",
-    targets: "ocean-targets-v2"
+    targets: "ocean-targets-v2",
+    scratchpad: "ocean-scratchpad-v1"
 };
 
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
@@ -803,6 +804,85 @@ function renderRecentNotes() {
     });
 }
 renderRecentNotes();
+
+// 2. PERSISTENT SCRATCHPAD (Center Bottom)
+const scratchpadCard = colCenter.createDiv({ cls: "ocean-card ocean-scratchpad-card" });
+const scratchpadHdr = scratchpadCard.createDiv({ cls: "ocean-card-hdr" });
+scratchpadHdr.createDiv({ cls: "ocean-card-title", text: "📝 QUICK SCRATCHPAD" });
+
+const scratchActions = scratchpadHdr.createDiv({ cls: "ocean-scratchpad-hdr-actions" });
+const saveIndicator = scratchActions.createSpan({ cls: "ocean-scratchpad-stat", text: "● Saved" });
+const copyScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📋 COPY", attr: { title: "Copy to Clipboard" } });
+const clearScratchBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "🧹 CLEAR", attr: { title: "Clear Scratchpad" } });
+const toDailyBtn = scratchActions.createDiv({ cls: "ocean-scratch-btn", text: "📤 DAILY", attr: { title: "Append to Today's Daily Note" } });
+
+const scratchTextarea = scratchpadCard.createEl("textarea", {
+    cls: "ocean-scratchpad-textarea",
+    attr: {
+        placeholder: "Type quick thoughts, markdown snippets, or temporary tasks... (Auto-saves continuously)"
+    }
+});
+
+let savedScratchText = localStorage.getItem(LS.scratchpad) || "";
+scratchTextarea.value = savedScratchText;
+
+let saveTimeout = null;
+scratchTextarea.oninput = () => {
+    saveIndicator.textContent = "● Saving...";
+    saveIndicator.style.color = "#fbbf24";
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+        localStorage.setItem(LS.scratchpad, scratchTextarea.value);
+        saveIndicator.textContent = "● Saved";
+        saveIndicator.style.color = "var(--ocean-muted)";
+    }, 300);
+};
+
+copyScratchBtn.onclick = () => {
+    const text = scratchTextarea.value.trim();
+    if (!text) {
+        new Notice("Scratchpad is empty");
+        return;
+    }
+    navigator.clipboard.writeText(text);
+    new Notice("📋 Copied scratchpad to clipboard!");
+};
+
+clearScratchBtn.onclick = () => {
+    if (!scratchTextarea.value.trim()) return;
+    scratchTextarea.value = "";
+    localStorage.setItem(LS.scratchpad, "");
+    new Notice("🧹 Scratchpad cleared");
+};
+
+toDailyBtn.onclick = async () => {
+    const text = scratchTextarea.value.trim();
+    if (!text) {
+        new Notice("Scratchpad is empty");
+        return;
+    }
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const dailyPath = `Daily/${dateStr}.md`;
+    
+    let file = app.vault.getAbstractFileByPath(dailyPath);
+    if (!file) {
+        file = app.vault.getAbstractFileByPath(`${dateStr}.md`);
+    }
+
+    try {
+        if (file) {
+            const existing = await app.vault.read(file);
+            await app.vault.modify(file, `${existing}\n\n### Scratchpad Note (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})\n${text}\n`);
+            new Notice(`📤 Appended scratchpad to ${file.name}!`);
+        } else {
+            await app.vault.create(dailyPath, `# ${dateStr}\n\n### Scratchpad Note\n${text}\n`);
+            new Notice(`📤 Created ${dailyPath} and saved scratchpad!`);
+        }
+    } catch(e) {
+        new Notice(`Notice: ${e.message}`);
+    }
+};
 
 // ── RIGHT COLUMN: 1. COLLECTION CARDS (FIRST) ────────────────
 const colCardSection = colRight.createDiv({ cls: "ocean-card" });

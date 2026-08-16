@@ -501,7 +501,6 @@ body.theme-light {
 }
 
 .ocean-col-left,
-.ocean-col-center,
 .ocean-col-right {
     display: flex;
     flex-direction: column;
@@ -509,6 +508,21 @@ body.theme-light {
     min-width: 0;
     min-height: 0;
     height: 100%;
+}
+
+.ocean-col-center {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ocean-gap);
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+}
+
+@media (max-width: 900px) {
+    .ocean-col-center {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ──────────────────────────────────────────────
@@ -533,10 +547,80 @@ body.theme-light {
 
 /* Independent stretching outer boxes */
 .ocean-col-left>.ocean-tag-card,
+.ocean-col-right>.ocean-card:first-child,
 .ocean-col-center>.ocean-recent-card,
-.ocean-col-right>.ocean-card:first-child {
+.ocean-col-center>.ocean-scratchpad-card {
     flex: 1;
     min-height: 0;
+    height: 100%;
+}
+
+.ocean-scratchpad-hdr-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ocean-scratch-btn {
+    padding: 2px 7px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 5px;
+    background: var(--ocean-hover-tint);
+    border: 1px solid var(--ocean-border);
+    color: var(--ocean-muted);
+    cursor: pointer;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    letter-spacing: 0.3px;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.ocean-scratch-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+    background: rgba(var(--ocean-accent-rgb), 0.1);
+}
+
+.ocean-scratchpad-stat {
+    font-size: 0.72rem;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-muted);
+    user-select: none;
+    margin-right: 4px;
+    transition: color 0.2s ease;
+}
+
+.ocean-scratchpad-textarea {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    color: var(--ocean-text);
+    font-family: var(--ocean-font-mono);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 10px 14px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ocean-scratchpad-textarea:focus {
+    border-color: var(--ocean-accent);
+    box-shadow: 0 0 10px rgba(var(--ocean-accent-rgb), 0.15);
+}
+
+.ocean-scratchpad-textarea::placeholder {
+    color: var(--ocean-muted);
+    opacity: 0.6;
 }
 
 .ocean-card-hdr {
