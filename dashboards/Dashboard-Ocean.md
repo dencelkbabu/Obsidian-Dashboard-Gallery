@@ -587,10 +587,21 @@ function renderHabitsTracker() {
             openEditHabitModal(h, idx);
         };
 
+        const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+        const todayDayIndex = ((new Date().getDay() + 6) % 7) + 1; // 1 = Monday, 7 = Sunday
+
         const dotGrid = row.createDiv({ cls: "ocean-dot-grid" });
         for (let day = 1; day <= 7; day++) {
             const key = `ocean-h-${h}-${day}`;
-            const dot = dotGrid.createDiv({ cls: "ocean-dot" + (localStorage.getItem(key) ? " active" : "") });
+            const isToday = day === todayDayIndex;
+            const isActive = !!localStorage.getItem(key);
+
+            const dot = dotGrid.createDiv({
+                cls: "ocean-dot" + (isActive ? " active" : "") + (isToday ? " today" : ""),
+                text: DAYS[day - 1],
+                attr: { title: `${isToday ? "Today • " : ""}${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day - 1]}` }
+            });
+
             dot.onclick = () => {
                 dot.classList.toggle("active");
                 if (localStorage.getItem(key)) {

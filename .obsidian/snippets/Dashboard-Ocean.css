@@ -761,22 +761,47 @@ body.theme-light {
 }
 
 .ocean-dot {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
     border: 1px solid var(--ocean-border);
     background: var(--ocean-surface);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-muted);
+    user-select: none;
+    line-height: 1;
 }
 
 .ocean-dot:hover {
     border-color: var(--ocean-accent);
+    color: var(--ocean-text);
+}
+
+.ocean-dot.today {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+    box-shadow: 0 0 8px rgba(var(--ocean-accent-rgb), 0.5);
+    font-weight: 800;
+    position: relative;
+    z-index: 2;
 }
 
 .ocean-dot.active {
     background: var(--ocean-emerald);
     border-color: var(--ocean-emerald);
+    color: #0b1120;
+    font-weight: 800;
+}
+
+.ocean-dot.today.active {
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.65), 0 0 2px var(--ocean-accent);
 }
 
 /* ──────────────────────────────────────────────
