@@ -1,16 +1,19 @@
 /* ==========================================================================
    DASHBOARD OCEAN (Zen Minimalism + Atlas Widgets + Komorebi Actions)
-   Palette: Deep Ocean & Crisp Borders (Zero Drop-Shadows)
-   Designed for Obsidian PKM (Native Obsidian Fonts, Zero External Requests)
+   Palette: Deep Ocean Glass & Crisp Borders (Zero Muddy Grays)
+   Designed for Obsidian PKM
    ========================================================================== */
 
-:root {
+/* ── DARK THEME TOKENS (Sleek Dark Glass, Zero Muddy Grays) ───────── */
+:root,
+body.theme-dark {
     --ocean-bg: var(--background-primary);
-    --ocean-surface: var(--background-secondary);
-    --ocean-overlay: var(--background-secondary-alt);
-    --ocean-border: rgba(255, 255, 255, 0.09);
-    --ocean-border-hover: rgba(56, 189, 248, 0.45);
-
+    --ocean-surface: rgba(255, 255, 255, 0.025);
+    --ocean-overlay: rgba(255, 255, 255, 0.04);
+    --ocean-border: rgba(255, 255, 255, 0.08);
+    --ocean-border-hover: rgba(56, 189, 248, 0.4);
+    
+    --ocean-title-gradient: linear-gradient(90deg, #f8fafc, #94a3b8);
     --ocean-accent: #38bdf8;
     --ocean-accent-rgb: 56, 189, 248;
     --ocean-indigo: #818cf8;
@@ -23,15 +26,42 @@
     --ocean-muted: var(--text-muted);
     --ocean-faint: var(--text-faint);
 
+    --ocean-btn-text: #0b1120;
+    --ocean-hover-tint: rgba(56, 189, 248, 0.09);
+
     --ocean-radius: 12px;
     --ocean-radius-sm: 8px;
     --ocean-gap: 18px;
     --ocean-pad: 20px;
 
-    /* Use Obsidian Default Fonts */
     --ocean-font-main: var(--font-interface, var(--default-font, inherit));
     --ocean-font-mono: var(--font-monospace, monospace);
     --ocean-font-body: var(--font-text, var(--font-interface, inherit));
+}
+
+/* ── LIGHT THEME TOKENS ─────────────────────────────────── */
+body.theme-light {
+    --ocean-bg: var(--background-primary);
+    --ocean-surface: rgba(0, 0, 0, 0.02);
+    --ocean-overlay: rgba(0, 0, 0, 0.035);
+    --ocean-border: rgba(0, 0, 0, 0.08);
+    --ocean-border-hover: rgba(2, 132, 199, 0.45);
+    
+    --ocean-title-gradient: linear-gradient(90deg, #0f172a, #334155);
+    --ocean-accent: #0284c7;
+    --ocean-accent-rgb: 2, 132, 199;
+    --ocean-indigo: #4f46e5;
+    --ocean-cyan: #0891b2;
+    --ocean-emerald: #059669;
+    --ocean-amber: #d97706;
+    --ocean-rose: #e11d48;
+
+    --ocean-text: var(--text-normal);
+    --ocean-muted: var(--text-muted);
+    --ocean-faint: var(--text-faint);
+
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(2, 132, 199, 0.06);
 }
 
 /* Full Width & Container Reset */
@@ -64,7 +94,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   1. HERO HEADER (Zen Inspired, No Drop Shadow)
+   1. HERO HEADER
    ────────────────────────────────────────────── */
 .ocean-header {
     background: var(--ocean-surface);
@@ -94,7 +124,7 @@
     font-weight: 800 !important;
     letter-spacing: -0.6px;
     margin: 0 0 6px 0 !important;
-    background: linear-gradient(90deg, #ffffff, #94a3b8);
+    background: var(--ocean-title-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-family: var(--ocean-font-main);
@@ -188,7 +218,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   3. CARDS & SECTIONS (Zero Drop Shadows)
+   3. CARDS & SECTIONS (Clean Translucent Surfaces)
    ────────────────────────────────────────────── */
 .ocean-card {
     background: var(--ocean-surface);
@@ -200,7 +230,7 @@
 }
 
 .ocean-card:hover {
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: var(--ocean-border-hover);
 }
 
 .ocean-card-hdr {
@@ -224,7 +254,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   4. SYSTEM ONE-TAP BUTTONS (Komorebi + Omnisearch)
+   4. SYSTEM ONE-TAP BUTTONS
    ────────────────────────────────────────────── */
 .ocean-act-grid {
     display: grid;
@@ -248,7 +278,7 @@
 
 .ocean-act-btn:hover {
     border-color: var(--ocean-accent);
-    background: rgba(56, 189, 248, 0.08);
+    background: var(--ocean-hover-tint);
 }
 
 .ocean-act-icon {
@@ -266,7 +296,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   5. JUMP BACK IN (Atlas Widget)
+   5. JUMP BACK IN
    ────────────────────────────────────────────── */
 .ocean-jump-list {
     display: flex;
@@ -293,7 +323,7 @@
 
 .ocean-jump-item:hover {
     border-color: var(--ocean-accent);
-    background: rgba(56, 189, 248, 0.06);
+    background: var(--ocean-hover-tint);
     color: var(--ocean-accent);
 }
 
@@ -303,7 +333,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   6. BROWSE BY TOPIC (Atlas Tags Widget)
+   6. BROWSE BY TOPIC
    ────────────────────────────────────────────── */
 .ocean-tag-wrap {
     display: flex;
@@ -334,7 +364,7 @@
 }
 
 .ocean-tag-pill.active {
-    background: rgba(56, 189, 248, 0.15);
+    background: rgba(var(--ocean-accent-rgb), 0.15);
     border-color: var(--ocean-accent);
     color: var(--ocean-accent);
 }
@@ -346,7 +376,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   7. COLLECTION (Komorebi Cards Widget)
+   7. COLLECTION
    ────────────────────────────────────────────── */
 .ocean-collection-container {
     display: grid;
@@ -442,11 +472,11 @@
 
 .ocean-add-btn:hover {
     border-color: var(--ocean-accent);
-    background: rgba(56, 189, 248, 0.1);
+    background: rgba(var(--ocean-accent-rgb), 0.1);
 }
 
 /* ──────────────────────────────────────────────
-   8. RECENTLY EDITED NOTES (Atlas Widget)
+   8. RECENTLY EDITED NOTES
    ────────────────────────────────────────────── */
 .ocean-notes-list {
     display: flex;
@@ -468,7 +498,7 @@
 
 .ocean-note-row:hover {
     border-color: var(--ocean-accent);
-    background: rgba(56, 189, 248, 0.05);
+    background: var(--ocean-hover-tint);
 }
 
 .ocean-note-info {
@@ -496,7 +526,7 @@
 }
 
 /* ──────────────────────────────────────────────
-   9. BIO-METRICS (WEEKLY) (Clean, No Extra Lines)
+   9. BIO-METRICS (WEEKLY)
    ────────────────────────────────────────────── */
 .ocean-habits-card {
     margin-top: var(--ocean-gap);
@@ -542,7 +572,7 @@
 }
 
 .ocean-habit-row:hover {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--ocean-border-hover);
 }
 
 .ocean-habit-title {
@@ -582,11 +612,8 @@
    ────────────────────────────────────────────── */
 .ocean-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -595,7 +622,7 @@
 }
 
 .ocean-modal {
-    background: var(--ocean-surface);
+    background: var(--background-primary);
     border: 1px solid var(--ocean-border);
     border-radius: var(--ocean-radius);
     padding: 26px;
@@ -647,7 +674,7 @@
 
 .ocean-btn.primary {
     background: var(--ocean-accent);
-    color: #000000;
+    color: var(--ocean-btn-text);
     border-color: var(--ocean-accent);
     font-weight: 700;
 }
