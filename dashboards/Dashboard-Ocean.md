@@ -20,7 +20,8 @@ const LS = {
     pinnedTags: "ocean-pinned-tags",
     pinnedNotes: "ocean-pinned-notes",
     habits: "ocean-habits",
-    cards: "ocean-cards"
+    cards: "ocean-cards",
+    targets: "ocean-targets"
 };
 
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
@@ -41,6 +42,13 @@ let savedCards = JSON.parse(localStorage.getItem(LS.cards)) || [
     { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
 ];
 localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+
+let savedTargets = JSON.parse(localStorage.getItem(LS.targets)) || [
+    { title: "Heavy License Exam (CE)", date: "2026-09-30", emoji: "🚛", link: "Future" },
+    { title: "German A2 Certification", date: "2027-06-30", emoji: "🇩🇪", link: "Future" },
+    { title: "University Application", date: "2030-05-15", emoji: "🎓", link: "Future" }
+];
+localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
 
 const container = dv.container.createDiv({ cls: "ocean-dashboard animate-in" });
 
@@ -287,6 +295,152 @@ setBtn.onclick = () => {
 };
 
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// 1.5 PANORAMIC TARGETS RUNWAY (Always-Visible Mission Bar)
+// ══════════════════════════════════════════════
+const runwayCard = container.createDiv({ cls: "ocean-card ocean-runway-card" });
+const runwayHdr = runwayCard.createDiv({ cls: "ocean-runway-hdr" });
+runwayHdr.createDiv({ cls: "ocean-card-title", text: "🎯 ACTIVE TARGETS & COUNTDOWNS" });
+
+const addTargetBtn = runwayHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD TARGET" });
+const runwayTrack = runwayCard.createDiv({ cls: "ocean-targets-track" });
+
+function renderTargets() {
+    runwayTrack.innerHTML = "";
+    if (savedTargets.length === 0) {
+        runwayTrack.createDiv({ text: "No active targets. Click + ADD TARGET to set a milestone!", attr: { style: "font-size:0.85rem; color:var(--ocean-muted); padding:4px;" } });
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    savedTargets.forEach((tg, idx) => {
+        const capsule = runwayTrack.createDiv({ cls: "ocean-target-capsule" });
+
+        capsule.createDiv({ cls: "ocean-target-emoji", text: tg.emoji || "🎯" });
+
+        const info = capsule.createDiv({ cls: "ocean-target-info" });
+        info.createDiv({ cls: "ocean-target-title", text: tg.title });
+        
+        let dateFormatted = tg.date;
+        let daysLeft = 0;
+        let badgeCls = "ocean-target-badge";
+        let badgeText = "";
+
+        if (tg.date) {
+            const targetDate = new Date(tg.date);
+            targetDate.setHours(0, 0, 0, 0);
+            const diffTime = targetDate - today;
+            daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            dateFormatted = `${targetDate.getDate()} ${months[targetDate.getMonth()]} ${targetDate.getFullYear()}`;
+
+            if (daysLeft > 1) {
+                badgeText = `${daysLeft}d left`;
+                badgeCls += " upcoming";
+            } else if (daysLeft === 1) {
+                badgeText = "Tomorrow";
+                badgeCls += " soon";
+            } else if (daysLeft === 0) {
+                badgeText = "Today 🎉";
+                badgeCls += " today";
+            } else {
+                badgeText = `${Math.abs(daysLeft)}d overdue`;
+                badgeCls += " overdue";
+            }
+        }
+
+        const metaRow = info.createDiv({ cls: "ocean-target-meta" });
+        metaRow.createSpan({ cls: "ocean-target-date", text: dateFormatted });
+
+        if (badgeText) {
+            metaRow.createSpan({ cls: badgeCls, text: badgeText });
+        }
+
+        const actions = capsule.createDiv({ cls: "ocean-target-actions" });
+        const editBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✎", attr: { title: "Edit Target" } });
+        const delBtn = actions.createDiv({ cls: "ocean-col-card-btn", text: "✕", attr: { title: "Delete Target" } });
+
+        editBtn.onclick = (e) => { e.stopPropagation(); showTargetModal(tg, idx); };
+        delBtn.onclick = (e) => {
+            e.stopPropagation();
+            savedTargets.splice(idx, 1);
+            localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+            renderTargets();
+            new Notice(`🗑️ Removed target: ${tg.title}`);
+        };
+
+        capsule.onclick = () => {
+            if (tg.link) app.workspace.openLinkText(tg.link, "", false);
+        };
+    });
+}
+
+function showTargetModal(targetToEdit = null, idx = null) {
+    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+    const modal = overlay.createDiv({ cls: "ocean-modal" });
+    modal.createDiv({ cls: "ocean-modal-title", text: targetToEdit ? "✎ Edit Target Milestone" : "🎯 Add Target Milestone" });
+
+    modal.createDiv({ text: "Milestone / Target Title:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+    const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? targetToEdit.title : "", placeholder: "E.g.: Heavy Commercial License Exam" } });
+
+    modal.createDiv({ text: "Target Date:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+    const dateInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { type: "date", value: targetToEdit ? (targetToEdit.date || "") : "" } });
+
+    modal.createDiv({ text: "Emoji Icon:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+    const emojiInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? (targetToEdit.emoji || "🎯") : "🎯", placeholder: "🎯" } });
+
+    modal.createDiv({ text: "Target Note Link (Optional):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
+    const linkInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? (targetToEdit.link || "") : "", placeholder: "E.g.: Future or Roadmaps/License" } });
+
+    const btnRow = modal.createDiv({ cls: "ocean-modal-btns" });
+    
+    if (targetToEdit !== null && idx !== null) {
+        const delModalBtn = btnRow.createEl("button", {
+            cls: "ocean-btn",
+            text: "🗑️ Delete",
+            attr: { style: "margin-right:auto; color:var(--ocean-rose);" }
+        });
+        delModalBtn.onclick = () => {
+            savedTargets.splice(idx, 1);
+            localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+            renderTargets();
+            new Notice(`🗑️ Deleted target ${targetToEdit.title}`);
+            overlay.remove();
+        };
+    }
+
+    const cancel = btnRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+    const save = btnRow.createEl("button", { cls: "ocean-btn primary", text: "Save Target" });
+
+    cancel.onclick = () => overlay.remove();
+    save.onclick = () => {
+        const title = titleInp.value.trim();
+        if (!title) return;
+        const newTarget = {
+            title: title,
+            date: dateInp.value,
+            emoji: emojiInp.value.trim() || "🎯",
+            link: linkInp.value.trim()
+        };
+
+        if (targetToEdit !== null && idx !== null) {
+            savedTargets[idx] = newTarget;
+        } else {
+            savedTargets.push(newTarget);
+        }
+        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+        renderTargets();
+        overlay.remove();
+    };
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+}
+
+addTargetBtn.onclick = () => showTargetModal();
+renderTargets();
+
 // ══════════════════════════════════════════════
 // 2. MAIN 3-COLUMN BENTO GRID
 // ══════════════════════════════════════════════

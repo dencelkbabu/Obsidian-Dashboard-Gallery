@@ -313,6 +313,54 @@ body.theme-light {
 }
 
 /* ──────────────────────────────────────────────
+   1.5 PANORAMIC TARGETS RUNWAY
+   ────────────────────────────────────────────── */
+.ocean-runway-card {
+    margin-bottom: var(--ocean-gap);
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ocean-runway-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ocean-targets-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.ocean-target-capsule {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.ocean-target-capsule:hover {
+    border-color: var(--ocean-accent);
+    background: var(--ocean-hover-tint);
+}
+
+.ocean-target-capsule:hover .ocean-target-actions {
+    opacity: 1;
+}
+
+/* ──────────────────────────────────────────────
    2. MAIN 3-COLUMN BENTO GRID LAYOUT (20% / 60% / 20%)
    ────────────────────────────────────────────── */
 .ocean-grid {
@@ -408,6 +456,53 @@ body.theme-light {
 }
 
 /* ──────────────────────────────────────────────
+   3.5 CENTER COMMAND DECK TABS
+   ────────────────────────────────────────────── */
+.ocean-deck-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--ocean-overlay);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--ocean-border);
+}
+
+.ocean-deck-tab {
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+}
+
+.ocean-deck-tab:hover {
+    color: var(--ocean-text);
+    background: rgba(var(--ocean-accent-rgb), 0.08);
+}
+
+.ocean-deck-tab.active {
+    color: var(--ocean-accent);
+    background: rgba(var(--ocean-accent-rgb), 0.14);
+    border-color: rgba(var(--ocean-accent-rgb), 0.28);
+    box-shadow: 0 0 10px rgba(var(--ocean-accent-rgb), 0.12);
+}
+
+.ocean-deck-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ──────────────────────────────────────────────
    4. SYSTEM ONE-TAP BUTTONS
    ────────────────────────────────────────────── */
 .ocean-act-grid {
@@ -484,6 +579,118 @@ body.theme-light {
 .ocean-jump-icon {
     color: var(--ocean-muted);
     flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────
+   5.5 TARGETS & COUNTDOWNS
+   ────────────────────────────────────────────── */
+.ocean-targets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.ocean-target-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+}
+
+.ocean-target-item:hover {
+    border-color: var(--ocean-accent);
+    background: var(--ocean-hover-tint);
+}
+
+.ocean-target-emoji {
+    font-size: 1.35rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.ocean-target-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ocean-target-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ocean-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ocean-target-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ocean-target-date {
+    font-size: 0.74rem;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-muted);
+}
+
+.ocean-target-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+}
+
+.ocean-target-badge.upcoming {
+    background: rgba(var(--ocean-accent-rgb), 0.12);
+    color: var(--ocean-accent);
+    border: 1px solid rgba(var(--ocean-accent-rgb), 0.3);
+}
+
+.ocean-target-badge.soon {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.ocean-target-badge.today {
+    background: rgba(52, 211, 153, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.5);
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+}
+
+.ocean-target-badge.overdue {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--ocean-rose);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.ocean-target-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+}
+
+.ocean-target-item:hover .ocean-target-actions {
+    opacity: 1;
 }
 
 /* ──────────────────────────────────────────────
