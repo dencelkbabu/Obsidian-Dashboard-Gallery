@@ -320,12 +320,14 @@ body.theme-light {
     grid-template-columns: 1fr 3fr 1fr;
     gap: var(--ocean-gap);
     margin-bottom: var(--ocean-gap);
-    align-items: start;
+    align-items: stretch;
+    height: 550px;
 }
 
 @media (max-width: 1180px) {
     .ocean-grid {
         grid-template-columns: 1fr 1fr;
+        height: auto;
     }
 
     .ocean-col-center {
@@ -337,6 +339,7 @@ body.theme-light {
 @media (max-width: 768px) {
     .ocean-grid {
         grid-template-columns: 1fr;
+        height: auto;
     }
 
     .ocean-col-center {
@@ -352,6 +355,8 @@ body.theme-light {
     flex-direction: column;
     gap: var(--ocean-gap);
     min-width: 0;
+    min-height: 0;
+    height: 100%;
 }
 
 /* ──────────────────────────────────────────────
@@ -364,10 +369,22 @@ body.theme-light {
     padding: var(--ocean-pad);
     position: relative;
     transition: border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .ocean-card:hover {
     border-color: var(--ocean-border-hover);
+}
+
+/* Independent stretching outer boxes */
+.ocean-col-left>.ocean-tag-card,
+.ocean-col-center>.ocean-recent-card,
+.ocean-col-right>.ocean-card:first-child {
+    flex: 1;
+    min-height: 0;
 }
 
 .ocean-card-hdr {
@@ -483,7 +500,8 @@ body.theme-light {
     flex-wrap: wrap;
     align-content: flex-start;
     gap: 6px;
-    max-height: 200px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding-right: 4px;
 }
@@ -557,6 +575,10 @@ body.theme-light {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .ocean-col-card {
@@ -662,10 +684,18 @@ body.theme-light {
 /* ──────────────────────────────────────────────
    8. RECENTLY EDITED NOTES
    ────────────────────────────────────────────── */
+.ocean-recent-card .ocean-card-hdr {
+    padding-right: 16px;
+}
+
 .ocean-notes-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .ocean-search-input {

@@ -85,7 +85,7 @@ const Utils = {
 
         return [...pinned, ...unpinned].slice(0, limit);
     },
-    getNotes: (limit = 6, query = "") => {
+    getNotes: (limit = 50, query = "") => {
         let pages = dv.pages();
         if (activeTag !== "__all__") {
             pages = pages.where(p => p.file.tags && p.file.tags.includes(activeTag));
@@ -411,7 +411,7 @@ function renderRecentNotes() {
         ? (noteSearchQuery ? `📄 SEARCH: "${noteSearchQuery}"` : "📄 RECENTLY EDITED") 
         : (noteSearchQuery ? `📄 SEARCH IN ${activeTag.toUpperCase()}: "${noteSearchQuery}"` : `📄 NOTES IN ${activeTag.toUpperCase()}`);
     
-    const notes = Utils.getNotes(noteSearchQuery ? 15 : 6, noteSearchQuery);
+    const notes = Utils.getNotes(50, noteSearchQuery);
     if (notes.length === 0) {
         notesList.createDiv({ text: "No matching notes found.", attr: { style: "padding:16px; font-size:0.85rem; color:var(--ocean-muted); text-align:center;" } });
         return;
