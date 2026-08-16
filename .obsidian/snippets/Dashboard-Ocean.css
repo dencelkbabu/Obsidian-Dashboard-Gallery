@@ -150,6 +150,7 @@ body.theme-light {
     align-items: center;
     justify-content: center;
     user-select: none;
+    max-width: 650px;
 }
 
 .ocean-clock-time {
@@ -169,7 +170,45 @@ body.theme-light {
     letter-spacing: 1.5px;
     color: var(--ocean-muted);
     font-family: var(--ocean-font-mono);
-    margin-top: 6px;
+    margin-top: 5px;
+}
+
+.ocean-bible-verse-wrap {
+    margin-top: 8px;
+    padding: 2px 4px;
+    background: transparent !important;
+    border: none !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.ocean-bible-verse-wrap:hover {
+    opacity: 0.85;
+}
+
+.ocean-bible-quote {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ocean-text);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.ocean-bible-ref {
+    font-size: 0.90rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-accent);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Banner Settings Gear (Top-right corner of header) */
@@ -215,6 +254,7 @@ body.theme-light {
         text-align: center;
         gap: 18px;
     }
+
     .ocean-hero-text,
     .ocean-hero-stats {
         justify-self: center;
@@ -621,12 +661,12 @@ body.theme-light {
     flex: 0 0 170px !important;
     box-sizing: border-box !important;
     will-change: width, min-width, border-color, box-shadow;
-    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-                min-width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-                flex-basis 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-                border-color 0.25s ease, 
-                background 0.25s ease, 
-                box-shadow 0.25s ease !important;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        min-width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        flex-basis 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease !important;
 }
 
 .ocean-search-input:hover {

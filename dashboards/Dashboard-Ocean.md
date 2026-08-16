@@ -172,6 +172,76 @@ const clockTimer = setInterval(() => {
     updateClock();
 }, 1000);
 
+// Daily Bible Verse (Dynamic Fetching with RSV Translation)
+const todayDateStr = new Date().toISOString().slice(0, 10);
+const cachedVerseRaw = localStorage.getItem("ocean-daily-verse");
+let currentVerse = null;
+
+if (cachedVerseRaw) {
+    try {
+        const parsed = JSON.parse(cachedVerseRaw);
+        if (parsed && parsed.date === todayDateStr && parsed.text && parsed.ref) {
+            currentVerse = parsed;
+        }
+    } catch (e) {}
+}
+
+const verseWrap = clockCont.createDiv({
+    cls: "ocean-bible-verse-wrap",
+    attr: { title: "Daily Verse • Click to copy • Right-click to refresh" }
+});
+const verseQuoteEl = verseWrap.createSpan({ cls: "ocean-bible-quote", text: currentVerse ? `“${currentVerse.text}”` : "Loading daily scripture..." });
+const verseRefEl = verseWrap.createSpan({ cls: "ocean-bible-ref", text: currentVerse ? `— ${currentVerse.ref}` : "" });
+
+async function loadVerse(forceRefresh = false) {
+    if (!forceRefresh && currentVerse) return;
+
+    try {
+        // Fetch dynamic verse from Bible API (RSV translation)
+        const res = await requestUrl({ url: "https://bible-api.com/?random=verse&translation=rsv" });
+        if (res && res.json && res.json.text && res.json.reference) {
+            const cleanText = res.json.text.trim().replace(/\s+/g, " ");
+            const refStr = res.json.reference;
+            currentVerse = { date: todayDateStr, text: cleanText, ref: refStr };
+            localStorage.setItem("ocean-daily-verse", JSON.stringify(currentVerse));
+            
+            verseQuoteEl.textContent = `“${cleanText}”`;
+            verseRefEl.textContent = `— ${refStr}`;
+            return;
+        }
+    } catch (err) {
+        // Graceful offline fallback
+    }
+
+    if (!currentVerse) {
+        currentVerse = {
+            date: todayDateStr,
+            text: "Trust in the Lord with all your heart, and do not rely on your own insight.",
+            ref: "Proverbs 3:5"
+        };
+        verseQuoteEl.textContent = `“${currentVerse.text}”`;
+        verseRefEl.textContent = `— ${currentVerse.ref}`;
+    }
+}
+
+loadVerse();
+
+verseWrap.onclick = () => {
+    if (currentVerse) {
+        navigator.clipboard.writeText(`${currentVerse.ref} - "${currentVerse.text}"`);
+        new Notice(`📖 Copied: ${currentVerse.ref}`);
+    }
+};
+
+verseWrap.oncontextmenu = (e) => {
+    e.preventDefault();
+    verseQuoteEl.textContent = "Fetching new scripture...";
+    verseRefEl.textContent = "";
+    loadVerse(true).then(() => {
+        new Notice("✨ Loaded new daily verse");
+    });
+};
+
 // Header Stats Cubes
 const statsCont = header.createDiv({ cls: "ocean-hero-stats" });
 const allTasks = dv.pages().file.tasks;
