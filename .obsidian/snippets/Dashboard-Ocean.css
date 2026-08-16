@@ -1,0 +1,653 @@
+/* ==========================================================================
+   DASHBOARD OCEAN (Zen Minimalism + Atlas Widgets + Komorebi Actions)
+   Palette: Deep Ocean & Crisp Borders (Zero Drop-Shadows)
+   Designed for Obsidian PKM (Native Obsidian Fonts, Zero External Requests)
+   ========================================================================== */
+
+:root {
+    --ocean-bg: var(--background-primary);
+    --ocean-surface: var(--background-secondary);
+    --ocean-overlay: var(--background-secondary-alt);
+    --ocean-border: rgba(255, 255, 255, 0.09);
+    --ocean-border-hover: rgba(56, 189, 248, 0.45);
+
+    --ocean-accent: #38bdf8;
+    --ocean-accent-rgb: 56, 189, 248;
+    --ocean-indigo: #818cf8;
+    --ocean-cyan: #22d3ee;
+    --ocean-emerald: #34d399;
+    --ocean-amber: #fbbf24;
+    --ocean-rose: #fb7185;
+
+    --ocean-text: var(--text-normal);
+    --ocean-muted: var(--text-muted);
+    --ocean-faint: var(--text-faint);
+
+    --ocean-radius: 12px;
+    --ocean-radius-sm: 8px;
+    --ocean-gap: 18px;
+    --ocean-pad: 20px;
+
+    /* Use Obsidian Default Fonts */
+    --ocean-font-main: var(--font-interface, var(--default-font, inherit));
+    --ocean-font-mono: var(--font-monospace, monospace);
+    --ocean-font-body: var(--font-text, var(--font-interface, inherit));
+}
+
+/* Full Width & Container Reset */
+.dashboard-layout .cm-sizer,
+.dashboard-layout .markdown-preview-sizer,
+.dashboard-ocean .cm-sizer,
+.dashboard-ocean .markdown-preview-sizer {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+.dashboard-layout .metadata-container,
+.dashboard-ocean .metadata-container {
+    display: none !important;
+}
+
+/* Main Dashboard Container */
+.ocean-dashboard {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 12px 16px 60px 16px;
+    font-family: var(--ocean-font-main);
+    color: var(--ocean-text);
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.ocean-dashboard * {
+    box-sizing: border-box;
+}
+
+/* ──────────────────────────────────────────────
+   1. HERO HEADER (Zen Inspired, No Drop Shadow)
+   ────────────────────────────────────────────── */
+.ocean-header {
+    background: var(--ocean-surface);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius);
+    padding: 28px 34px;
+    margin-bottom: var(--ocean-gap);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ocean-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ocean-accent), var(--ocean-indigo), transparent);
+}
+
+.ocean-hero-text h1 {
+    font-size: 2.6rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.6px;
+    margin: 0 0 6px 0 !important;
+    background: linear-gradient(90deg, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: var(--ocean-font-main);
+}
+
+.ocean-hero-sub {
+    font-size: 1.02rem;
+    color: var(--ocean-muted);
+    font-family: var(--ocean-font-body);
+}
+
+.ocean-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ocean-settings-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    background: var(--ocean-overlay);
+    color: var(--ocean-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ocean-settings-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
+.ocean-hero-stats {
+    display: flex;
+    gap: 10px;
+}
+
+.ocean-stat-box {
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    padding: 10px 18px;
+    min-width: 96px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ocean-stat-val {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ocean-accent);
+    font-family: var(--ocean-font-mono);
+    line-height: 1.1;
+}
+
+.ocean-stat-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ocean-muted);
+}
+
+/* ──────────────────────────────────────────────
+   2. MAIN GRID LAYOUT
+   ────────────────────────────────────────────── */
+.ocean-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: var(--ocean-gap);
+    margin-bottom: var(--ocean-gap);
+}
+
+@media (max-width: 960px) {
+    .ocean-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ocean-col-left,
+.ocean-col-center {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ocean-gap);
+}
+
+/* ──────────────────────────────────────────────
+   3. CARDS & SECTIONS (Zero Drop Shadows)
+   ────────────────────────────────────────────── */
+.ocean-card {
+    background: var(--ocean-surface);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius);
+    padding: var(--ocean-pad);
+    position: relative;
+    transition: border-color 0.2s ease;
+}
+
+.ocean-card:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.ocean-card-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.ocean-card-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ocean-accent);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-family: var(--ocean-font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+/* ──────────────────────────────────────────────
+   4. SYSTEM ONE-TAP BUTTONS (Komorebi + Omnisearch)
+   ────────────────────────────────────────────── */
+.ocean-act-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.ocean-act-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 8px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ocean-act-btn:hover {
+    border-color: var(--ocean-accent);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.ocean-act-icon {
+    font-size: 1.35rem;
+    color: var(--ocean-accent);
+}
+
+.ocean-act-lbl {
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ocean-muted);
+    font-family: var(--ocean-font-mono);
+}
+
+/* ──────────────────────────────────────────────
+   5. JUMP BACK IN (Atlas Widget)
+   ────────────────────────────────────────────── */
+.ocean-jump-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ocean-jump-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: var(--ocean-font-body);
+    transition: all 0.15s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ocean-jump-item:hover {
+    border-color: var(--ocean-accent);
+    background: rgba(56, 189, 248, 0.06);
+    color: var(--ocean-accent);
+}
+
+.ocean-jump-icon {
+    color: var(--ocean-muted);
+    flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────
+   6. BROWSE BY TOPIC (Atlas Tags Widget)
+   ────────────────────────────────────────────── */
+.ocean-tag-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 190px;
+    overflow-y: auto;
+}
+
+.ocean-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: 999px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ocean-muted);
+    transition: all 0.15s ease;
+}
+
+.ocean-tag-pill:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
+.ocean-tag-pill.active {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
+.ocean-tag-count {
+    font-size: 0.72rem;
+    opacity: 0.65;
+    font-family: var(--ocean-font-mono);
+}
+
+/* ──────────────────────────────────────────────
+   7. COLLECTION (Komorebi Cards Widget)
+   ────────────────────────────────────────────── */
+.ocean-collection-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.ocean-col-card {
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 115px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ocean-col-card:hover {
+    border-color: var(--ocean-accent);
+    transform: translateY(-2px);
+}
+
+.ocean-col-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ocean-col-card-emoji {
+    font-size: 1.5rem;
+}
+
+.ocean-col-card-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.ocean-col-card:hover .ocean-col-card-actions {
+    opacity: 1;
+}
+
+.ocean-col-card-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--ocean-border);
+    background: var(--ocean-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    cursor: pointer;
+    color: var(--ocean-muted);
+}
+
+.ocean-col-card-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+}
+
+.ocean-col-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ocean-text);
+    margin-bottom: 3px;
+}
+
+.ocean-col-card-sub {
+    font-size: 0.82rem;
+    color: var(--ocean-muted);
+}
+
+.ocean-add-btn {
+    padding: 4px 12px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: var(--ocean-font-mono);
+    border: 1px solid var(--ocean-border);
+    background: var(--ocean-overlay);
+    color: var(--ocean-accent);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ocean-add-btn:hover {
+    border-color: var(--ocean-accent);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* ──────────────────────────────────────────────
+   8. RECENTLY EDITED NOTES (Atlas Widget)
+   ────────────────────────────────────────────── */
+.ocean-notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ocean-note-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ocean-note-row:hover {
+    border-color: var(--ocean-accent);
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.ocean-note-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ocean-note-name {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--ocean-text);
+}
+
+.ocean-note-folder {
+    font-size: 0.78rem;
+    color: var(--ocean-muted);
+    font-family: var(--ocean-font-mono);
+}
+
+.ocean-note-time {
+    font-size: 0.78rem;
+    color: var(--ocean-faint);
+    font-family: var(--ocean-font-mono);
+}
+
+/* ──────────────────────────────────────────────
+   9. BIO-METRICS (WEEKLY) (Clean, No Extra Lines)
+   ────────────────────────────────────────────── */
+.ocean-habits-card {
+    margin-top: var(--ocean-gap);
+}
+
+.ocean-habits-card .ocean-card-hdr {
+    border-bottom: none !important;
+    margin-bottom: 12px;
+}
+
+.ocean-consistency-bar-wrap {
+    width: 100%;
+    height: 6px;
+    background: var(--ocean-overlay);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: none !important;
+}
+
+.ocean-consistency-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--ocean-accent), var(--ocean-emerald));
+    transition: width 0.4s ease;
+}
+
+.ocean-habit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 14px;
+}
+
+.ocean-habit-row {
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s ease;
+}
+
+.ocean-habit-row:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ocean-habit-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-text);
+    text-transform: uppercase;
+}
+
+.ocean-dot-grid {
+    display: flex;
+    gap: 6px;
+}
+
+.ocean-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--ocean-border);
+    background: var(--ocean-surface);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ocean-dot:hover {
+    border-color: var(--ocean-accent);
+}
+
+.ocean-dot.active {
+    background: var(--ocean-emerald);
+    border-color: var(--ocean-emerald);
+}
+
+/* ──────────────────────────────────────────────
+   10. MODALS & POPUPS
+   ────────────────────────────────────────────── */
+.ocean-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.ocean-modal {
+    background: var(--ocean-surface);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius);
+    padding: 26px;
+    width: 90%;
+    max-width: 460px;
+}
+
+.ocean-modal-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: var(--ocean-accent);
+}
+
+.ocean-modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    color: var(--ocean-text);
+    font-size: 0.96rem;
+    margin-bottom: 14px;
+    outline: none;
+    font-family: var(--ocean-font-body);
+}
+
+.ocean-modal-input:focus {
+    border-color: var(--ocean-accent);
+}
+
+.ocean-modal-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.ocean-btn {
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--ocean-border);
+    background: var(--ocean-overlay);
+    color: var(--ocean-text);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.88rem;
+}
+
+.ocean-btn.primary {
+    background: var(--ocean-accent);
+    color: #000000;
+    border-color: var(--ocean-accent);
+    font-weight: 700;
+}
