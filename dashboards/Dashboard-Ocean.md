@@ -416,7 +416,12 @@ function showTargetModal(targetToEdit = null, idx = null) {
     const titleInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? targetToEdit.title : "", placeholder: "E.g.: Heavy Commercial License Exam" } });
 
     modal.createDiv({ text: "Target Date:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
-    const dateInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { type: "date", value: targetToEdit ? (targetToEdit.date || "") : "" } });
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const dateInp = modal.createEl("input", {
+        cls: "ocean-modal-input",
+        attr: { type: "date", min: todayStr, value: targetToEdit ? (targetToEdit.date || "") : "" }
+    });
 
     modal.createDiv({ text: "Emoji Icon:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px;" } });
     const emojiInp = modal.createEl("input", { cls: "ocean-modal-input", attr: { value: targetToEdit ? (targetToEdit.emoji || "🎯") : "🎯", placeholder: "🎯" } });
@@ -447,7 +452,14 @@ function showTargetModal(targetToEdit = null, idx = null) {
     cancel.onclick = () => overlay.remove();
     save.onclick = () => {
         const title = titleInp.value.trim();
-        if (!title) return;
+        if (!title) {
+            new Notice("⚠️ Please enter a milestone title");
+            return;
+        }
+        if (dateInp.value && dateInp.value < todayStr) {
+            new Notice("⚠️ Target date cannot be in the past!");
+            return;
+        }
         const newTarget = {
             title: title,
             date: dateInp.value,
