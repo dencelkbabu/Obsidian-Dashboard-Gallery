@@ -747,35 +747,94 @@ function openMasterSettingsModal() {
         new Notice("💾 Copied complete Dashboard configuration to clipboard!");
     };
 
-    // Import Settings JSON
+    // Import Settings JSON with in-app Modal (Fixes Electron prompt() not supported error)
     const importBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "📥 Import Config JSON" });
     importBtn.onclick = () => {
-        const jsonInput = prompt("Paste your exported Dashboard Ocean JSON configuration here:");
-        if (!jsonInput) return;
-        try {
-            const parsed = JSON.parse(jsonInput);
-            if (parsed.theme) localStorage.setItem(LS.theme, parsed.theme);
-            if (parsed.themeMode) localStorage.setItem(LS.themeMode, parsed.themeMode);
-            if (parsed.settings) localStorage.setItem(LS.settings, JSON.stringify(parsed.settings));
-            if (parsed.title) localStorage.setItem(LS.title, parsed.title);
-            if (parsed.subtitle !== undefined) localStorage.setItem(LS.subtitle, parsed.subtitle);
-            if (parsed.targets) localStorage.setItem(LS.targets, JSON.stringify(parsed.targets));
-            if (parsed.cards) localStorage.setItem(LS.cards, JSON.stringify(parsed.cards));
-            if (parsed.habits) localStorage.setItem(LS.habits, JSON.stringify(parsed.habits));
-            if (parsed.pinnedNotes) localStorage.setItem(LS.pinnedNotes, JSON.stringify(parsed.pinnedNotes));
-            if (parsed.pinnedTags) localStorage.setItem(LS.pinnedTags, JSON.stringify(parsed.pinnedTags));
-            if (parsed.scratchpad !== undefined) localStorage.setItem(LS.scratchpad, parsed.scratchpad);
-            new Notice("✨ Dashboard configuration imported! Please press Ctrl + R to reload the dashboard.", 5000);
-            overlay.remove();
-            setTimeout(() => {
-                try {
-                    const activeView = app.workspace.getActiveViewOfType(tp => true);
-                    if (activeView && activeView.leaf) activeView.leaf.rebuildView();
-                } catch(e) {}
-            }, 300);
-        } catch(e) {
-            new Notice(`⚠️ Invalid JSON: ${e.message}`);
+        const importOverlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+        importOverlay.setAttribute("data-theme", currentTheme);
+        if (currentThemeMode === "dark" || (currentThemeMode === "auto" && document.body.classList.contains("theme-dark"))) {
+            importOverlay.setAttribute("data-mode", "dark");
         }
+
+        const importModal = importOverlay.createDiv({ cls: "ocean-modal", attr: { style: "max-width: 580px; width: 92%;" } });
+        const importHdr = importModal.createDiv({ cls: "ocean-modal-hdr" });
+        importHdr.createDiv({ cls: "ocean-modal-title", text: "📥 Import Dashboard JSON" });
+        const closeImportBtn = importHdr.createDiv({ cls: "ocean-modal-close", text: "✕" });
+        closeImportBtn.onclick = () => importOverlay.remove();
+
+        const importBody = importModal.createDiv({ cls: "ocean-modal-body", attr: { style: "display:flex; flex-direction:column; gap:12px;" } });
+        importBody.createDiv({
+            text: "Paste your exported Dashboard Ocean JSON configuration below, or click 'Paste from Clipboard':",
+            attr: { style: "font-size:0.85rem; color:var(--ocean-muted); line-height:1.4;" }
+        });
+
+        const jsonArea = importBody.createEl("textarea", {
+            cls: "ocean-modal-input",
+            attr: {
+                placeholder: "{\n  \"version\": \"ocean-v2\",\n  \"targets\": [...]\n}",
+                style: "height: 200px; font-family: var(--ocean-font-mono); font-size: 0.8rem; line-height: 1.4; resize: vertical; width: 100%; white-space: pre;"
+            }
+        });
+
+        const importActions = importModal.createDiv({ cls: "ocean-modal-actions", attr: { style: "display:flex; justify-content:space-between; align-items:center; margin-top:16px;" } });
+        
+        const pasteBtn = importActions.createEl("button", {
+            cls: "ocean-btn",
+            text: "📋 Paste from Clipboard",
+            attr: { style: "font-size:0.8rem;" }
+        });
+
+        pasteBtn.onclick = async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) jsonArea.value = text;
+            } catch(e) {
+                new Notice("⚠️ Could not read clipboard automatically. Please press Ctrl+V inside the box.");
+            }
+        };
+
+        const rightBtns = importActions.createDiv({ attr: { style: "display:flex; gap:8px;" } });
+        const cancelBtn = rightBtns.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+        cancelBtn.onclick = () => importOverlay.remove();
+
+        const applyImportBtn = rightBtns.createEl("button", { cls: "ocean-btn primary", text: "✅ Apply & Import" });
+        applyImportBtn.onclick = () => {
+            const jsonInput = jsonArea.value.trim();
+            if (!jsonInput) {
+                new Notice("⚠️ Please paste valid JSON before importing.");
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(jsonInput);
+                if (parsed.theme) localStorage.setItem(LS.theme, parsed.theme);
+                if (parsed.themeMode) localStorage.setItem(LS.themeMode, parsed.themeMode);
+                if (parsed.settings) localStorage.setItem(LS.settings, JSON.stringify(parsed.settings));
+                if (parsed.title) localStorage.setItem(LS.title, parsed.title);
+                if (parsed.subtitle !== undefined) localStorage.setItem(LS.subtitle, parsed.subtitle);
+                if (parsed.targets) localStorage.setItem(LS.targets, JSON.stringify(parsed.targets));
+                if (parsed.cards) localStorage.setItem(LS.cards, JSON.stringify(parsed.cards));
+                if (parsed.habits) localStorage.setItem(LS.habits, JSON.stringify(parsed.habits));
+                if (parsed.pinnedNotes) localStorage.setItem(LS.pinnedNotes, JSON.stringify(parsed.pinnedNotes));
+                if (parsed.pinnedTags) localStorage.setItem(LS.pinnedTags, JSON.stringify(parsed.pinnedTags));
+                if (parsed.scratchpad !== undefined) localStorage.setItem(LS.scratchpad, parsed.scratchpad);
+
+                new Notice("✨ Dashboard configuration successfully imported! Reloading...", 4000);
+                importOverlay.remove();
+                overlay.remove();
+
+                setTimeout(() => {
+                    try {
+                        const activeView = app.workspace.getActiveViewOfType(tp => true);
+                        if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+                    } catch(e) {
+                        location.reload();
+                    }
+                }, 300);
+            } catch(e) {
+                new Notice(`⚠️ Invalid JSON: ${e.message}`, 6000);
+            }
+        };
     };
 
     // 1. Clear Everything & Start from Scratch (Clean Slate)
