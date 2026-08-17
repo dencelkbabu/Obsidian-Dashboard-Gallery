@@ -3,9 +3,8 @@
     Pulls edits from Obsidian Vault -> Git Dev Repo.
 
 .DESCRIPTION
-    Copies modified CSS snippets and dashboards from D:\Obsidian Vault
+    Copies modified CSS snippets and dashboards (Dashboard-*.css / Dashboard-*.md) from D:\Obsidian Vault
     into this git repository for review, staging, and git commit.
-    Maps dashboards\Dashboard.md -> dashboards\Dashboard-Komorebi.md.
 #>
 
 param (
@@ -31,14 +30,6 @@ if (Test-Path $VaultSnippets) {
 
 # 2. Pull Dashboard Notes (Vault -> Repo)
 if (Test-Path $VaultDashboards) {
-    # Mapped: Dashboard.md -> Dashboard-Komorebi.md
-    $mainDashboard = Join-Path $VaultDashboards "Dashboard.md"
-    if (Test-Path $mainDashboard) {
-        Copy-Item -Path $mainDashboard -Destination (Join-Path $RepoDashboards "Dashboard-Komorebi.md") -Force
-        Write-Host "  ✔ Mapped: dashboards\Dashboard.md -> dashboards\Dashboard-Komorebi.md" -ForegroundColor Green
-    }
-
-    # Other dashboards
     Get-ChildItem -Path "$VaultDashboards\Dashboard-*.md" | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $RepoDashboards -Force
         Write-Host "  ✔ Pulled Dashboard: $($_.Name)" -ForegroundColor Green

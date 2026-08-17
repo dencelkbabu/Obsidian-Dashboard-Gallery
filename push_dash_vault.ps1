@@ -3,9 +3,8 @@
     Deploys changes from Git repository -> Obsidian Vault.
 
 .DESCRIPTION
-    Copies modified CSS snippets and dashboard markdown notes from this repo
-    into your Obsidian Vault (D:\Obsidian Vault).
-    Maps dashboards\Dashboard-Komorebi.md -> dashboards\Dashboard.md.
+    Copies modified CSS snippets and dashboard markdown notes (Dashboard-*.css / Dashboard-*.md)
+    from this repo into your Obsidian Vault (D:\Obsidian Vault).
 #>
 
 param (
@@ -34,14 +33,6 @@ if (Test-Path $RepoSnippets) {
 
 # 2. Sync Dashboard Markdown Notes (Repo -> Vault)
 if (Test-Path $RepoDashboards) {
-    # Mapped: Dashboard-Komorebi.md -> Dashboard.md
-    $komoRepo = Join-Path $RepoDashboards "Dashboard-Komorebi.md"
-    if (Test-Path $komoRepo) {
-        Copy-Item -Path $komoRepo -Destination (Join-Path $VaultDashboards "Dashboard.md") -Force
-        Write-Host "  ✔ Mapped: dashboards\Dashboard-Komorebi.md -> dashboards\Dashboard.md" -ForegroundColor Green
-    }
-
-    # Other dashboards
     Get-ChildItem -Path "$RepoDashboards\Dashboard-*.md" | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $VaultDashboards -Force
         Write-Host "  ✔ Deployed Dashboard: $($_.Name)" -ForegroundColor Green
