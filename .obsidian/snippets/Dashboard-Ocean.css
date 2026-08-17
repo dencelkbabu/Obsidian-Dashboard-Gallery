@@ -23,13 +23,13 @@
 body.theme-dark .ocean-dashboard[data-theme="ocean"]:not([data-mode="light"]),
 body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
 :root {
-    --ocean-bg: var(--background-primary);
-    --ocean-surface: rgba(255, 255, 255, 0.025);
-    --ocean-overlay: rgba(255, 255, 255, 0.04);
-    --ocean-border: rgba(255, 255, 255, 0.08);
-    --ocean-border-hover: rgba(56, 189, 248, 0.4);
+    --ocean-bg: #0a0f1d;
+    --ocean-surface: #0f172a;
+    --ocean-overlay: #1e293b;
+    --ocean-border: rgba(56, 189, 248, 0.18);
+    --ocean-border-hover: #38bdf8;
 
-    --ocean-title-gradient: linear-gradient(90deg, #f8fafc, #94a3b8);
+    --ocean-title-gradient: linear-gradient(90deg, #ffffff, #93c5fd);
     --ocean-accent: #38bdf8;
     --ocean-accent-rgb: 56, 189, 248;
     --ocean-indigo: #818cf8;
@@ -38,11 +38,11 @@ body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
     --ocean-amber: #fbbf24;
     --ocean-rose: #fb7185;
 
-    --ocean-text: var(--text-normal);
-    --ocean-muted: var(--text-muted);
-    --ocean-faint: var(--text-faint);
+    --ocean-text: #f8fafc;
+    --ocean-muted: #94a3b8;
+    --ocean-faint: #64748b;
     --ocean-btn-text: #0b1120;
-    --ocean-hover-tint: rgba(56, 189, 248, 0.09);
+    --ocean-hover-tint: rgba(56, 189, 248, 0.1);
     --ocean-radius: 12px;
     --ocean-radius-sm: 8px;
 }
@@ -52,13 +52,13 @@ body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
 .ocean-dashboard:not([data-theme])[data-mode="light"],
 body.theme-light .ocean-dashboard[data-theme="ocean"]:not([data-mode="dark"]),
 body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]) {
-    --ocean-bg: var(--background-primary);
-    --ocean-surface: rgba(0, 0, 0, 0.02);
-    --ocean-overlay: rgba(0, 0, 0, 0.035);
-    --ocean-border: rgba(0, 0, 0, 0.08);
-    --ocean-border-hover: rgba(2, 132, 199, 0.45);
+    --ocean-bg: #f0f9ff;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f8fafc;
+    --ocean-border: #bae6fd;
+    --ocean-border-hover: #0284c7;
 
-    --ocean-title-gradient: linear-gradient(90deg, #0f172a, #334155);
+    --ocean-title-gradient: linear-gradient(90deg, #0369a1, #0284c7);
     --ocean-accent: #0284c7;
     --ocean-accent-rgb: 2, 132, 199;
     --ocean-indigo: #4f46e5;
@@ -67,11 +67,11 @@ body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]) {
     --ocean-amber: #d97706;
     --ocean-rose: #e11d48;
 
-    --ocean-text: var(--text-normal);
-    --ocean-muted: var(--text-muted);
-    --ocean-faint: var(--text-faint);
+    --ocean-text: #0f172a;
+    --ocean-muted: #475569;
+    --ocean-faint: #94a3b8;
     --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(2, 132, 199, 0.06);
+    --ocean-hover-tint: rgba(2, 132, 199, 0.08);
     --ocean-radius: 12px;
     --ocean-radius-sm: 8px;
 }
@@ -82,13 +82,13 @@ body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]) {
 /* Zen Dark */
 .ocean-dashboard[data-theme="zen"][data-mode="dark"],
 body.theme-dark .ocean-dashboard[data-theme="zen"]:not([data-mode="light"]) {
-    --ocean-bg: #121212;
+    --ocean-bg: #121214;
     --ocean-surface: #18181b;
-    --ocean-overlay: #27272a;
-    --ocean-border: rgba(255, 255, 255, 0.09);
-    --ocean-border-hover: rgba(163, 230, 53, 0.45);
+    --ocean-overlay: #232326;
+    --ocean-border: rgba(255, 255, 255, 0.1);
+    --ocean-border-hover: #a3e635;
 
-    --ocean-title-gradient: linear-gradient(90deg, #f4f4f5, #a1a1aa);
+    --ocean-title-gradient: linear-gradient(90deg, #f4f4f5, #d4d4d8);
     --ocean-accent: #a3e635;
     --ocean-accent-rgb: 163, 230, 53;
     --ocean-indigo: #a1a1aa;
@@ -99,9 +99,9 @@ body.theme-dark .ocean-dashboard[data-theme="zen"]:not([data-mode="light"]) {
 
     --ocean-text: #f4f4f5;
     --ocean-muted: #a1a1aa;
-    --ocean-faint: #52525b;
+    --ocean-faint: #71717a;
     --ocean-btn-text: #18181b;
-    --ocean-hover-tint: rgba(163, 230, 53, 0.08);
+    --ocean-hover-tint: rgba(163, 230, 53, 0.1);
     --ocean-radius: 8px;
     --ocean-radius-sm: 6px;
 }
@@ -112,10 +112,10 @@ body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
     --ocean-bg: #fafaf9;
     --ocean-surface: #ffffff;
     --ocean-overlay: #f5f5f4;
-    --ocean-border: rgba(0, 0, 0, 0.08);
-    --ocean-border-hover: rgba(77, 124, 15, 0.45);
+    --ocean-border: #e7e5e4;
+    --ocean-border-hover: #4d7c0f;
 
-    --ocean-title-gradient: linear-gradient(90deg, #1c1917, #57534e);
+    --ocean-title-gradient: linear-gradient(90deg, #1c1917, #44403c);
     --ocean-accent: #4d7c0f;
     --ocean-accent-rgb: 77, 124, 15;
     --ocean-indigo: #78716c;
@@ -125,10 +125,10 @@ body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
     --ocean-rose: #be123c;
 
     --ocean-text: #1c1917;
-    --ocean-muted: #78716c;
+    --ocean-muted: #57534e;
     --ocean-faint: #a8a29e;
     --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(77, 124, 15, 0.06);
+    --ocean-hover-tint: rgba(77, 124, 15, 0.08);
     --ocean-radius: 8px;
     --ocean-radius-sm: 6px;
 }
@@ -166,10 +166,10 @@ body.theme-dark .ocean-dashboard[data-theme="synthwave"]:not([data-mode="light"]
 /* Synthwave Light */
 .ocean-dashboard[data-theme="synthwave"][data-mode="light"],
 body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]) {
-    --ocean-bg: #faf7fc;
+    --ocean-bg: #faf5ff;
     --ocean-surface: #ffffff;
     --ocean-overlay: #f3e8ff;
-    --ocean-border: rgba(192, 132, 252, 0.35);
+    --ocean-border: #e9d5ff;
     --ocean-border-hover: #db2777;
 
     --ocean-title-gradient: linear-gradient(90deg, #be185d, #7e22ce);
@@ -182,7 +182,7 @@ body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]
     --ocean-rose: #e11d48;
 
     --ocean-text: #2e1065;
-    --ocean-muted: #7e22ce;
+    --ocean-muted: #6b21a8;
     --ocean-faint: #c084fc;
     --ocean-btn-text: #ffffff;
     --ocean-hover-tint: rgba(219, 39, 119, 0.06);
@@ -239,7 +239,7 @@ body.theme-light .ocean-dashboard[data-theme="tailwind"]:not([data-mode="dark"])
     --ocean-rose: #e11d48;
 
     --ocean-text: #0f172a;
-    --ocean-muted: #64748b;
+    --ocean-muted: #475569;
     --ocean-faint: #94a3b8;
     --ocean-btn-text: #ffffff;
     --ocean-hover-tint: rgba(79, 70, 229, 0.08);
@@ -281,12 +281,12 @@ body.theme-dark .ocean-dashboard[data-theme="macos"]:not([data-mode="light"]) {
 .ocean-dashboard[data-theme="macos"][data-mode="light"],
 body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]) {
     --ocean-bg: #f5f5f7;
-    --ocean-surface: rgba(255, 255, 255, 0.8);
+    --ocean-surface: rgba(255, 255, 255, 0.88);
     --ocean-overlay: rgba(0, 0, 0, 0.04);
-    --ocean-border: rgba(0, 0, 0, 0.12);
+    --ocean-border: rgba(0, 0, 0, 0.1);
     --ocean-border-hover: rgba(0, 122, 255, 0.5);
 
-    --ocean-title-gradient: linear-gradient(90deg, #1d1d1f, #424245);
+    --ocean-title-gradient: linear-gradient(90deg, #1d1d1f, #3a3a3c);
     --ocean-accent: #007aff;
     --ocean-accent-rgb: 0, 122, 255;
     --ocean-indigo: #5856d6;
@@ -296,7 +296,7 @@ body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]) {
     --ocean-rose: #ff3b30;
 
     --ocean-text: #1d1d1f;
-    --ocean-muted: #86868b;
+    --ocean-muted: #6e6e73;
     --ocean-faint: #aeaeb2;
     --ocean-btn-text: #ffffff;
     --ocean-hover-tint: rgba(0, 122, 255, 0.08);
@@ -338,9 +338,9 @@ body.theme-dark .ocean-dashboard[data-theme="material"]:not([data-mode="light"])
 .ocean-dashboard[data-theme="material"][data-mode="light"],
 body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"]) {
     --ocean-bg: #fef7ff;
-    --ocean-surface: #ffffff;
-    --ocean-overlay: #f3edf7;
-    --ocean-border: #cac4d0;
+    --ocean-surface: #f3edf7;
+    --ocean-overlay: #ffffff;
+    --ocean-border: #e6e0e9;
     --ocean-border-hover: #6750a4;
 
     --ocean-title-gradient: linear-gradient(90deg, #1d1b20, #49454f);
@@ -370,44 +370,43 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
     border-radius: 18px;
     backdrop-filter: blur(28px) saturate(190%);
     -webkit-backdrop-filter: blur(28px) saturate(190%);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--ocean-border);
 }
 
 .ocean-dashboard[data-theme="macos"] .ocean-card {
     border-radius: 18px;
     backdrop-filter: blur(24px) saturate(160%);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--ocean-border);
 }
 
 .ocean-dashboard[data-theme="macos"] .ocean-stat-cube {
     border-radius: 16px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--ocean-border);
 }
 
 .ocean-dashboard[data-theme="macos"] .ocean-target-capsule,
 .ocean-dashboard[data-theme="macos"] .ocean-col-card,
 .ocean-dashboard[data-theme="macos"] .ocean-note-row {
     border-radius: 12px;
+    border: 1px solid var(--ocean-border);
 }
 
 .ocean-dashboard[data-theme="macos"] .ocean-act-grid {
-    background: rgba(0, 0, 0, 0.16);
+    background: var(--ocean-overlay);
     padding: 10px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--ocean-border);
 }
 
 .ocean-dashboard[data-theme="macos"] .ocean-act-btn {
     border-radius: 12px;
+    border: 1px solid var(--ocean-border);
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
@@ -507,23 +506,24 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
 }
 
 .ocean-dashboard[data-theme="zen"] .ocean-stat-cube {
-    background: transparent;
-    border: none;
-    border-left: 2px solid var(--ocean-border);
-    border-radius: 0;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: 6px;
     box-shadow: none;
 }
 
 .ocean-dashboard[data-theme="zen"] .ocean-target-capsule,
-.ocean-dashboard[data-theme="zen"] .ocean-col-card {
-    background: transparent;
+.ocean-dashboard[data-theme="zen"] .ocean-col-card,
+.ocean-dashboard[data-theme="zen"] .ocean-note-row,
+.ocean-dashboard[data-theme="zen"] .ocean-jump-item {
+    background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: 6px;
     box-shadow: none;
 }
 
 .ocean-dashboard[data-theme="zen"] .ocean-tag-pill {
-    background: transparent;
+    background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: 4px;
 }
@@ -533,7 +533,7 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
 }
 
 .ocean-dashboard[data-theme="zen"] .ocean-act-btn {
-    background: transparent;
+    background: var(--ocean-overlay);
     border: 1px solid var(--ocean-border);
     border-radius: 6px;
 }
@@ -717,6 +717,11 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
     color: var(--ocean-text);
     font-family: var(--ocean-font-mono);
     text-shadow: 0 0 20px rgba(var(--ocean-accent-rgb), 0.25);
+}
+
+body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
+.ocean-dashboard[data-mode="light"] .ocean-clock-time {
+    text-shadow: none !important;
 }
 
 .ocean-clock-date {

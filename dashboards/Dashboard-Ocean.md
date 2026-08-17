@@ -387,7 +387,9 @@ setTimeout(() => {
 setBtn.onclick = () => openMasterSettingsModal();
 
 function openMasterSettingsModal() {
-    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
+    const overlay = document.body.createDiv({ cls: "ocean-modal-overlay animate-in" });
+    overlay.setAttribute("data-theme", currentTheme);
+    overlay.setAttribute("data-mode", currentThemeMode);
     const modal = overlay.createDiv({ cls: "ocean-modal ocean-settings-modal" });
 
     let tempTheme = currentTheme;
@@ -481,6 +483,7 @@ function openMasterSettingsModal() {
             tempThemeMode = m.id;
             modeButtons.forEach(b => b.el.classList.toggle("active", b.id === tempThemeMode));
             container.setAttribute("data-mode", tempThemeMode);
+            overlay.setAttribute("data-mode", tempThemeMode);
         };
     });
 
@@ -557,6 +560,7 @@ function openMasterSettingsModal() {
             tempTheme = t.id;
             themeCards.forEach(c => c.el.classList.toggle("active", c.id === tempTheme));
             container.setAttribute("data-theme", tempTheme);
+            overlay.setAttribute("data-theme", tempTheme);
         };
     });
 
