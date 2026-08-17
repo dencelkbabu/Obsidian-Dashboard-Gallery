@@ -2576,6 +2576,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: 16px !important;
     text-align: center !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-hero-text,
 .ocean-dashboard.ocean-narrow .ocean-header-clock,
 .ocean-dashboard.ocean-narrow .ocean-hero-stats {
@@ -2583,6 +2584,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     text-align: center !important;
     width: 100% !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-bible-verse-wrap {
     white-space: normal !important;
     flex-direction: column !important;
@@ -2592,21 +2594,25 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     max-width: 100% !important;
     gap: 4px !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-bible-quote {
     white-space: normal !important;
     word-break: break-word !important;
     text-align: center !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-hero-stats {
     display: flex !important;
     justify-content: center !important;
     gap: 12px !important;
     margin-top: 4px !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-runway-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: var(--ocean-gap) !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-targets-track {
     display: flex !important;
     flex-direction: column !important;
@@ -2617,6 +2623,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     max-height: 200px !important;
     padding: 2px 4px 6px 2px !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-target-capsule,
 .ocean-dashboard.ocean-narrow .ocean-task-capsule {
     display: flex !important;
@@ -2627,23 +2634,28 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     min-height: 56px !important;
     flex-shrink: 0 !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-runway-controls {
     display: none !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-grid {
     grid-template-columns: 1fr 1fr !important;
     height: auto !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-col-center {
     grid-column: span 2 !important;
     order: -1;
     height: auto !important;
     grid-template-columns: 1fr 1fr !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-col-left,
 .ocean-dashboard.ocean-narrow .ocean-col-right {
     height: auto !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-col-left>.ocean-tag-card,
 .ocean-dashboard.ocean-narrow .ocean-col-right>.ocean-card,
 .ocean-dashboard.ocean-narrow .ocean-col-center>.ocean-recent-card,
@@ -2651,11 +2663,13 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     height: auto !important;
     flex: none !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-card {
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-notes-list {
     min-height: 0 !important;
     max-height: 380px !important;
@@ -2663,23 +2677,27 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     overflow-y: auto !important;
     padding-right: 6px !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-scratchpad-textarea {
     height: 260px !important;
     max-height: 380px !important;
     min-height: 180px !important;
     overflow-y: auto !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-tag-wrap {
     min-height: 0 !important;
     max-height: 260px !important;
     overflow-y: auto !important;
     padding-right: 6px !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-jump-list {
     min-height: 0 !important;
     max-height: 240px !important;
     overflow-y: auto !important;
 }
+
 .ocean-dashboard.ocean-narrow .ocean-habit-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 }
