@@ -979,7 +979,16 @@ let tasksTrack = null;
 const enableHorizontalWheel = (el) => {
     if (!el) return;
     el.addEventListener("wheel", (e) => {
-        if (e.deltaY !== 0) {
+        // If the container is in narrow, compact, or mobile downward flow, let native vertical scrolling work
+        if (container.classList.contains("ocean-narrow") || 
+            container.classList.contains("ocean-compact") || 
+            container.classList.contains("ocean-is-mobile") ||
+            container.classList.contains("ocean-phone-view")) {
+            return;
+        }
+
+        // Only redirect horizontal scroll when the track has horizontal overflow
+        if (el.scrollWidth > el.clientWidth && e.deltaY !== 0) {
             e.preventDefault();
             el.scrollLeft += e.deltaY;
         }

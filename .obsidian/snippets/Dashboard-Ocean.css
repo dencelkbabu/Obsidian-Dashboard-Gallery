@@ -693,6 +693,7 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 .ocean-dashboard .ocean-notes-list,
 .ocean-dashboard .ocean-tag-wrap,
 .ocean-dashboard .ocean-jump-list,
+.ocean-dashboard .ocean-targets-track,
 .ocean-dashboard .ocean-target-list,
 .ocean-dashboard .ocean-tasks-list,
 .ocean-dashboard .ocean-scratchpad-textarea,
@@ -705,6 +706,7 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 .ocean-dashboard .ocean-notes-list::-webkit-scrollbar,
 .ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar,
 .ocean-dashboard .ocean-jump-list::-webkit-scrollbar,
+.ocean-dashboard .ocean-targets-track::-webkit-scrollbar,
 .ocean-dashboard .ocean-target-list::-webkit-scrollbar,
 .ocean-dashboard .ocean-tasks-list::-webkit-scrollbar,
 .ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar,
@@ -717,6 +719,7 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 .ocean-dashboard .ocean-notes-list::-webkit-scrollbar-track,
 .ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-track,
 .ocean-dashboard .ocean-jump-list::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-targets-track::-webkit-scrollbar-track,
 .ocean-dashboard .ocean-target-list::-webkit-scrollbar-track,
 .ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-track,
 .ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-track,
@@ -728,6 +731,7 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 .ocean-dashboard .ocean-notes-list::-webkit-scrollbar-thumb,
 .ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-thumb,
 .ocean-dashboard .ocean-jump-list::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-targets-track::-webkit-scrollbar-thumb,
 .ocean-dashboard .ocean-target-list::-webkit-scrollbar-thumb,
 .ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-thumb,
 .ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-thumb,
@@ -740,6 +744,7 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 .ocean-dashboard .ocean-notes-list::-webkit-scrollbar-thumb:hover,
 .ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-thumb:hover,
 .ocean-dashboard .ocean-jump-list::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-targets-track::-webkit-scrollbar-thumb:hover,
 .ocean-dashboard .ocean-target-list::-webkit-scrollbar-thumb:hover,
 .ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-thumb:hover,
 .ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-thumb:hover,
@@ -2484,6 +2489,32 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
         gap: var(--ocean-gap) !important;
     }
 
+    .ocean-targets-track {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        max-height: 200px !important;
+        padding: 2px 4px 6px 2px !important;
+    }
+
+    .ocean-target-capsule,
+    .ocean-task-capsule {
+        display: flex !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        min-height: 56px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .ocean-runway-controls {
+        display: none !important;
+    }
+
     .ocean-grid {
         grid-template-columns: 1fr 1fr !important;
         height: auto !important;
@@ -2575,6 +2606,29 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 .ocean-dashboard.ocean-narrow .ocean-runway-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: var(--ocean-gap) !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-targets-track {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    max-height: 200px !important;
+    padding: 2px 4px 6px 2px !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-target-capsule,
+.ocean-dashboard.ocean-narrow .ocean-task-capsule {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 56px !important;
+    flex-shrink: 0 !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-runway-controls {
+    display: none !important;
 }
 .ocean-dashboard.ocean-narrow .ocean-grid {
     grid-template-columns: 1fr 1fr !important;
@@ -2780,11 +2834,42 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: var(--ocean-gap) !important;
 }
 
+.ocean-compact .ocean-targets-track,
+.ocean-is-mobile .ocean-targets-track,
+.is-mobile .ocean-targets-track,
+.is-phone .ocean-targets-track {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    max-height: 200px !important;
+    padding: 2px 4px 6px 2px !important;
+}
+
 .ocean-compact .ocean-target-capsule,
+.ocean-compact .ocean-task-capsule,
 .ocean-is-mobile .ocean-target-capsule,
+.ocean-is-mobile .ocean-task-capsule,
 .is-mobile .ocean-target-capsule,
-.is-phone .ocean-target-capsule {
+.is-mobile .ocean-task-capsule,
+.is-phone .ocean-target-capsule,
+.is-phone .ocean-task-capsule {
+    display: flex !important;
+    width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 56px !important;
+    flex-shrink: 0 !important;
+}
+
+.ocean-compact .ocean-runway-controls,
+.ocean-is-mobile .ocean-runway-controls,
+.is-mobile .ocean-runway-controls,
+.is-phone .ocean-runway-controls {
+    display: none !important;
 }
 
 /* Bento Grid on Compact / Split */
