@@ -517,7 +517,7 @@ body.theme-dark .ocean-modal-overlay[data-theme="material"]:not([data-mode="ligh
     border-bottom: 1px solid var(--ocean-border);
     border-radius: 0;
     box-shadow: none;
-    padding: 16px 4px 24px 4px;
+    padding: 16px 44px 24px 4px;
 }
 
 .ocean-dashboard[data-theme="zen"] .ocean-header::before {
