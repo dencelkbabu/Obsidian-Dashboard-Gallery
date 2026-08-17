@@ -93,10 +93,11 @@ if (isMobilePlatform) {
 if (typeof ResizeObserver !== "undefined") {
     const ro = new ResizeObserver((entries) => {
         for (const entry of entries) {
-            const w = entry.contentRect.width;
-            container.classList.toggle("ocean-narrow", w < 1120);
-            container.classList.toggle("ocean-compact", w < 800);
-            container.classList.toggle("ocean-phone-view", w < 520);
+            const scale = parseFloat(container.style.getPropertyValue("--ocean-scale")) || 1;
+            const physicalW = entry.contentRect.width * scale;
+            container.classList.toggle("ocean-narrow", physicalW < 1120);
+            container.classList.toggle("ocean-compact", physicalW < 720);
+            container.classList.toggle("ocean-phone-view", physicalW < 480);
         }
     });
     ro.observe(container);
