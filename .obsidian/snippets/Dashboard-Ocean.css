@@ -672,6 +672,8 @@ body.theme-dark .ocean-modal-overlay[data-theme="material"]:not([data-mode="ligh
     box-sizing: border-box;
     font-size: var(--ocean-font-size, 16px);
     zoom: var(--ocean-scale, 1);
+    container-type: inline-size;
+    container-name: ocean-dash;
     transition: background 0.25s ease, color 0.25s ease;
 }
 
@@ -685,6 +687,65 @@ body.theme-light .ocean-dashboard[data-mode="dark"] {
 
 .ocean-dashboard * {
     box-sizing: border-box;
+}
+
+/* Custom Scrollbars for all scrollable dashboard sections */
+.ocean-dashboard .ocean-notes-list,
+.ocean-dashboard .ocean-tag-wrap,
+.ocean-dashboard .ocean-jump-list,
+.ocean-dashboard .ocean-target-list,
+.ocean-dashboard .ocean-tasks-list,
+.ocean-dashboard .ocean-scratchpad-textarea,
+.ocean-dashboard .ocean-habit-matrix,
+.ocean-modal-scroll {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--ocean-border) transparent !important;
+}
+
+.ocean-dashboard .ocean-notes-list::-webkit-scrollbar,
+.ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar,
+.ocean-dashboard .ocean-jump-list::-webkit-scrollbar,
+.ocean-dashboard .ocean-target-list::-webkit-scrollbar,
+.ocean-dashboard .ocean-tasks-list::-webkit-scrollbar,
+.ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar,
+.ocean-dashboard .ocean-habit-matrix::-webkit-scrollbar,
+.ocean-modal-scroll::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
+
+.ocean-dashboard .ocean-notes-list::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-jump-list::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-target-list::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-track,
+.ocean-dashboard .ocean-habit-matrix::-webkit-scrollbar-track,
+.ocean-modal-scroll::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.ocean-dashboard .ocean-notes-list::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-jump-list::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-target-list::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-thumb,
+.ocean-dashboard .ocean-habit-matrix::-webkit-scrollbar-thumb,
+.ocean-modal-scroll::-webkit-scrollbar-thumb {
+    background: var(--ocean-border) !important;
+    border-radius: 4px !important;
+}
+
+.ocean-dashboard .ocean-notes-list::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-tag-wrap::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-jump-list::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-target-list::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-tasks-list::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-scratchpad-textarea::-webkit-scrollbar-thumb:hover,
+.ocean-dashboard .ocean-habit-matrix::-webkit-scrollbar-thumb:hover,
+.ocean-modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--ocean-accent) !important;
 }
 
 /* ──────────────────────────────────────────────
@@ -1681,6 +1742,12 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 /* ──────────────────────────────────────────────
    8. RECENTLY EDITED NOTES
    ────────────────────────────────────────────── */
+.ocean-recent-card {
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+}
+
 .ocean-recent-card .ocean-card-hdr {
     padding-right: 16px;
 }
@@ -1689,10 +1756,11 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding-right: 4px;
+    flex: 1 1 auto;
+    min-height: 280px;
+    max-height: 380px;
+    overflow-y: auto !important;
+    padding-right: 6px;
 }
 
 .ocean-search-input {
@@ -2370,27 +2438,52 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 /* ──────────────────────────────────────────────
-   11. COMPREHENSIVE RESPONSIVE & MOBILE DESIGN
+   11. COMPREHENSIVE RESPONSIVE, SPLIT-PANE & MOBILE DESIGN
    ────────────────────────────────────────────── */
-@media (max-width: 1024px) {
+
+/* Level 1: Moderate Split / Half Screen (Width <= 1120px) */
+@container ocean-dash (max-width: 1120px) {
     .ocean-header {
-        grid-template-columns: 1fr;
-        padding: 20px;
-        gap: 16px;
-        text-align: center;
+        grid-template-columns: 1fr !important;
+        padding: 20px 24px !important;
+        gap: 16px !important;
+        text-align: center !important;
     }
 
     .ocean-hero-text,
     .ocean-header-clock,
     .ocean-hero-stats {
-        justify-self: center;
-        text-align: center;
+        justify-self: center !important;
+        text-align: center !important;
+        width: 100% !important;
     }
 
     .ocean-bible-verse-wrap {
-        white-space: normal;
-        flex-wrap: wrap;
-        text-align: center;
+        white-space: normal !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 4px !important;
+    }
+
+    .ocean-bible-quote {
+        white-space: normal !important;
+        word-break: break-word !important;
+        text-align: center !important;
+    }
+
+    .ocean-hero-stats {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        margin-top: 4px !important;
+    }
+
+    .ocean-runway-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: var(--ocean-gap) !important;
     }
 
     .ocean-grid {
@@ -2402,20 +2495,143 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
         grid-column: span 2 !important;
         order: -1;
         height: auto !important;
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .ocean-col-left,
+    .ocean-col-right {
+        height: auto !important;
+    }
+
+    .ocean-card {
+        height: auto !important;
+        min-height: fit-content !important;
+        max-height: none !important;
+    }
+
+    .ocean-notes-list {
+        min-height: 280px !important;
+        max-height: 380px !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        padding-right: 6px !important;
+    }
+
+    .ocean-scratchpad-textarea {
+        height: 300px !important;
+        max-height: 380px !important;
+        min-height: 220px !important;
+        overflow-y: auto !important;
+    }
+
+    .ocean-tag-wrap {
+        min-height: 160px !important;
+        max-height: 260px !important;
+        overflow-y: auto !important;
+        padding-right: 6px !important;
+    }
+
+    .ocean-jump-list {
+        min-height: 120px !important;
+        max-height: 240px !important;
+        overflow-y: auto !important;
     }
 }
 
-/* Class-based selectors (active on Obsidian Mobile app & phone) */
+.ocean-dashboard.ocean-narrow .ocean-header {
+    grid-template-columns: 1fr !important;
+    padding: 20px 24px !important;
+    gap: 16px !important;
+    text-align: center !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-hero-text,
+.ocean-dashboard.ocean-narrow .ocean-header-clock,
+.ocean-dashboard.ocean-narrow .ocean-hero-stats {
+    justify-self: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-bible-verse-wrap {
+    white-space: normal !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 4px !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-bible-quote {
+    white-space: normal !important;
+    word-break: break-word !important;
+    text-align: center !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-hero-stats {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    margin-top: 4px !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-runway-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--ocean-gap) !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-grid {
+    grid-template-columns: 1fr 1fr !important;
+    height: auto !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-col-center {
+    grid-column: span 2 !important;
+    order: -1;
+    height: auto !important;
+    grid-template-columns: 1fr 1fr !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-col-left,
+.ocean-dashboard.ocean-narrow .ocean-col-right {
+    height: auto !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-card {
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-notes-list {
+    min-height: 280px !important;
+    max-height: 380px !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    padding-right: 6px !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-scratchpad-textarea {
+    height: 300px !important;
+    max-height: 380px !important;
+    min-height: 220px !important;
+    overflow-y: auto !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-tag-wrap {
+    min-height: 160px !important;
+    max-height: 260px !important;
+    overflow-y: auto !important;
+    padding-right: 6px !important;
+}
+.ocean-dashboard.ocean-narrow .ocean-jump-list {
+    min-height: 120px !important;
+    max-height: 240px !important;
+    overflow-y: auto !important;
+}
+
+/* Level 2: Compact Split-Pane & Mobile Layout (Width <= 800px) */
+.ocean-compact,
 .ocean-is-mobile,
 .is-mobile .ocean-dashboard,
 .is-phone .ocean-dashboard {
-    padding: 6px 6px 36px 6px !important;
+    padding: 8px 8px 48px 8px !important;
 }
 
+.ocean-compact .ocean-header,
 .ocean-is-mobile .ocean-header,
 .is-mobile .ocean-header,
 .is-phone .ocean-header {
-    padding: 18px 14px !important;
+    padding: 18px 16px !important;
     gap: 14px !important;
     grid-template-columns: 1fr !important;
     display: flex !important;
@@ -2424,6 +2640,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     text-align: center !important;
 }
 
+.ocean-compact .ocean-hero-text,
 .ocean-is-mobile .ocean-hero-text,
 .is-mobile .ocean-hero-text,
 .is-phone .ocean-hero-text {
@@ -2431,22 +2648,25 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     text-align: center !important;
 }
 
+.ocean-compact .ocean-hero-text h1,
 .ocean-is-mobile .ocean-hero-text h1,
 .is-mobile .ocean-hero-text h1,
 .is-phone .ocean-hero-text h1 {
-    font-size: 1.45rem !important;
-    line-height: 1.25 !important;
+    font-size: 1.6rem !important;
+    line-height: 1.2 !important;
     margin: 0 auto 4px auto !important;
     word-break: normal !important;
 }
 
+.ocean-compact .ocean-hero-sub,
 .ocean-is-mobile .ocean-hero-sub,
 .is-mobile .ocean-hero-sub,
 .is-phone .ocean-hero-sub {
-    font-size: 0.82rem !important;
+    font-size: 0.84rem !important;
     text-align: center !important;
 }
 
+.ocean-compact .ocean-header-clock,
 .ocean-is-mobile .ocean-header-clock,
 .is-mobile .ocean-header-clock,
 .is-phone .ocean-header-clock {
@@ -2454,18 +2674,21 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     text-align: center !important;
 }
 
+.ocean-compact .ocean-clock-time,
 .ocean-is-mobile .ocean-clock-time,
 .is-mobile .ocean-clock-time,
 .is-phone .ocean-clock-time {
-    font-size: 2.1rem !important;
+    font-size: 2.2rem !important;
 }
 
+.ocean-compact .ocean-clock-date,
 .ocean-is-mobile .ocean-clock-date,
 .is-mobile .ocean-clock-date,
 .is-phone .ocean-clock-date {
-    font-size: 0.72rem !important;
+    font-size: 0.74rem !important;
 }
 
+.ocean-compact .ocean-bible-verse-wrap,
 .ocean-is-mobile .ocean-bible-verse-wrap,
 .is-mobile .ocean-bible-verse-wrap,
 .is-phone .ocean-bible-verse-wrap {
@@ -2474,66 +2697,74 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     align-items: center !important;
     text-align: center !important;
     width: 100% !important;
+    max-width: 100% !important;
     gap: 3px !important;
 }
 
+.ocean-compact .ocean-bible-quote,
 .ocean-is-mobile .ocean-bible-quote,
 .is-mobile .ocean-bible-quote,
 .is-phone .ocean-bible-quote {
-    font-size: 0.85rem !important;
+    font-size: 0.88rem !important;
     line-height: 1.35 !important;
     white-space: normal !important;
     word-break: break-word !important;
     text-align: center !important;
 }
 
+.ocean-compact .ocean-bible-ref,
 .ocean-is-mobile .ocean-bible-ref,
 .is-mobile .ocean-bible-ref,
 .is-phone .ocean-bible-ref {
-    font-size: 0.75rem !important;
+    font-size: 0.78rem !important;
     text-align: center !important;
 }
 
+.ocean-compact .ocean-hero-stats,
 .ocean-is-mobile .ocean-hero-stats,
 .is-mobile .ocean-hero-stats,
 .is-phone .ocean-hero-stats {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 12px !important;
     width: 100% !important;
     margin-top: 4px !important;
 }
 
+.ocean-compact .ocean-stat-cube,
 .ocean-is-mobile .ocean-stat-cube,
 .is-mobile .ocean-stat-cube,
 .is-phone .ocean-stat-cube {
-    min-width: 0 !important;
-    width: 100% !important;
-    padding: 10px 8px !important;
+    min-width: 120px !important;
+    padding: 10px 16px !important;
     align-items: center !important;
     text-align: center !important;
-    border-radius: 12px !important;
+    border-radius: var(--ocean-radius-sm) !important;
 }
 
+.ocean-compact .ocean-stat-top-row,
 .ocean-is-mobile .ocean-stat-top-row,
 .is-mobile .ocean-stat-top-row,
 .is-phone .ocean-stat-top-row {
     justify-content: center !important;
 }
 
+.ocean-compact .ocean-stat-val,
 .ocean-is-mobile .ocean-stat-val,
 .is-mobile .ocean-stat-val,
 .is-phone .ocean-stat-val {
     font-size: 1.4rem !important;
 }
 
+.ocean-compact .ocean-stat-lab,
 .ocean-is-mobile .ocean-stat-lab,
 .is-mobile .ocean-stat-lab,
 .is-phone .ocean-stat-lab {
-    font-size: 0.65rem !important;
+    font-size: 0.68rem !important;
 }
 
-/* Runways on Mobile */
+/* Runways on Compact / Split */
+.ocean-compact .ocean-runway-grid,
 .ocean-is-mobile .ocean-runway-grid,
 .is-mobile .ocean-runway-grid,
 .is-phone .ocean-runway-grid {
@@ -2541,13 +2772,15 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: var(--ocean-gap) !important;
 }
 
+.ocean-compact .ocean-target-capsule,
 .ocean-is-mobile .ocean-target-capsule,
 .is-mobile .ocean-target-capsule,
 .is-phone .ocean-target-capsule {
-    max-width: 290px !important;
+    max-width: 100% !important;
 }
 
-/* Bento Grid on Mobile */
+/* Bento Grid on Compact / Split */
+.ocean-compact .ocean-grid,
 .ocean-is-mobile .ocean-grid,
 .is-mobile .ocean-grid,
 .is-phone .ocean-grid {
@@ -2557,6 +2790,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: var(--ocean-gap) !important;
 }
 
+.ocean-compact .ocean-col-left,
+.ocean-compact .ocean-col-center,
+.ocean-compact .ocean-col-right,
 .ocean-is-mobile .ocean-col-left,
 .ocean-is-mobile .ocean-col-center,
 .ocean-is-mobile .ocean-col-right,
@@ -2573,23 +2809,28 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: var(--ocean-gap) !important;
 }
 
+.ocean-compact .ocean-col-center,
 .ocean-is-mobile .ocean-col-center,
 .is-mobile .ocean-col-center,
 .is-phone .ocean-col-center {
     order: 0 !important;
     display: flex !important;
     flex-direction: column !important;
+    grid-template-columns: 1fr !important;
 }
 
+.ocean-compact .ocean-card,
 .ocean-is-mobile .ocean-card,
 .is-mobile .ocean-card,
 .is-phone .ocean-card {
     height: auto !important;
-    min-height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
     flex: none !important;
-    padding: 14px !important;
+    padding: 16px !important;
 }
 
+.ocean-compact .ocean-card-hdr,
 .ocean-is-mobile .ocean-card-hdr,
 .is-mobile .ocean-card-hdr,
 .is-phone .ocean-card-hdr {
@@ -2598,40 +2839,49 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     margin-bottom: 12px !important;
 }
 
+.ocean-compact .ocean-card-title,
 .ocean-is-mobile .ocean-card-title,
 .is-mobile .ocean-card-title,
 .is-phone .ocean-card-title {
-    font-size: 0.84rem !important;
+    font-size: 0.86rem !important;
 }
 
 /* Tag Cloud */
+.ocean-compact .ocean-tag-wrap,
 .ocean-is-mobile .ocean-tag-wrap,
 .is-mobile .ocean-tag-wrap,
 .is-phone .ocean-tag-wrap {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
-    max-height: 190px !important;
+    min-height: 140px !important;
+    max-height: 240px !important;
     overflow-y: auto !important;
     padding-right: 4px !important;
 }
 
+.ocean-compact .ocean-tag-pill,
 .ocean-is-mobile .ocean-tag-pill,
 .is-mobile .ocean-tag-pill,
 .is-phone .ocean-tag-pill {
     padding: 4px 10px !important;
-    font-size: 0.74rem !important;
+    font-size: 0.76rem !important;
 }
 
 /* Notes list */
+.ocean-compact .ocean-notes-list,
 .ocean-is-mobile .ocean-notes-list,
 .is-mobile .ocean-notes-list,
 .is-phone .ocean-notes-list {
-    max-height: 340px !important;
+    min-height: 260px !important;
+    max-height: 360px !important;
+    height: auto !important;
     overflow-y: auto !important;
+    padding-right: 6px !important;
 }
 
 /* Scratchpad */
+.ocean-compact .ocean-scratchpad-hdr-actions,
 .ocean-is-mobile .ocean-scratchpad-hdr-actions,
 .is-mobile .ocean-scratchpad-hdr-actions,
 .is-phone .ocean-scratchpad-hdr-actions {
@@ -2639,47 +2889,57 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: 4px !important;
 }
 
+.ocean-compact .ocean-scratch-btn,
 .ocean-is-mobile .ocean-scratch-btn,
 .is-mobile .ocean-scratch-btn,
 .is-phone .ocean-scratch-btn {
-    padding: 2px 6px !important;
-    font-size: 0.64rem !important;
-    height: 20px !important;
+    padding: 3px 8px !important;
+    font-size: 0.68rem !important;
+    height: 22px !important;
 }
 
+.ocean-compact .ocean-scratchpad-textarea,
 .ocean-is-mobile .ocean-scratchpad-textarea,
 .is-mobile .ocean-scratchpad-textarea,
 .is-phone .ocean-scratchpad-textarea {
-    min-height: 160px !important;
+    height: 260px !important;
+    min-height: 200px !important;
+    max-height: 340px !important;
+    overflow-y: auto !important;
 }
 
 /* Actions Grid */
+.ocean-compact .ocean-act-grid,
 .ocean-is-mobile .ocean-act-grid,
 .is-mobile .ocean-act-grid,
 .is-phone .ocean-act-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)) !important;
     gap: 8px !important;
 }
 
+.ocean-compact .ocean-act-btn,
 .ocean-is-mobile .ocean-act-btn,
 .is-mobile .ocean-act-btn,
 .is-phone .ocean-act-btn {
-    padding: 10px 4px !important;
+    padding: 12px 6px !important;
 }
 
+.ocean-compact .ocean-act-icon,
 .ocean-is-mobile .ocean-act-icon,
 .is-mobile .ocean-act-icon,
 .is-phone .ocean-act-icon {
-    font-size: 1.25rem !important;
+    font-size: 1.3rem !important;
 }
 
+.ocean-compact .ocean-act-lbl,
 .ocean-is-mobile .ocean-act-lbl,
 .is-mobile .ocean-act-lbl,
 .is-phone .ocean-act-lbl {
-    font-size: 0.65rem !important;
+    font-size: 0.68rem !important;
 }
 
-/* Habits on Mobile */
+/* Habits on Compact / Split */
+.ocean-compact .ocean-habit-row,
 .ocean-is-mobile .ocean-habit-row,
 .is-mobile .ocean-habit-row,
 .is-phone .ocean-habit-row {
@@ -2689,6 +2949,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     padding: 10px 12px !important;
 }
 
+.ocean-compact .ocean-habit-left,
 .ocean-is-mobile .ocean-habit-left,
 .is-mobile .ocean-habit-left,
 .is-phone .ocean-habit-left {
@@ -2696,15 +2957,17 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     justify-content: space-between !important;
 }
 
+.ocean-compact .ocean-dot-grid,
 .ocean-is-mobile .ocean-dot-grid,
 .is-mobile .ocean-dot-grid,
 .is-phone .ocean-dot-grid {
     width: 100% !important;
     display: flex !important;
     justify-content: space-between !important;
-    gap: 3px !important;
+    gap: 4px !important;
 }
 
+.ocean-compact .ocean-dot,
 .ocean-is-mobile .ocean-dot,
 .is-mobile .ocean-dot,
 .is-phone .ocean-dot {
@@ -2714,7 +2977,8 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     border-radius: 6px !important;
 }
 
-/* Modals on Mobile */
+/* Modals on Compact / Mobile */
+.ocean-compact .ocean-modal,
 .ocean-is-mobile .ocean-modal,
 .is-mobile .ocean-modal,
 .is-phone .ocean-modal {
@@ -2723,12 +2987,14 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     max-height: 90vh !important;
 }
 
+.ocean-compact .ocean-settings-modal,
 .ocean-is-mobile .ocean-settings-modal,
 .is-mobile .ocean-settings-modal,
 .is-phone .ocean-settings-modal {
     padding: 16px !important;
 }
 
+.ocean-compact .ocean-settings-tabs,
 .ocean-is-mobile .ocean-settings-tabs,
 .is-mobile .ocean-settings-tabs,
 .is-phone .ocean-settings-tabs {
@@ -2736,6 +3002,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: 3px !important;
 }
 
+.ocean-compact .ocean-settings-tab,
 .ocean-is-mobile .ocean-settings-tab,
 .is-mobile .ocean-settings-tab,
 .is-phone .ocean-settings-tab {
@@ -2743,6 +3010,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     font-size: 0.7rem !important;
 }
 
+.ocean-compact .ocean-settings-data-grid,
 .ocean-is-mobile .ocean-settings-data-grid,
 .is-mobile .ocean-settings-data-grid,
 .is-phone .ocean-settings-data-grid {

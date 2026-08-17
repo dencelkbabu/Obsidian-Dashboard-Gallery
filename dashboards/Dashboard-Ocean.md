@@ -90,6 +90,18 @@ if (isMobilePlatform) {
     container.classList.add("ocean-is-mobile");
 }
 
+if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+            const w = entry.contentRect.width;
+            container.classList.toggle("ocean-narrow", w < 1120);
+            container.classList.toggle("ocean-compact", w < 800);
+            container.classList.toggle("ocean-phone-view", w < 520);
+        }
+    });
+    ro.observe(container);
+}
+
 // Helper Utilities
 const Utils = {
     getGreeting: () => {
@@ -101,20 +113,40 @@ const Utils = {
     },
     relTime: (d) => {
         if (!d) return "";
-        const m = Math.floor((Date.now() - d.toMillis()) / 60000);
+        let ms = 0;
+        if (typeof d === "number") {
+            ms = d;
+        } else if (typeof d.toMillis === "function") {
+            ms = d.toMillis();
+        } else if (d instanceof Date) {
+            ms = d.getTime();
+        }
+        if (!ms) return "";
+        const m = Math.floor((Date.now() - ms) / 60000);
         if (m < 1) return "just now";
         if (m < 60) return `${m}m ago`;
         const h = Math.floor(m / 60);
         if (h < 24) return `${h}h ago`;
         const day = Math.floor(h / 24);
         if (day < 7) return `${day}d ago`;
-        return d.toFormat("dd LLL");
+        if (typeof d.toFormat === "function") return d.toFormat("dd LLL");
+        const dt = new Date(ms);
+        return dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
     },
     taskTime: (d) => {
         if (!d) return "";
-        const m = Math.floor((Date.now() - d.toMillis()) / 60000);
+        let ms = 0;
+        if (typeof d === "number") {
+            ms = d;
+        } else if (typeof d.toMillis === "function") {
+            ms = d.toMillis();
+        } else if (d instanceof Date) {
+            ms = d.getTime();
+        }
+        if (!ms) return "";
+        const m = Math.floor((Date.now() - ms) / 60000);
         const day = Math.floor(m / 1440);
-        const year = d.year || new Date(d.toMillis()).getFullYear();
+        const year = d.year || new Date(ms).getFullYear();
         
         let rel = "";
         if (m < 1) rel = "just now";
@@ -159,11 +191,11 @@ const Utils = {
         return [...pinned, ...unpinned].slice(0, limit);
     },
     getNotes: (limit = 50, query = "") => {
-        if (activeTag === "__all__" && !query) {
-            try {
-                // Fast 0ms native cache
+        try {
+            if (activeTag === "__all__" && !query) {
                 const mdFiles = app.vault.getMarkdownFiles()
-                    .sort((a, b) => b.stat.mtime - a.stat.mtime)
+                    .filter(f => f && f.stat)
+                    .sort((a, b) => (b.stat?.mtime || 0) - (a.stat?.mtime || 0))
                     .slice(0, limit + pinnedNotes.length);
                 
                 const noteList = mdFiles.map(f => ({
@@ -172,41 +204,58 @@ const Utils = {
                             name: f.basename,
                             path: f.path,
                             folder: f.parent ? f.parent.path : "",
-                            mtime: { toMillis: () => f.stat.mtime }
+                            mtime: f.stat?.mtime || 0
                         }
                     },
                     isPinned: pinnedNotes.includes(f.path)
                 }));
 
-                const pinned = noteList.filter(p => p.isPinned).sort((a, b) => b.page.file.mtime.toMillis() - a.page.file.mtime.toMillis());
-                const unpinned = noteList.filter(p => !p.isPinned).sort((a, b) => b.page.file.mtime.toMillis() - a.page.file.mtime.toMillis());
+                const getMs = (p) => {
+                    const m = p.page.file.mtime;
+                    return typeof m === "number" ? m : (typeof m?.toMillis === "function" ? m.toMillis() : 0);
+                };
+
+                const pinned = noteList.filter(p => p.isPinned).sort((a, b) => getMs(b) - getMs(a));
+                const unpinned = noteList.filter(p => !p.isPinned).sort((a, b) => getMs(b) - getMs(a));
                 return [...pinned, ...unpinned].slice(0, limit);
-            } catch(e) {}
+            }
+        } catch(e) {
+            console.error("Fast notes lookup error:", e);
         }
 
-        let pList = dv.pages();
-        if (activeTag !== "__all__") {
-            pList = pList.where(p => p.file.tags && p.file.tags.includes(activeTag));
+        try {
+            let pList = dv.pages();
+            if (activeTag !== "__all__") {
+                pList = pList.where(p => p.file.tags && p.file.tags.includes(activeTag));
+            }
+
+            if (query && query.trim()) {
+                const q = query.trim().toLowerCase();
+                pList = pList.where(p => 
+                    (p.file.name && p.file.name.toLowerCase().includes(q)) || 
+                    (p.file.folder && p.file.folder.toLowerCase().includes(q)) ||
+                    (p.file.tags && p.file.tags.some(t => t.toLowerCase().includes(q)))
+                );
+            }
+
+            const allPages = pList.array().map(p => ({
+                page: p,
+                isPinned: pinnedNotes.includes(p.file.path)
+            }));
+
+            const getMs = (p) => {
+                const m = p.page.file.mtime;
+                return typeof m === "number" ? m : (typeof m?.toMillis === "function" ? m.toMillis() : 0);
+            };
+
+            const pinned = allPages.filter(p => p.isPinned).sort((a, b) => getMs(b) - getMs(a));
+            const unpinned = allPages.filter(p => !p.isPinned).sort((a, b) => getMs(b) - getMs(a));
+
+            return [...pinned, ...unpinned].slice(0, limit);
+        } catch (e) {
+            console.error("Dataview notes lookup error:", e);
+            return [];
         }
-
-        if (query && query.trim()) {
-            const q = query.trim().toLowerCase();
-            pList = pList.where(p => 
-                p.file.name.toLowerCase().includes(q) || 
-                (p.file.folder && p.file.folder.toLowerCase().includes(q)) ||
-                (p.file.tags && p.file.tags.some(t => t.toLowerCase().includes(q)))
-            );
-        }
-
-        const allPages = pList.array().map(p => ({
-            page: p,
-            isPinned: pinnedNotes.includes(p.file.path)
-        }));
-
-        const pinned = allPages.filter(p => p.isPinned).sort((a, b) => b.page.file.mtime - a.page.file.mtime);
-        const unpinned = allPages.filter(p => !p.isPinned).sort((a, b) => b.page.file.mtime - a.page.file.mtime);
-
-        return [...pinned, ...unpinned].slice(0, limit);
     },
     getRecentlyOpened: (limit = 5) => {
         try {
