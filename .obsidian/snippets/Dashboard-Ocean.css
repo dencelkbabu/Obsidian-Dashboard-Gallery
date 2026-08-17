@@ -670,7 +670,8 @@ body.theme-dark .ocean-modal-overlay[data-theme="material"]:not([data-mode="ligh
     font-family: var(--ocean-font-main);
     color: var(--ocean-text);
     box-sizing: border-box;
-    font-size: 1rem;
+    font-size: var(--ocean-font-size, 16px);
+    zoom: var(--ocean-scale, 1);
     transition: background 0.25s ease, color 0.25s ease;
 }
 
@@ -2319,6 +2320,53 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     color: var(--ocean-btn-text);
     border-color: var(--ocean-accent);
     font-weight: 700;
+}
+
+/* Stepper Controls (Font Size Scale) */
+.ocean-stepper-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ocean-stepper-btn {
+    padding: 8px 14px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    color: var(--ocean-text);
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.ocean-stepper-btn:hover {
+    border-color: var(--ocean-accent);
+    color: var(--ocean-accent);
+    transform: translateY(-1px);
+}
+
+.ocean-stepper-display {
+    min-width: 64px;
+    text-align: center;
+    padding: 8px 12px;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: var(--ocean-radius-sm);
+    color: var(--ocean-accent);
+    font-family: var(--ocean-font-mono);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.ocean-stepper-reset {
+    font-size: 0.75rem;
+    color: var(--ocean-muted);
+    margin-left: auto;
+    font-family: var(--ocean-font-mono);
 }
 
 /* ──────────────────────────────────────────────

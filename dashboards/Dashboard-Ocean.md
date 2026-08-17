@@ -41,6 +41,7 @@ const defaultSettings = {
         habits: true
     },
     gridHeight: 550,
+    fontSize: 16,
     recentLimit: 50,
     tagLimit: 35
 };
@@ -80,6 +81,9 @@ localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
 const container = dv.container.createDiv({ cls: "ocean-dashboard animate-in" });
 container.setAttribute("data-theme", currentTheme);
 container.setAttribute("data-mode", currentThemeMode);
+const initialScale = (masterSettings.fontSize || 16) / 16;
+container.style.setProperty("--ocean-font-size", `${masterSettings.fontSize || 16}px`);
+container.style.setProperty("--ocean-scale", `${initialScale}`);
 
 const isMobilePlatform = app.isMobile || (typeof Platform !== "undefined" && Platform.isMobile);
 if (isMobilePlatform) {
@@ -394,11 +398,15 @@ function openMasterSettingsModal() {
 
     let tempTheme = currentTheme;
     let tempThemeMode = currentThemeMode;
+    let tempFontSize = masterSettings.fontSize || 16;
 
     const closeModal = () => {
         // Revert live preview if not saved
         container.setAttribute("data-theme", currentTheme);
         container.setAttribute("data-mode", currentThemeMode);
+        const savedScale = (masterSettings.fontSize || 16) / 16;
+        container.style.setProperty("--ocean-font-size", `${masterSettings.fontSize || 16}px`);
+        container.style.setProperty("--ocean-scale", `${savedScale}`);
         document.removeEventListener("keydown", escHandler);
         overlay.remove();
     };
@@ -573,6 +581,38 @@ function openMasterSettingsModal() {
 
     generalPanel.createDiv({ text: "Subtitle / Motto:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
     const subInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { value: bannerSubtitle, placeholder: "Leave empty for dynamic time greeting" } });
+
+    generalPanel.createDiv({ text: "Dashboard Font Size Scale:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const fzRow = generalPanel.createDiv({ cls: "ocean-stepper-row" });
+    const fzMinusBtn = fzRow.createEl("button", { cls: "ocean-stepper-btn", text: "➖ 1" });
+    const fzDisplay = fzRow.createDiv({ cls: "ocean-stepper-display", text: `${tempFontSize}px` });
+    const fzPlusBtn = fzRow.createEl("button", { cls: "ocean-stepper-btn", text: "➕ 1" });
+    const fzResetBtn = fzRow.createEl("button", { cls: "ocean-stepper-btn ocean-stepper-reset", text: "Reset (16px)" });
+
+    fzMinusBtn.onclick = () => {
+        if (tempFontSize > 11) {
+            tempFontSize--;
+            fzDisplay.innerText = `${tempFontSize}px`;
+            container.style.setProperty("--ocean-font-size", `${tempFontSize}px`);
+            container.style.setProperty("--ocean-scale", `${tempFontSize / 16}`);
+        }
+    };
+
+    fzPlusBtn.onclick = () => {
+        if (tempFontSize < 28) {
+            tempFontSize++;
+            fzDisplay.innerText = `${tempFontSize}px`;
+            container.style.setProperty("--ocean-font-size", `${tempFontSize}px`);
+            container.style.setProperty("--ocean-scale", `${tempFontSize / 16}`);
+        }
+    };
+
+    fzResetBtn.onclick = () => {
+        tempFontSize = 16;
+        fzDisplay.innerText = "16px";
+        container.style.setProperty("--ocean-font-size", "16px");
+        container.style.setProperty("--ocean-scale", "1");
+    };
 
     generalPanel.createDiv({ text: "Bento Grid Height (px):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
     const heightInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.gridHeight || 550), min: "400", max: "1000", step: "25" } });
@@ -785,6 +825,7 @@ function openMasterSettingsModal() {
 
         masterSettings.widgets = tempWidgets;
         masterSettings.gridHeight = parseInt(heightInp.value, 10) || 550;
+        masterSettings.fontSize = tempFontSize;
         masterSettings.recentLimit = parseInt(limitInp.value, 10) || 50;
         masterSettings.tagLimit = parseInt(tagLimitInp.value, 10) || 35;
 
