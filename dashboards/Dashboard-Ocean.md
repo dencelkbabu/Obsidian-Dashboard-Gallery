@@ -277,7 +277,14 @@ const Utils = {
     },
     icon: (parent, name, fallback = "•") => {
         const el = parent.createDiv();
-        try { setIcon(el, name); } catch (e) { el.textContent = fallback; }
+        try {
+            setIcon(el, name);
+            if (!el.hasChildNodes() && !el.innerHTML.trim()) {
+                el.textContent = fallback;
+            }
+        } catch (e) {
+            el.textContent = fallback;
+        }
         return el;
     }
 };
@@ -1699,7 +1706,7 @@ if (hasLeft || hasCenter || hasRight) {
             const SYS_ACTIONS = [
                 { icon: "search",      lbl: "Omni-Search",cmd: "switcher:open",  em: "🔍" },
                 { icon: "calendar",    lbl: "Daily",      cmd: "daily-notes",   em: "📅" },
-                { icon: "graph",       lbl: "Graph",      cmd: "graph:open",    em: "🕸️" },
+                { icon: "share-2",     lbl: "Graph",      cmd: "graph:open",    em: "🕸️" },
                 { icon: "file-plus",   lbl: "New Note",   cmd: "file-explorer:new-file", em: "📝" },
                 { icon: "settings",    lbl: "Settings",   cmd: "app:open-settings", em: "⚙️" },
                 { icon: "bookmark",    lbl: "Bookmarks",  cmd: "bookmarks:open", em: "🔖" }
