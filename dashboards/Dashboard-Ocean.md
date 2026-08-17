@@ -1293,13 +1293,29 @@ function renderLiveTasks() {
             capsule.createDiv({ cls: "ocean-target-emoji", text: "☑️" });
 
             const info = capsule.createDiv({ cls: "ocean-target-info" });
-            info.createDiv({ cls: "ocean-target-title", text: t.text.replace(/#\S+/g, "").trim() || "Task item" });
+            const cleanTitle = (t.text || "Task item")
+                .replace(/#\S+/g, "")
+                .replace(/\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, "$1")
+                .replace(/\*\*([^*]+)\*\*/g, "$1")
+                .replace(/\*([^*]+)\*/g, "$1")
+                .trim();
+            info.createDiv({ cls: "ocean-target-title", text: cleanTitle });
 
             const metaRow = info.createDiv({ cls: "ocean-target-meta" });
             if (t.link) {
+                let noteName = "";
+                if (typeof t.link.fileName === "function") {
+                    noteName = t.link.fileName();
+                } else if (typeof t.link.fileName === "string") {
+                    noteName = t.link.fileName;
+                } else if (t.link.display) {
+                    noteName = t.link.display;
+                } else if (t.link.path) {
+                    noteName = t.link.path.replace(/\.md$/i, "").split("/").pop();
+                }
                 const parentPage = dv.page(t.link.path);
                 const timeStr = parentPage && parentPage.file.mtime ? Utils.taskTime(parentPage.file.mtime) : "";
-                metaRow.createSpan({ cls: "ocean-target-date", text: (t.link.fileName || "") + (timeStr ? ` • ${timeStr}` : "") });
+                metaRow.createSpan({ cls: "ocean-target-date", text: (noteName || "Note") + (timeStr ? ` • ${timeStr}` : "") });
             }
             metaRow.createSpan({ cls: "ocean-task-tag-badge todo", text: "TODO" });
 
