@@ -263,6 +263,21 @@ const todayDateStr = new Date().toISOString().slice(0, 10);
 const cachedVerseRaw = localStorage.getItem("ocean-daily-verse");
 let currentVerse = null;
 
+const FALLBACK_VERSES = [
+    { text: "Trust in the Lord with all your heart, and do not rely on your own insight.", ref: "Proverbs 3:5" },
+    { text: "I can do all things through him who strengthens me.", ref: "Philippians 4:13" },
+    { text: "The Lord is my shepherd; I shall not want.", ref: "Psalm 23:1" },
+    { text: "Be strong and courageous; do not be frightened or dismayed, for the Lord your God is with you wherever you go.", ref: "Joshua 1:9" },
+    { text: "For I know the plans I have for you, plans for welfare and not for evil, to give you a future and a hope.", ref: "Jeremiah 29:11" },
+    { text: "Do not worry about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.", ref: "Philippians 4:6" },
+    { text: "The light shines in the darkness, and the darkness did not overcome it.", ref: "John 1:5" },
+    { text: "Commit your work to the Lord, and your plans will be established.", ref: "Proverbs 16:3" },
+    { text: "Come to me, all you that are weary and are carrying heavy burdens, and I will give you rest.", ref: "Matthew 11:28" },
+    { text: "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.", ref: "John 14:27" },
+    { text: "He has told you, O mortal, what is good; and what does the Lord require of you but to do justice, and to love kindness, and to walk humbly with your God?", ref: "Micah 6:8" },
+    { text: "Let all that you do be done in love.", ref: "1 Corinthians 16:14" }
+];
+
 if (cachedVerseRaw) {
     try {
         const parsed = JSON.parse(cachedVerseRaw);
@@ -272,41 +287,38 @@ if (cachedVerseRaw) {
     } catch (e) {}
 }
 
+const defaultVerse = currentVerse || FALLBACK_VERSES[0];
 const verseWrap = clockCont.createDiv({
     cls: "ocean-bible-verse-wrap",
     attr: { title: "Daily Verse • Click to copy • Right-click to refresh" }
 });
-const verseQuoteEl = verseWrap.createSpan({ cls: "ocean-bible-quote", text: currentVerse ? `“${currentVerse.text}”` : "“Trust in the Lord with all your heart, and do not rely on your own insight.”" });
-const verseRefEl = verseWrap.createSpan({ cls: "ocean-bible-ref", text: currentVerse ? `— ${currentVerse.ref}` : "— Proverbs 3:5" });
+const verseQuoteEl = verseWrap.createSpan({ cls: "ocean-bible-quote", text: `“${defaultVerse.text}”` });
+const verseRefEl = verseWrap.createSpan({ cls: "ocean-bible-ref", text: `— ${defaultVerse.ref}` });
 
 async function loadVerse(forceRefresh = false) {
     if (!forceRefresh && currentVerse) return;
 
+    let newVerse = null;
     try {
         const fetchPromise = requestUrl({ url: "https://bible-api.com/?random=verse&translation=rsv" });
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500));
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000));
         const res = await Promise.race([fetchPromise, timeoutPromise]);
 
         if (res && res.json && res.json.text && res.json.reference) {
             const cleanText = res.json.text.trim().replace(/\s+/g, " ");
             const refStr = res.json.reference;
-            currentVerse = { date: todayDateStr, text: cleanText, ref: refStr };
-            localStorage.setItem("ocean-daily-verse", JSON.stringify(currentVerse));
-            
-            verseQuoteEl.textContent = `“${cleanText}”`;
-            verseRefEl.textContent = `— ${refStr}`;
-            return;
+            newVerse = { date: todayDateStr, text: cleanText, ref: refStr };
         }
     } catch (err) {
-        // Graceful offline fallback
+        // Use random fallback from curated RSV collection if API is offline or slow
+        const pool = FALLBACK_VERSES.filter(v => !currentVerse || v.ref !== currentVerse.ref);
+        const fallback = pool[Math.floor(Math.random() * pool.length)] || FALLBACK_VERSES[0];
+        newVerse = { date: todayDateStr, text: fallback.text, ref: fallback.ref };
     }
 
-    if (!currentVerse) {
-        currentVerse = {
-            date: todayDateStr,
-            text: "Trust in the Lord with all your heart, and do not rely on your own insight.",
-            ref: "Proverbs 3:5"
-        };
+    if (newVerse) {
+        currentVerse = newVerse;
+        localStorage.setItem("ocean-daily-verse", JSON.stringify(currentVerse));
         verseQuoteEl.textContent = `“${currentVerse.text}”`;
         verseRefEl.textContent = `— ${currentVerse.ref}`;
     }
@@ -326,7 +338,12 @@ verseWrap.oncontextmenu = (e) => {
     verseQuoteEl.textContent = "Fetching new scripture...";
     verseRefEl.textContent = "";
     loadVerse(true).then(() => {
-        new Notice("✨ Loaded new daily verse");
+        new Notice("✨ Loaded new scripture verse");
+    }).catch(() => {
+        if (currentVerse) {
+            verseQuoteEl.textContent = `“${currentVerse.text}”`;
+            verseRefEl.textContent = `— ${currentVerse.ref}`;
+        }
     });
 };
 
