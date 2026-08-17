@@ -419,7 +419,6 @@ verseWrap.oncontextmenu = (e) => {
 // Header Stats Cubes (Instant 0ms lookup)
 const statsCont = header.createDiv({ cls: "ocean-hero-stats" });
 const totalNotesCount = app.vault.getMarkdownFiles().length;
-let completedTasksCount = parseInt(localStorage.getItem("ocean-cached-achievements") || "0", 10);
 
 const notesCube = statsCont.createDiv({ cls: "ocean-stat-cube" });
 const notesTopRow = notesCube.createDiv({ cls: "ocean-stat-top-row" });
@@ -427,23 +426,20 @@ notesTopRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
 notesTopRow.createDiv({ cls: "ocean-stat-val", text: String(totalNotesCount) });
 notesCube.createDiv({ cls: "ocean-stat-lab", text: "Notes" });
 
-const achCube = statsCont.createDiv({ cls: "ocean-stat-cube" });
-const achTopRow = achCube.createDiv({ cls: "ocean-stat-top-row" });
-achTopRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
-const achValEl = achTopRow.createDiv({ cls: "ocean-stat-val", text: String(completedTasksCount) });
-achCube.createDiv({ cls: "ocean-stat-lab", text: "Achievements" });
+const goalsCube = statsCont.createDiv({
+    cls: "ocean-stat-cube",
+    attr: { title: "Weekly Bio-Metrics Consistency (Click to jump to habits)", style: "cursor: pointer;" }
+});
+const goalsTopRow = goalsCube.createDiv({ cls: "ocean-stat-top-row" });
+goalsTopRow.createDiv({ cls: "ocean-stat-star", text: "🎯" });
+const goalsValEl = goalsTopRow.createDiv({ cls: "ocean-stat-val", text: "0/0" });
+goalsCube.createDiv({ cls: "ocean-stat-lab", text: "Weekly Goals" });
 
-// Async background refresh of task count without blocking UI
-setTimeout(() => {
-    try {
-        const tasks = dv.pages("#tasks or #todo or #daily or #pending or #journal").file.tasks;
-        if (tasks) {
-            const count = tasks.where(t => t.completed).length;
-            achValEl.textContent = String(count);
-            localStorage.setItem("ocean-cached-achievements", String(count));
-        }
-    } catch(e) {}
-}, 200);
+let updateHeaderGoals = () => {
+    const stats = Utils.getHabitStats();
+    goalsValEl.textContent = stats.total > 0 ? `${stats.active}/${stats.total}` : "0";
+};
+updateHeaderGoals();
 
 setBtn.onclick = () => openMasterSettingsModal();
 
@@ -1824,6 +1820,7 @@ if (hasLeft || hasCenter || hasRight) {
 // ══════════════════════════════════════════════
 if (masterSettings.widgets.habits !== false) {
     const habitsCard = container.createDiv({ cls: "ocean-card ocean-habits-card" });
+    goalsCube.onclick = () => habitsCard.scrollIntoView({ behavior: "smooth" });
     const habHdr = habitsCard.createDiv({ cls: "ocean-card-hdr" });
     habHdr.createDiv({ cls: "ocean-card-title", text: "🧬 BIO-METRICS (WEEKLY CONSISTENCY)" });
 
@@ -1837,6 +1834,9 @@ if (masterSettings.widgets.habits !== false) {
     function updateConsistencyBar() {
         const stats = Utils.getHabitStats();
         barFill.style.width = `${stats.percent}%`;
+        if (typeof updateHeaderGoals === "function") {
+            updateHeaderGoals();
+        }
     }
 
     function openEditHabitModal(h, idx) {
