@@ -527,16 +527,52 @@ function openMasterSettingsModal() {
         }
     };
 
-    // Factory Reset
+    // 1. Clear Everything & Start from Scratch (Clean Slate)
+    const cleanSlateBtn = dataBtnGrid.createEl("button", {
+        cls: "ocean-btn",
+        text: "🧹 Clear Everything & Start From Scratch",
+        attr: { style: "grid-column: 1 / -1; color: #38bdf8; border-color: rgba(56,189,248,0.4); margin-top:8px;" }
+    });
+    cleanSlateBtn.onclick = () => {
+        if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and habits to start completely from a clean blank slate?")) return;
+        localStorage.setItem(LS.targets, "[]");
+        localStorage.setItem(LS.cards, "[]");
+        localStorage.setItem(LS.habits, "[]");
+        localStorage.setItem(LS.scratchpad, "");
+        localStorage.setItem(LS.pinnedNotes, "[]");
+        localStorage.setItem(LS.pinnedTags, "[]");
+        localStorage.setItem(LS.tag, "__all__");
+        localStorage.setItem(LS.title, "DASHBOARD OCEAN");
+        localStorage.setItem(LS.subtitle, "");
+
+        // Remove all habit day checkboxes
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith("ocean-h-")) keysToRemove.push(k);
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+
+        new Notice("🧹 Dashboard wiped clean to a blank slate! Please press Ctrl + R to reload the dashboard.", 5000);
+        overlay.remove();
+        setTimeout(() => {
+            try {
+                const activeView = app.workspace.getActiveViewOfType(tp => true);
+                if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            } catch(e) {}
+        }, 300);
+    };
+
+    // 2. Factory Reset to Default Placeholders
     const factoryResetBtn = dataBtnGrid.createEl("button", {
         cls: "ocean-btn",
-        text: "⚠️ Factory Reset Entire Dashboard",
-        attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4); margin-top:8px;" }
+        text: "🎯 Reset to Default Placeholders",
+        attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4); margin-top:4px;" }
     });
     factoryResetBtn.onclick = () => {
-        if (!confirm("Are you sure you want to reset the entire dashboard to pristine factory settings? All custom targets, cards, scratchpad, and settings will be reset.")) return;
+        if (!confirm("Are you sure you want to reset the dashboard back to the initial sample milestone targets, collection cards, and habit placeholders?")) return;
         Object.values(LS).forEach(k => localStorage.removeItem(k));
-        new Notice("✨ Factory reset complete! Please press Ctrl + R to reload the dashboard.", 5000);
+        new Notice("✨ Reset to default placeholders complete! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
         setTimeout(() => {
             try {
@@ -1272,6 +1308,14 @@ if (hasLeft || hasCenter || hasRight) {
 
             function renderCollectionCards() {
                 collectionContainer.innerHTML = "";
+                if (savedCards.length === 0) {
+                    collectionContainer.createDiv({
+                        text: "No collection cards yet. Click + ADD CARD to create your first shortcut!",
+                        attr: { style: "font-size:0.82rem; color:var(--ocean-muted); padding:12px 6px; text-align:center; line-height:1.4;" }
+                    });
+                    return;
+                }
+
                 savedCards.forEach((c, idx) => {
                     const cardEl = collectionContainer.createDiv({ cls: "ocean-col-card" });
                     
@@ -1506,6 +1550,14 @@ if (masterSettings.widgets.habits !== false) {
 
     function renderHabitsTracker() {
         habitGrid.innerHTML = "";
+        if (savedHabits.length === 0) {
+            habitGrid.createDiv({
+                text: "No weekly metrics tracked yet. Click + ADD HABIT to start building consistency!",
+                attr: { style: "font-size:0.82rem; color:var(--ocean-muted); padding:16px 6px; grid-column: 1 / -1; text-align:center; line-height:1.4;" }
+            });
+            updateConsistencyBar();
+            return;
+        }
         savedHabits.forEach((h, idx) => {
             const row = habitGrid.createDiv({ cls: "ocean-habit-row" });
             
