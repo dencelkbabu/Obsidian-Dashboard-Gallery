@@ -276,6 +276,18 @@ const Utils = {
         const pct = totalDots > 0 ? (activeDots / totalDots) * 100 : 0;
         return { total: totalDots, active: activeDots, percent: pct };
     },
+    bindModalBackdropClose: (overlay, closeModal) => {
+        let isMouseDownOnOverlay = false;
+        overlay.addEventListener("mousedown", (e) => {
+            isMouseDownOnOverlay = (e.target === overlay);
+        });
+        overlay.addEventListener("mouseup", (e) => {
+            if (isMouseDownOnOverlay && e.target === overlay) {
+                closeModal();
+            }
+            isMouseDownOnOverlay = false;
+        });
+    },
     icon: (parent, name, fallback = "•") => {
         const el = parent.createDiv();
         try {
@@ -754,6 +766,7 @@ function openMasterSettingsModal() {
         }
 
         const importModal = importOverlay.createDiv({ cls: "ocean-modal", attr: { style: "max-width: 580px; width: 92%;" } });
+        Utils.bindModalBackdropClose(importOverlay, () => importOverlay.remove());
         const importHdr = importModal.createDiv({ cls: "ocean-modal-hdr" });
         importHdr.createDiv({ cls: "ocean-modal-title", text: "📥 Import Dashboard JSON" });
         const closeImportBtn = importHdr.createDiv({ cls: "ocean-modal-close", text: "✕" });
@@ -959,7 +972,7 @@ function openMasterSettingsModal() {
         }, 200);
     };
 
-    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+    Utils.bindModalBackdropClose(overlay, closeModal);
 }
 
 // ══════════════════════════════════════════════
@@ -1175,7 +1188,7 @@ function showTargetModal(targetToEdit = null, idx = null) {
         if (showTargets && runwayTrack) renderTargets();
         closeModal();
     };
-    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+    Utils.bindModalBackdropClose(overlay, closeModal);
 }
 
 if (showTargets && runwayTrack) {
@@ -1753,7 +1766,7 @@ if (hasLeft || hasCenter || hasRight) {
                     renderCollectionCards();
                     closeModal();
                 };
-                overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+                Utils.bindModalBackdropClose(overlay, closeModal);
             }
 
             addColBtn.onclick = () => showCardModal();
@@ -1884,7 +1897,7 @@ if (masterSettings.widgets.habits !== false) {
             }
             closeModal();
         };
-        overlay.onclick = (ev) => { if (ev.target === overlay) closeModal(); };
+        Utils.bindModalBackdropClose(overlay, closeModal);
     }
 
     function renderHabitsTracker() {
@@ -1988,7 +2001,7 @@ if (masterSettings.widgets.habits !== false) {
             }
             closeModal();
         };
-        overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+        Utils.bindModalBackdropClose(overlay, closeModal);
     };
 
     renderHabitsTracker();
