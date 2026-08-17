@@ -514,11 +514,13 @@ function openMasterSettingsModal() {
             if (parsed.pinnedNotes) localStorage.setItem(LS.pinnedNotes, JSON.stringify(parsed.pinnedNotes));
             if (parsed.pinnedTags) localStorage.setItem(LS.pinnedTags, JSON.stringify(parsed.pinnedTags));
             if (parsed.scratchpad !== undefined) localStorage.setItem(LS.scratchpad, parsed.scratchpad);
-            new Notice("✨ Dashboard configuration imported successfully! Reloading...");
+            new Notice("✨ Dashboard configuration imported! Please press Ctrl + R to reload the dashboard.", 5000);
             overlay.remove();
             setTimeout(() => {
-                const activeView = app.workspace.getActiveViewOfType(tp => true);
-                if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+                try {
+                    const activeView = app.workspace.getActiveViewOfType(tp => true);
+                    if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+                } catch(e) {}
             }, 300);
         } catch(e) {
             new Notice(`⚠️ Invalid JSON: ${e.message}`);
@@ -534,11 +536,13 @@ function openMasterSettingsModal() {
     factoryResetBtn.onclick = () => {
         if (!confirm("Are you sure you want to reset the entire dashboard to pristine factory settings? All custom targets, cards, scratchpad, and settings will be reset.")) return;
         Object.values(LS).forEach(k => localStorage.removeItem(k));
-        new Notice("✨ Factory reset complete! Reloading...");
+        new Notice("✨ Factory reset complete! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
         setTimeout(() => {
-            const activeView = app.workspace.getActiveViewOfType(tp => true);
-            if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            try {
+                const activeView = app.workspace.getActiveViewOfType(tp => true);
+                if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            } catch(e) {}
         }, 300);
     };
 
@@ -578,17 +582,18 @@ function openMasterSettingsModal() {
 
         bannerTitle = titleInp.value.trim() || "DASHBOARD OCEAN";
         bannerSubtitle = subInp.value.trim();
-
         localStorage.setItem(LS.title, bannerTitle);
         localStorage.setItem(LS.subtitle, bannerSubtitle);
         localStorage.setItem(LS.settings, JSON.stringify(masterSettings));
 
-        new Notice("✨ Master settings applied! Reloading...");
+        new Notice("✨ Settings saved! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
 
         setTimeout(() => {
-            const activeView = app.workspace.getActiveViewOfType(tp => true);
-            if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            try {
+                const activeView = app.workspace.getActiveViewOfType(tp => true);
+                if (activeView && activeView.leaf) activeView.leaf.rebuildView();
+            } catch(e) {}
         }, 200);
     };
 
