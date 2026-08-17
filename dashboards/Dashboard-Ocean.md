@@ -113,11 +113,23 @@ const Utils = {
 
         return `${rel} • ${year}`;
     },
-    getProcessedTags: (limit = 24) => {
-        const counts = {};
-        for (const p of dv.pages()) {
-            if (!p.file.tags) continue;
-            for (const t of p.file.tags) counts[t] = (counts[t] || 0) + 1;
+    getProcessedTags: (limit = 35) => {
+        let counts = {};
+        try {
+            const metaTags = app.metadataCache.getTags();
+            if (metaTags && Object.keys(metaTags).length > 0) {
+                counts = Object.assign({}, metaTags);
+            } else {
+                for (const p of dv.pages()) {
+                    if (!p.file.tags) continue;
+                    for (const t of p.file.tags) counts[t] = (counts[t] || 0) + 1;
+                }
+            }
+        } catch (e) {
+            for (const p of dv.pages()) {
+                if (!p.file.tags) continue;
+                for (const t of p.file.tags) counts[t] = (counts[t] || 0) + 1;
+            }
         }
         const allEntries = Object.entries(counts).map(([tag, count]) => ({
             tag,
@@ -135,21 +147,46 @@ const Utils = {
         return [...pinned, ...unpinned].slice(0, limit);
     },
     getNotes: (limit = 50, query = "") => {
-        let pages = dv.pages();
+        if (activeTag === "__all__" && !query) {
+            try {
+                // Fast 0ms native cache
+                const mdFiles = app.vault.getMarkdownFiles()
+                    .sort((a, b) => b.stat.mtime - a.stat.mtime)
+                    .slice(0, limit + pinnedNotes.length);
+                
+                const noteList = mdFiles.map(f => ({
+                    page: {
+                        file: {
+                            name: f.basename,
+                            path: f.path,
+                            folder: f.parent ? f.parent.path : "",
+                            mtime: { toMillis: () => f.stat.mtime }
+                        }
+                    },
+                    isPinned: pinnedNotes.includes(f.path)
+                }));
+
+                const pinned = noteList.filter(p => p.isPinned).sort((a, b) => b.page.file.mtime.toMillis() - a.page.file.mtime.toMillis());
+                const unpinned = noteList.filter(p => !p.isPinned).sort((a, b) => b.page.file.mtime.toMillis() - a.page.file.mtime.toMillis());
+                return [...pinned, ...unpinned].slice(0, limit);
+            } catch(e) {}
+        }
+
+        let pList = dv.pages();
         if (activeTag !== "__all__") {
-            pages = pages.where(p => p.file.tags && p.file.tags.includes(activeTag));
+            pList = pList.where(p => p.file.tags && p.file.tags.includes(activeTag));
         }
 
         if (query && query.trim()) {
             const q = query.trim().toLowerCase();
-            pages = pages.where(p => 
+            pList = pList.where(p => 
                 p.file.name.toLowerCase().includes(q) || 
                 (p.file.folder && p.file.folder.toLowerCase().includes(q)) ||
                 (p.file.tags && p.file.tags.some(t => t.toLowerCase().includes(q)))
             );
         }
 
-        const allPages = pages.array().map(p => ({
+        const allPages = pList.array().map(p => ({
             page: p,
             isPinned: pinnedNotes.includes(p.file.path)
         }));
@@ -221,7 +258,7 @@ const clockTimer = setInterval(() => {
     updateClock();
 }, 1000);
 
-// Daily Bible Verse (Dynamic Fetching with RSV Translation)
+// Daily Bible Verse (Dynamic Fetching with RSV Translation & Fast Timeout)
 const todayDateStr = new Date().toISOString().slice(0, 10);
 const cachedVerseRaw = localStorage.getItem("ocean-daily-verse");
 let currentVerse = null;
@@ -239,15 +276,17 @@ const verseWrap = clockCont.createDiv({
     cls: "ocean-bible-verse-wrap",
     attr: { title: "Daily Verse • Click to copy • Right-click to refresh" }
 });
-const verseQuoteEl = verseWrap.createSpan({ cls: "ocean-bible-quote", text: currentVerse ? `“${currentVerse.text}”` : "Loading daily scripture..." });
-const verseRefEl = verseWrap.createSpan({ cls: "ocean-bible-ref", text: currentVerse ? `— ${currentVerse.ref}` : "" });
+const verseQuoteEl = verseWrap.createSpan({ cls: "ocean-bible-quote", text: currentVerse ? `“${currentVerse.text}”` : "“Trust in the Lord with all your heart, and do not rely on your own insight.”" });
+const verseRefEl = verseWrap.createSpan({ cls: "ocean-bible-ref", text: currentVerse ? `— ${currentVerse.ref}` : "— Proverbs 3:5" });
 
 async function loadVerse(forceRefresh = false) {
     if (!forceRefresh && currentVerse) return;
 
     try {
-        // Fetch dynamic verse from Bible API (RSV translation)
-        const res = await requestUrl({ url: "https://bible-api.com/?random=verse&translation=rsv" });
+        const fetchPromise = requestUrl({ url: "https://bible-api.com/?random=verse&translation=rsv" });
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500));
+        const res = await Promise.race([fetchPromise, timeoutPromise]);
+
         if (res && res.json && res.json.text && res.json.reference) {
             const cleanText = res.json.text.trim().replace(/\s+/g, " ");
             const refStr = res.json.reference;
@@ -291,21 +330,34 @@ verseWrap.oncontextmenu = (e) => {
     });
 };
 
-// Header Stats Cubes
+// Header Stats Cubes (Instant 0ms lookup)
 const statsCont = header.createDiv({ cls: "ocean-hero-stats" });
-const allTasks = dv.pages().file.tasks;
-const completedTasksCount = allTasks ? allTasks.where(t => t.completed).length : 0;
+const totalNotesCount = app.vault.getMarkdownFiles().length;
+let completedTasksCount = parseInt(localStorage.getItem("ocean-cached-achievements") || "0", 10);
 
-[
-    { v: dv.pages().length, l: "Notes" },
-    { v: completedTasksCount, l: "Achievements" }
-].forEach(st => {
-    const cube = statsCont.createDiv({ cls: "ocean-stat-cube" });
-    const topRow = cube.createDiv({ cls: "ocean-stat-top-row" });
-    topRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
-    topRow.createDiv({ cls: "ocean-stat-val", text: String(st.v) });
-    cube.createDiv({ cls: "ocean-stat-lab", text: st.l });
-});
+const notesCube = statsCont.createDiv({ cls: "ocean-stat-cube" });
+const notesTopRow = notesCube.createDiv({ cls: "ocean-stat-top-row" });
+notesTopRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
+notesTopRow.createDiv({ cls: "ocean-stat-val", text: String(totalNotesCount) });
+notesCube.createDiv({ cls: "ocean-stat-lab", text: "Notes" });
+
+const achCube = statsCont.createDiv({ cls: "ocean-stat-cube" });
+const achTopRow = achCube.createDiv({ cls: "ocean-stat-top-row" });
+achTopRow.createDiv({ cls: "ocean-stat-star", text: "⭐" });
+const achValEl = achTopRow.createDiv({ cls: "ocean-stat-val", text: String(completedTasksCount) });
+achCube.createDiv({ cls: "ocean-stat-lab", text: "Achievements" });
+
+// Async background refresh of task count without blocking UI
+setTimeout(() => {
+    try {
+        const tasks = dv.pages("#tasks or #todo or #daily or #pending or #journal").file.tasks;
+        if (tasks) {
+            const count = tasks.where(t => t.completed).length;
+            achValEl.textContent = String(count);
+            localStorage.setItem("ocean-cached-achievements", String(count));
+        }
+    } catch(e) {}
+}, 200);
 
 setBtn.onclick = () => openMasterSettingsModal();
 
@@ -775,10 +827,17 @@ function renderLiveTasks() {
         pendingNotes = [];
     }
 
-    // 2. Query checklist tasks
+    // 2. Query checklist tasks (fast targeted scan)
     let todoTasks = [];
     try {
-        todoTasks = dv.pages().file.tasks.where(t => !t.completed).slice(0, 10);
+        const taskPages = dv.pages('#tasks or #todo or #task or #pending or "daily" or "Daily"');
+        if (taskPages && taskPages.length > 0) {
+            todoTasks = taskPages.file.tasks.where(t => !t.completed).slice(0, 10);
+        }
+        if (!todoTasks || todoTasks.length === 0) {
+            const recentPages = dv.pages().sort(p => p.file.mtime, 'desc').slice(0, 40);
+            todoTasks = recentPages.file.tasks.where(t => !t.completed).slice(0, 10);
+        }
     } catch(e) {
         todoTasks = [];
     }
