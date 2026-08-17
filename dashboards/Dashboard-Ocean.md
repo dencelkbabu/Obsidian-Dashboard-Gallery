@@ -13,6 +13,8 @@ const { setIcon } = require("obsidian");
 
 // --- ⚙️ PERSISTENCE KEYS ---
 const LS = {
+    theme: "ocean-theme-preset",
+    themeMode: "ocean-theme-mode",
     title: "ocean-title",
     subtitle: "ocean-subtitle",
     tag: "ocean-active-tag",
@@ -46,6 +48,9 @@ const defaultSettings = {
 let masterSettings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}"));
 masterSettings.widgets = Object.assign({}, defaultSettings.widgets, masterSettings.widgets || {});
 
+let currentTheme = localStorage.getItem(LS.theme) || "ocean";
+let currentThemeMode = localStorage.getItem(LS.themeMode) || "auto";
+
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
 let bannerSubtitle = localStorage.getItem(LS.subtitle) || "";
 let activeTag = localStorage.getItem(LS.tag) || "__all__";
@@ -73,6 +78,9 @@ let savedTargets = JSON.parse(localStorage.getItem(LS.targets)) || [
 localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
 
 const container = dv.container.createDiv({ cls: "ocean-dashboard animate-in" });
+container.setAttribute("data-theme", currentTheme);
+container.setAttribute("data-mode", currentThemeMode);
+
 const isMobilePlatform = app.isMobile || (typeof Platform !== "undefined" && Platform.isMobile);
 if (isMobilePlatform) {
     container.classList.add("ocean-is-mobile");
@@ -381,18 +389,35 @@ setBtn.onclick = () => openMasterSettingsModal();
 function openMasterSettingsModal() {
     const overlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
     const modal = overlay.createDiv({ cls: "ocean-modal ocean-settings-modal" });
+
+    let tempTheme = currentTheme;
+    let tempThemeMode = currentThemeMode;
+
+    const closeModal = () => {
+        // Revert live preview if not saved
+        container.setAttribute("data-theme", currentTheme);
+        container.setAttribute("data-mode", currentThemeMode);
+        document.removeEventListener("keydown", escHandler);
+        overlay.remove();
+    };
+
+    const escHandler = (ev) => {
+        if (ev.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", escHandler);
     
     // Header
     const hdr = modal.createDiv({ cls: "ocean-settings-hdr" });
     hdr.createDiv({ cls: "ocean-modal-title", text: "⚙️ DASHBOARD MASTER SETTINGS" });
-    const closeIcon = hdr.createDiv({ cls: "ocean-settings-close", text: "✕" });
-    closeIcon.onclick = () => overlay.remove();
+    const closeIcon = hdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
+    closeIcon.onclick = closeModal;
 
-    // Tab Switcher
+    // Tab Switcher (4 Tabs)
     const tabsRow = modal.createDiv({ cls: "ocean-settings-tabs" });
     const tabWidgetsBtn = tabsRow.createDiv({ cls: "ocean-settings-tab active", text: "🎛️ WIDGETS" });
+    const tabThemesBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "🎨 THEMES" });
     const tabGeneralBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "⚙️ GENERAL" });
-    const tabDataBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "💾 DATA & BACKUP" });
+    const tabDataBtn = tabsRow.createDiv({ cls: "ocean-settings-tab", text: "💾 DATA" });
 
     const contentArea = modal.createDiv({ cls: "ocean-settings-content" });
 
@@ -430,7 +455,112 @@ function openMasterSettingsModal() {
         };
     });
 
-    // TAB 2: GENERAL
+    // TAB 2: THEMES & MODES
+    const themesPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
+    themesPanel.createDiv({ cls: "ocean-settings-desc", text: "Choose a visual design language and appearance mode. Click any theme to preview live in the background." });
+
+    themesPanel.createDiv({ text: "Appearance Mode:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:6px;" } });
+    
+    // Segmented Mode Controls
+    const modeSegmented = themesPanel.createDiv({ cls: "ocean-mode-segmented" });
+    const modes = [
+        { id: "auto", label: "🌗 Auto (Obsidian)" },
+        { id: "dark", label: "🌙 Dark Mode" },
+        { id: "light", label: "☀️ Light Mode" }
+    ];
+    const modeButtons = [];
+
+    modes.forEach(m => {
+        const btn = modeSegmented.createDiv({
+            cls: "ocean-mode-btn" + (tempThemeMode === m.id ? " active" : ""),
+            text: m.label
+        });
+        modeButtons.push({ id: m.id, el: btn });
+
+        btn.onclick = () => {
+            tempThemeMode = m.id;
+            modeButtons.forEach(b => b.el.classList.toggle("active", b.id === tempThemeMode));
+            container.setAttribute("data-mode", tempThemeMode);
+        };
+    });
+
+    themesPanel.createDiv({ text: "Theme Presets:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:6px; margin-top:8px;" } });
+    
+    const themeDefs = [
+        {
+            id: "ocean",
+            name: "Ocean Deep",
+            icon: "🌊",
+            desc: "Bioluminescent cyan, deep navy glass, and wave glowing borders.",
+            swatches: ["#38bdf8", "#818cf8", "#34d399", "#0b1120"]
+        },
+        {
+            id: "zen",
+            name: "Zen Minimalist",
+            icon: "🌬️",
+            desc: "Wabi-sabi charcoal, sand stone, calm sage green, and flat 8px borders.",
+            swatches: ["#a3e635", "#18181b", "#78716c", "#f43f5e"]
+        },
+        {
+            id: "komorebi",
+            name: "Komorebi Botanical",
+            icon: "🌿",
+            desc: "Warm Japanese paper canvas, forest moss, sunlit ochre amber, and 16px soft radii.",
+            swatches: ["#4ade80", "#18241d", "#facc15", "#38bdf8"]
+        },
+        {
+            id: "tailwind",
+            name: "Tailwind Slate",
+            icon: "⚡",
+            desc: "Modern web slate/zinc, electric indigo, emerald, and sharp 10px borders.",
+            swatches: ["#6366f1", "#0f172a", "#10b981", "#f43f5e"]
+        },
+        {
+            id: "macos",
+            name: "macOS Sequoia",
+            icon: "🍎",
+            desc: "Frosted acrylic glassmorphism, SF vibrant colors, and Apple 18px radii.",
+            swatches: ["#0a84ff", "#242426", "#ffd60a", "#bf5af2"]
+        },
+        {
+            id: "material",
+            name: "Material You (M3)",
+            icon: "🤖",
+            desc: "Android MD3 elevations, expressive pastel lavender pills, and 22px pill radii.",
+            swatches: ["#d0bcff", "#1d1b20", "#a8eff0", "#ffdf9a"]
+        }
+    ];
+
+    const themeGrid = themesPanel.createDiv({ cls: "ocean-theme-grid" });
+    const themeCards = [];
+
+    themeDefs.forEach(t => {
+        const card = themeGrid.createDiv({
+            cls: "ocean-theme-card" + (tempTheme === t.id ? " active" : "")
+        });
+        themeCards.push({ id: t.id, el: card });
+
+        const cardHdr = card.createDiv({ cls: "ocean-theme-card-hdr" });
+        const nameEl = cardHdr.createDiv({ cls: "ocean-theme-name" });
+        nameEl.createSpan({ text: t.icon });
+        nameEl.createSpan({ text: t.name });
+        cardHdr.createDiv({ cls: "ocean-theme-active-tag", text: "Active" });
+
+        card.createDiv({ cls: "ocean-theme-desc", text: t.desc });
+
+        const swatchWrap = card.createDiv({ cls: "ocean-theme-swatches" });
+        t.swatches.forEach(c => {
+            swatchWrap.createDiv({ cls: "ocean-theme-swatch", attr: { style: `background: ${c};` } });
+        });
+
+        card.onclick = () => {
+            tempTheme = t.id;
+            themeCards.forEach(c => c.el.classList.toggle("active", c.id === tempTheme));
+            container.setAttribute("data-theme", tempTheme);
+        };
+    });
+
+    // TAB 3: GENERAL
     const generalPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
     generalPanel.createDiv({ cls: "ocean-settings-desc", text: "Customize dashboard branding, layout heights, and limits." });
 
@@ -449,7 +579,7 @@ function openMasterSettingsModal() {
     generalPanel.createDiv({ text: "Max Topic Tags to Load:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
     const tagLimitInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.tagLimit || 35), min: "10", max: "100", step: "5" } });
 
-    // TAB 3: DATA & BACKUP
+    // TAB 4: DATA & BACKUP
     const dataPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
     dataPanel.createDiv({ cls: "ocean-settings-desc", text: "Reset individual component caches or backup/restore your dashboard configuration." });
 
@@ -499,7 +629,9 @@ function openMasterSettingsModal() {
     const exportBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn primary", text: "💾 Export Config JSON (Copy)" });
     exportBtn.onclick = () => {
         const fullBackup = {
-            version: "ocean-v1",
+            version: "ocean-v2",
+            theme: currentTheme,
+            themeMode: currentThemeMode,
             date: new Date().toISOString(),
             settings: masterSettings,
             title: localStorage.getItem(LS.title) || bannerTitle,
@@ -522,6 +654,8 @@ function openMasterSettingsModal() {
         if (!jsonInput) return;
         try {
             const parsed = JSON.parse(jsonInput);
+            if (parsed.theme) localStorage.setItem(LS.theme, parsed.theme);
+            if (parsed.themeMode) localStorage.setItem(LS.themeMode, parsed.themeMode);
             if (parsed.settings) localStorage.setItem(LS.settings, JSON.stringify(parsed.settings));
             if (parsed.title) localStorage.setItem(LS.title, parsed.title);
             if (parsed.subtitle !== undefined) localStorage.setItem(LS.subtitle, parsed.subtitle);
@@ -552,6 +686,8 @@ function openMasterSettingsModal() {
     });
     cleanSlateBtn.onclick = () => {
         if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and habits to start completely from a clean blank slate?")) return;
+        localStorage.setItem(LS.theme, "ocean");
+        localStorage.setItem(LS.themeMode, "auto");
         localStorage.setItem(LS.targets, "[]");
         localStorage.setItem(LS.cards, "[]");
         localStorage.setItem(LS.habits, "[]");
@@ -600,23 +736,33 @@ function openMasterSettingsModal() {
     };
 
     // Tab Navigation Logic
+    const allTabBtns = [tabWidgetsBtn, tabThemesBtn, tabGeneralBtn, tabDataBtn];
+    const allPanels = [widgetsPanel, themesPanel, generalPanel, dataPanel];
+
     tabWidgetsBtn.onclick = () => {
-        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
-        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        allTabBtns.forEach(b => b.classList.remove("active"));
+        allPanels.forEach(p => p.classList.remove("active"));
         tabWidgetsBtn.classList.add("active");
         widgetsPanel.classList.add("active");
     };
 
+    tabThemesBtn.onclick = () => {
+        allTabBtns.forEach(b => b.classList.remove("active"));
+        allPanels.forEach(p => p.classList.remove("active"));
+        tabThemesBtn.classList.add("active");
+        themesPanel.classList.add("active");
+    };
+
     tabGeneralBtn.onclick = () => {
-        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
-        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        allTabBtns.forEach(b => b.classList.remove("active"));
+        allPanels.forEach(p => p.classList.remove("active"));
         tabGeneralBtn.classList.add("active");
         generalPanel.classList.add("active");
     };
 
     tabDataBtn.onclick = () => {
-        [tabWidgetsBtn, tabGeneralBtn, tabDataBtn].forEach(b => b.classList.remove("active"));
-        [widgetsPanel, generalPanel, dataPanel].forEach(p => p.classList.remove("active"));
+        allTabBtns.forEach(b => b.classList.remove("active"));
+        allPanels.forEach(p => p.classList.remove("active"));
         tabDataBtn.classList.add("active");
         dataPanel.classList.add("active");
     };
@@ -626,8 +772,13 @@ function openMasterSettingsModal() {
     const cancelBtn = bottomRow.createEl("button", { cls: "ocean-btn", text: "Cancel" });
     const saveApplyBtn = bottomRow.createEl("button", { cls: "ocean-btn primary", text: "💾 Save & Apply" });
 
-    cancelBtn.onclick = () => overlay.remove();
+    cancelBtn.onclick = closeModal;
     saveApplyBtn.onclick = () => {
+        currentTheme = tempTheme;
+        currentThemeMode = tempThemeMode;
+        localStorage.setItem(LS.theme, currentTheme);
+        localStorage.setItem(LS.themeMode, currentThemeMode);
+
         masterSettings.widgets = tempWidgets;
         masterSettings.gridHeight = parseInt(heightInp.value, 10) || 550;
         masterSettings.recentLimit = parseInt(limitInp.value, 10) || 50;
@@ -639,7 +790,8 @@ function openMasterSettingsModal() {
         localStorage.setItem(LS.subtitle, bannerSubtitle);
         localStorage.setItem(LS.settings, JSON.stringify(masterSettings));
 
-        new Notice("✨ Settings saved! Please press Ctrl + R to reload the dashboard.", 5000);
+        document.removeEventListener("keydown", escHandler);
+        new Notice("✨ Settings & Theme saved! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
 
         setTimeout(() => {
@@ -650,7 +802,7 @@ function openMasterSettingsModal() {
         }, 200);
     };
 
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
 }
 
 // ══════════════════════════════════════════════

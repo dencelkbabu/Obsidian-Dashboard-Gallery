@@ -1,12 +1,28 @@
 /* ==========================================================================
-   DASHBOARD OCEAN (Zen Minimalism + Atlas Widgets + Komorebi Actions)
-   Palette: Deep Ocean Glass & Crisp Borders (Zero Muddy Grays)
-   Designed for Obsidian PKM
+   DASHBOARD OCEAN (Multi-Theme Engine + Mode Control)
+   Supported Themes: Ocean, Zen, Komorebi, Tailwind, macOS, Material You
+   Appearance Modes: Auto (Obsidian sync), Dark (Forced), Light (Forced)
    ========================================================================== */
 
-/* ── DARK THEME TOKENS (Sleek Dark Glass, Zero Muddy Grays) ───────── */
-:root,
-body.theme-dark {
+:root {
+    --ocean-radius: 12px;
+    --ocean-radius-sm: 8px;
+    --ocean-gap: 18px;
+    --ocean-pad: 20px;
+    --ocean-font-main: var(--font-interface, var(--default-font, inherit));
+    --ocean-font-mono: var(--font-monospace, monospace);
+    --ocean-font-body: var(--font-text, var(--font-interface, inherit));
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. THEME: OCEAN DEEP (Default)
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Ocean Dark */
+.ocean-dashboard[data-theme="ocean"][data-mode="dark"],
+.ocean-dashboard:not([data-theme])[data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="ocean"]:not([data-mode="light"]),
+body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
+:root {
     --ocean-bg: var(--background-primary);
     --ocean-surface: rgba(255, 255, 255, 0.025);
     --ocean-overlay: rgba(255, 255, 255, 0.04);
@@ -25,22 +41,17 @@ body.theme-dark {
     --ocean-text: var(--text-normal);
     --ocean-muted: var(--text-muted);
     --ocean-faint: var(--text-faint);
-
     --ocean-btn-text: #0b1120;
     --ocean-hover-tint: rgba(56, 189, 248, 0.09);
-
     --ocean-radius: 12px;
     --ocean-radius-sm: 8px;
-    --ocean-gap: 18px;
-    --ocean-pad: 20px;
-
-    --ocean-font-main: var(--font-interface, var(--default-font, inherit));
-    --ocean-font-mono: var(--font-monospace, monospace);
-    --ocean-font-body: var(--font-text, var(--font-interface, inherit));
 }
 
-/* ── LIGHT THEME TOKENS ─────────────────────────────────── */
-body.theme-light {
+/* Ocean Light */
+.ocean-dashboard[data-theme="ocean"][data-mode="light"],
+.ocean-dashboard:not([data-theme])[data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="ocean"]:not([data-mode="dark"]),
+body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]) {
     --ocean-bg: var(--background-primary);
     --ocean-surface: rgba(0, 0, 0, 0.02);
     --ocean-overlay: rgba(0, 0, 0, 0.035);
@@ -59,9 +70,295 @@ body.theme-light {
     --ocean-text: var(--text-normal);
     --ocean-muted: var(--text-muted);
     --ocean-faint: var(--text-faint);
-
     --ocean-btn-text: #ffffff;
     --ocean-hover-tint: rgba(2, 132, 199, 0.06);
+    --ocean-radius: 12px;
+    --ocean-radius-sm: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. THEME: ZEN MINIMALIST
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Zen Dark */
+.ocean-dashboard[data-theme="zen"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="zen"]:not([data-mode="light"]) {
+    --ocean-bg: #121212;
+    --ocean-surface: #18181b;
+    --ocean-overlay: #27272a;
+    --ocean-border: rgba(255, 255, 255, 0.09);
+    --ocean-border-hover: rgba(163, 230, 53, 0.45);
+
+    --ocean-title-gradient: linear-gradient(90deg, #f4f4f5, #a1a1aa);
+    --ocean-accent: #a3e635;
+    --ocean-accent-rgb: 163, 230, 53;
+    --ocean-indigo: #a1a1aa;
+    --ocean-cyan: #84cc16;
+    --ocean-emerald: #4ade80;
+    --ocean-amber: #eab308;
+    --ocean-rose: #f43f5e;
+
+    --ocean-text: #f4f4f5;
+    --ocean-muted: #a1a1aa;
+    --ocean-faint: #52525b;
+    --ocean-btn-text: #18181b;
+    --ocean-hover-tint: rgba(163, 230, 53, 0.08);
+    --ocean-radius: 8px;
+    --ocean-radius-sm: 6px;
+}
+
+/* Zen Light */
+.ocean-dashboard[data-theme="zen"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
+    --ocean-bg: #fafaf9;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f5f5f4;
+    --ocean-border: rgba(0, 0, 0, 0.08);
+    --ocean-border-hover: rgba(77, 124, 15, 0.45);
+
+    --ocean-title-gradient: linear-gradient(90deg, #1c1917, #57534e);
+    --ocean-accent: #4d7c0f;
+    --ocean-accent-rgb: 77, 124, 15;
+    --ocean-indigo: #78716c;
+    --ocean-cyan: #65a30d;
+    --ocean-emerald: #15803d;
+    --ocean-amber: #b45309;
+    --ocean-rose: #be123c;
+
+    --ocean-text: #1c1917;
+    --ocean-muted: #78716c;
+    --ocean-faint: #a8a29e;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(77, 124, 15, 0.06);
+    --ocean-radius: 8px;
+    --ocean-radius-sm: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. THEME: KOMOREBI BOTANICAL
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Komorebi Dark */
+.ocean-dashboard[data-theme="komorebi"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="komorebi"]:not([data-mode="light"]) {
+    --ocean-bg: #121a15;
+    --ocean-surface: #18241d;
+    --ocean-overlay: #213228;
+    --ocean-border: rgba(74, 222, 128, 0.14);
+    --ocean-border-hover: rgba(74, 222, 128, 0.45);
+
+    --ocean-title-gradient: linear-gradient(90deg, #f0fdf4, #86efac);
+    --ocean-accent: #4ade80;
+    --ocean-accent-rgb: 74, 222, 128;
+    --ocean-indigo: #38bdf8;
+    --ocean-cyan: #2dd4bf;
+    --ocean-emerald: #4ade80;
+    --ocean-amber: #facc15;
+    --ocean-rose: #fb7185;
+
+    --ocean-text: #f0fdf4;
+    --ocean-muted: #86efac;
+    --ocean-faint: #22c55e;
+    --ocean-btn-text: #052e16;
+    --ocean-hover-tint: rgba(74, 222, 128, 0.09);
+    --ocean-radius: 16px;
+    --ocean-radius-sm: 10px;
+}
+
+/* Komorebi Light */
+.ocean-dashboard[data-theme="komorebi"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="komorebi"]:not([data-mode="dark"]) {
+    --ocean-bg: #f4f7f4;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #ebf3eb;
+    --ocean-border: rgba(21, 128, 61, 0.15);
+    --ocean-border-hover: rgba(21, 128, 61, 0.45);
+
+    --ocean-title-gradient: linear-gradient(90deg, #14532d, #166534);
+    --ocean-accent: #15803d;
+    --ocean-accent-rgb: 21, 128, 61;
+    --ocean-indigo: #0284c7;
+    --ocean-cyan: #0f766e;
+    --ocean-emerald: #15803d;
+    --ocean-amber: #b45309;
+    --ocean-rose: #be123c;
+
+    --ocean-text: #14532d;
+    --ocean-muted: #3f6212;
+    --ocean-faint: #84cc16;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(21, 128, 61, 0.07);
+    --ocean-radius: 16px;
+    --ocean-radius-sm: 10px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   4. THEME: TAILWIND SLATE
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Tailwind Dark */
+.ocean-dashboard[data-theme="tailwind"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="tailwind"]:not([data-mode="light"]) {
+    --ocean-bg: #090d16;
+    --ocean-surface: #0f172a;
+    --ocean-overlay: #1e293b;
+    --ocean-border: #334155;
+    --ocean-border-hover: #6366f1;
+
+    --ocean-title-gradient: linear-gradient(90deg, #f8fafc, #cbd5e1);
+    --ocean-accent: #6366f1;
+    --ocean-accent-rgb: 99, 102, 241;
+    --ocean-indigo: #818cf8;
+    --ocean-cyan: #06b6d4;
+    --ocean-emerald: #10b981;
+    --ocean-amber: #f59e0b;
+    --ocean-rose: #f43f5e;
+
+    --ocean-text: #f8fafc;
+    --ocean-muted: #94a3b8;
+    --ocean-faint: #64748b;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(99, 102, 241, 0.1);
+    --ocean-radius: 10px;
+    --ocean-radius-sm: 6px;
+}
+
+/* Tailwind Light */
+.ocean-dashboard[data-theme="tailwind"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="tailwind"]:not([data-mode="dark"]) {
+    --ocean-bg: #f8fafc;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f1f5f9;
+    --ocean-border: #e2e8f0;
+    --ocean-border-hover: #4f46e5;
+
+    --ocean-title-gradient: linear-gradient(90deg, #0f172a, #334155);
+    --ocean-accent: #4f46e5;
+    --ocean-accent-rgb: 79, 70, 229;
+    --ocean-indigo: #6366f1;
+    --ocean-cyan: #0891b2;
+    --ocean-emerald: #059669;
+    --ocean-amber: #d97706;
+    --ocean-rose: #e11d48;
+
+    --ocean-text: #0f172a;
+    --ocean-muted: #64748b;
+    --ocean-faint: #94a3b8;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(79, 70, 229, 0.08);
+    --ocean-radius: 10px;
+    --ocean-radius-sm: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   5. THEME: macOS SEQUOIA
+   ══════════════════════════════════════════════════════════════════════════ */
+/* macOS Dark */
+.ocean-dashboard[data-theme="macos"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="macos"]:not([data-mode="light"]) {
+    --ocean-bg: #161618;
+    --ocean-surface: rgba(36, 36, 38, 0.75);
+    --ocean-overlay: rgba(255, 255, 255, 0.08);
+    --ocean-border: rgba(255, 255, 255, 0.14);
+    --ocean-border-hover: rgba(10, 132, 255, 0.6);
+
+    --ocean-title-gradient: linear-gradient(90deg, #ffffff, #d1d5db);
+    --ocean-accent: #0a84ff;
+    --ocean-accent-rgb: 10, 132, 255;
+    --ocean-indigo: #5e5ce6;
+    --ocean-cyan: #64d2ff;
+    --ocean-emerald: #30d158;
+    --ocean-amber: #ffd60a;
+    --ocean-rose: #ff453a;
+
+    --ocean-text: #ffffff;
+    --ocean-muted: #98989d;
+    --ocean-faint: #636366;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(10, 132, 255, 0.12);
+    --ocean-radius: 18px;
+    --ocean-radius-sm: 12px;
+}
+
+/* macOS Light */
+.ocean-dashboard[data-theme="macos"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]) {
+    --ocean-bg: #f5f5f7;
+    --ocean-surface: rgba(255, 255, 255, 0.8);
+    --ocean-overlay: rgba(0, 0, 0, 0.04);
+    --ocean-border: rgba(0, 0, 0, 0.12);
+    --ocean-border-hover: rgba(0, 122, 255, 0.5);
+
+    --ocean-title-gradient: linear-gradient(90deg, #1d1d1f, #424245);
+    --ocean-accent: #007aff;
+    --ocean-accent-rgb: 0, 122, 255;
+    --ocean-indigo: #5856d6;
+    --ocean-cyan: #32ade6;
+    --ocean-emerald: #34c759;
+    --ocean-amber: #ff9500;
+    --ocean-rose: #ff3b30;
+
+    --ocean-text: #1d1d1f;
+    --ocean-muted: #86868b;
+    --ocean-faint: #aeaeb2;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(0, 122, 255, 0.08);
+    --ocean-radius: 18px;
+    --ocean-radius-sm: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   6. THEME: MATERIAL YOU (M3)
+   ══════════════════════════════════════════════════════════════════════════ */
+/* Material Dark */
+.ocean-dashboard[data-theme="material"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="material"]:not([data-mode="light"]) {
+    --ocean-bg: #141218;
+    --ocean-surface: #1d1b20;
+    --ocean-overlay: #2b2930;
+    --ocean-border: #49454f;
+    --ocean-border-hover: #d0bcff;
+
+    --ocean-title-gradient: linear-gradient(90deg, #e6e0e9, #cac4d0);
+    --ocean-accent: #d0bcff;
+    --ocean-accent-rgb: 208, 188, 255;
+    --ocean-indigo: #d0bcff;
+    --ocean-cyan: #a8eff0;
+    --ocean-emerald: #a8f0a0;
+    --ocean-amber: #ffdf9a;
+    --ocean-rose: #ffb4ab;
+
+    --ocean-text: #e6e0e9;
+    --ocean-muted: #cac4d0;
+    --ocean-faint: #79747e;
+    --ocean-btn-text: #381e72;
+    --ocean-hover-tint: rgba(208, 188, 255, 0.12);
+    --ocean-radius: 22px;
+    --ocean-radius-sm: 14px;
+}
+
+/* Material Light */
+.ocean-dashboard[data-theme="material"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"]) {
+    --ocean-bg: #fef7ff;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f3edf7;
+    --ocean-border: #cac4d0;
+    --ocean-border-hover: #6750a4;
+
+    --ocean-title-gradient: linear-gradient(90deg, #1d1b20, #49454f);
+    --ocean-accent: #6750a4;
+    --ocean-accent-rgb: 103, 80, 164;
+    --ocean-indigo: #6750a4;
+    --ocean-cyan: #006874;
+    --ocean-emerald: #1d6c29;
+    --ocean-amber: #7e5700;
+    --ocean-rose: #ba1a1a;
+
+    --ocean-text: #1d1b20;
+    --ocean-muted: #49454f;
+    --ocean-faint: #79747e;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(103, 80, 164, 0.08);
+    --ocean-radius: 22px;
+    --ocean-radius-sm: 14px;
 }
 
 /* Full Width & Container Reset */
@@ -1564,6 +1861,130 @@ body.theme-light {
 .ocean-toggle-switch.active .ocean-toggle-knob {
     background: #0b1120;
     transform: translateX(18px);
+}
+
+/* ── THEMES TAB STYLES ───────────────────────────────── */
+.ocean-mode-segmented {
+    display: flex;
+    background: var(--ocean-overlay);
+    border: 1px solid var(--ocean-border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+    margin-bottom: 12px;
+}
+
+.ocean-mode-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--ocean-font-mono);
+    color: var(--ocean-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.ocean-mode-btn:hover {
+    color: var(--ocean-text);
+}
+
+.ocean-mode-btn.active {
+    background: var(--ocean-accent);
+    color: var(--ocean-btn-text);
+    box-shadow: 0 0 10px rgba(var(--ocean-accent-rgb), 0.35);
+}
+
+.ocean-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 4px;
+}
+
+@media (max-width: 580px) {
+    .ocean-theme-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ocean-theme-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px;
+    background: var(--ocean-overlay);
+    border: 2px solid var(--ocean-border);
+    border-radius: var(--ocean-radius);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+    gap: 6px;
+}
+
+.ocean-theme-card:hover {
+    border-color: var(--ocean-border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ocean-theme-card.active {
+    border-color: var(--ocean-accent);
+    background: rgba(var(--ocean-accent-rgb), 0.08);
+    box-shadow: 0 0 16px rgba(var(--ocean-accent-rgb), 0.3);
+}
+
+.ocean-theme-card-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ocean-theme-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ocean-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ocean-theme-active-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--ocean-accent);
+    color: var(--ocean-btn-text);
+    display: none;
+}
+
+.ocean-theme-card.active .ocean-theme-active-tag {
+    display: inline-block;
+}
+
+.ocean-theme-desc {
+    font-size: 0.72rem;
+    color: var(--ocean-muted);
+    line-height: 1.35;
+}
+
+.ocean-theme-swatches {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.ocean-theme-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .ocean-settings-data-grid {
