@@ -48,7 +48,7 @@ const defaultSettings = {
 let masterSettings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}"));
 masterSettings.widgets = Object.assign({}, defaultSettings.widgets, masterSettings.widgets || {});
 
-let currentTheme = localStorage.getItem(LS.theme) || "ocean";
+let currentTheme = localStorage.getItem(LS.theme) || "zen";
 let currentThemeMode = localStorage.getItem(LS.themeMode) || "auto";
 
 let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
@@ -502,11 +502,11 @@ function openMasterSettingsModal() {
             swatches: ["#a3e635", "#18181b", "#78716c", "#f43f5e"]
         },
         {
-            id: "komorebi",
-            name: "Komorebi Botanical",
-            icon: "🌿",
-            desc: "Warm Japanese paper canvas, forest moss, sunlit ochre amber, and 16px soft radii.",
-            swatches: ["#4ade80", "#18241d", "#facc15", "#38bdf8"]
+            id: "synthwave",
+            name: "Warm Synthwave",
+            icon: "🌆",
+            desc: "Pastel sunset rose, lavender mist, soft apricot, and sharp zero-radius corners.",
+            swatches: ["#f472b6", "#c084fc", "#7dd3fc", "#fde047"]
         },
         {
             id: "tailwind",
@@ -686,7 +686,7 @@ function openMasterSettingsModal() {
     });
     cleanSlateBtn.onclick = () => {
         if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and habits to start completely from a clean blank slate?")) return;
-        localStorage.setItem(LS.theme, "ocean");
+        localStorage.setItem(LS.theme, "zen");
         localStorage.setItem(LS.themeMode, "auto");
         localStorage.setItem(LS.targets, "[]");
         localStorage.setItem(LS.cards, "[]");

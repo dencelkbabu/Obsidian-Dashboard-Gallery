@@ -134,60 +134,60 @@ body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   3. THEME: KOMOREBI BOTANICAL
+   3. THEME: SYNTHWAVE '84 (Warm Pastel Retro & Zero Radius)
    ══════════════════════════════════════════════════════════════════════════ */
-/* Komorebi Dark */
-.ocean-dashboard[data-theme="komorebi"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="komorebi"]:not([data-mode="light"]) {
-    --ocean-bg: #121a15;
-    --ocean-surface: #18241d;
-    --ocean-overlay: #213228;
-    --ocean-border: rgba(74, 222, 128, 0.14);
-    --ocean-border-hover: rgba(74, 222, 128, 0.45);
+/* Synthwave Dark */
+.ocean-dashboard[data-theme="synthwave"][data-mode="dark"],
+body.theme-dark .ocean-dashboard[data-theme="synthwave"]:not([data-mode="light"]) {
+    --ocean-bg: #151022;
+    --ocean-surface: #1e1730;
+    --ocean-overlay: #2d2247;
+    --ocean-border: rgba(244, 114, 182, 0.28);
+    --ocean-border-hover: #7dd3fc;
 
-    --ocean-title-gradient: linear-gradient(90deg, #f0fdf4, #86efac);
-    --ocean-accent: #4ade80;
-    --ocean-accent-rgb: 74, 222, 128;
-    --ocean-indigo: #38bdf8;
-    --ocean-cyan: #2dd4bf;
-    --ocean-emerald: #4ade80;
-    --ocean-amber: #facc15;
+    --ocean-title-gradient: linear-gradient(90deg, #f472b6, #c084fc, #7dd3fc);
+    --ocean-accent: #f472b6;
+    --ocean-accent-rgb: 244, 114, 182;
+    --ocean-indigo: #c084fc;
+    --ocean-cyan: #7dd3fc;
+    --ocean-emerald: #6ee7b7;
+    --ocean-amber: #fde047;
     --ocean-rose: #fb7185;
 
-    --ocean-text: #f0fdf4;
-    --ocean-muted: #86efac;
-    --ocean-faint: #22c55e;
-    --ocean-btn-text: #052e16;
-    --ocean-hover-tint: rgba(74, 222, 128, 0.09);
-    --ocean-radius: 16px;
-    --ocean-radius-sm: 10px;
+    --ocean-text: #f5f3ff;
+    --ocean-muted: #c4b5fd;
+    --ocean-faint: #8b5cf6;
+    --ocean-btn-text: #1e1730;
+    --ocean-hover-tint: rgba(244, 114, 182, 0.1);
+    --ocean-radius: 0px;
+    --ocean-radius-sm: 0px;
 }
 
-/* Komorebi Light */
-.ocean-dashboard[data-theme="komorebi"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="komorebi"]:not([data-mode="dark"]) {
-    --ocean-bg: #f4f7f4;
+/* Synthwave Light */
+.ocean-dashboard[data-theme="synthwave"][data-mode="light"],
+body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]) {
+    --ocean-bg: #faf7fc;
     --ocean-surface: #ffffff;
-    --ocean-overlay: #ebf3eb;
-    --ocean-border: rgba(21, 128, 61, 0.15);
-    --ocean-border-hover: rgba(21, 128, 61, 0.45);
+    --ocean-overlay: #f3e8ff;
+    --ocean-border: rgba(192, 132, 252, 0.35);
+    --ocean-border-hover: #db2777;
 
-    --ocean-title-gradient: linear-gradient(90deg, #14532d, #166534);
-    --ocean-accent: #15803d;
-    --ocean-accent-rgb: 21, 128, 61;
-    --ocean-indigo: #0284c7;
-    --ocean-cyan: #0f766e;
-    --ocean-emerald: #15803d;
-    --ocean-amber: #b45309;
-    --ocean-rose: #be123c;
+    --ocean-title-gradient: linear-gradient(90deg, #be185d, #7e22ce);
+    --ocean-accent: #db2777;
+    --ocean-accent-rgb: 219, 39, 119;
+    --ocean-indigo: #9333ea;
+    --ocean-cyan: #0284c7;
+    --ocean-emerald: #059669;
+    --ocean-amber: #d97706;
+    --ocean-rose: #e11d48;
 
-    --ocean-text: #14532d;
-    --ocean-muted: #3f6212;
-    --ocean-faint: #84cc16;
+    --ocean-text: #2e1065;
+    --ocean-muted: #7e22ce;
+    --ocean-faint: #c084fc;
     --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(21, 128, 61, 0.07);
-    --ocean-radius: 16px;
-    --ocean-radius-sm: 10px;
+    --ocean-hover-tint: rgba(219, 39, 119, 0.06);
+    --ocean-radius: 0px;
+    --ocean-radius-sm: 0px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -359,6 +359,265 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
     --ocean-hover-tint: rgba(103, 80, 164, 0.08);
     --ocean-radius: 22px;
     --ocean-radius-sm: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THEME DESIGN SYSTEMS (Box Looks, Shadows, Backgrounds & Layout Geometry)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. 🍎 macOS SEQUOIA (Frosted Glassmorphism, Squircles & Blur) ──────── */
+.ocean-dashboard[data-theme="macos"] .ocean-header {
+    border-radius: 18px;
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-card {
+    border-radius: 18px;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-stat-cube {
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-target-capsule,
+.ocean-dashboard[data-theme="macos"] .ocean-col-card,
+.ocean-dashboard[data-theme="macos"] .ocean-note-row {
+    border-radius: 12px;
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-act-grid {
+    background: rgba(0, 0, 0, 0.16);
+    padding: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-act-btn {
+    border-radius: 12px;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-act-btn:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 6px 14px rgba(10, 132, 255, 0.35);
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-tag-pill {
+    border-radius: 8px;
+}
+
+.ocean-dashboard[data-theme="macos"] .ocean-dot {
+    border-radius: 6px;
+}
+
+/* ── 2. 🤖 MATERIAL YOU M3 (Tonal Surface Elevations & Pill Geometry) ────── */
+.ocean-dashboard[data-theme="material"] .ocean-header {
+    border-radius: 28px;
+    border: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-card {
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-stat-cube {
+    border-radius: 22px;
+    border: none;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-search-box input {
+    border-radius: 9999px;
+    padding-left: 36px;
+    padding-right: 18px;
+    height: 40px;
+    border: none;
+    background: var(--ocean-overlay);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-tag-pill {
+    border-radius: 9999px;
+    padding: 6px 14px;
+    font-weight: 700;
+    border: none;
+    background: var(--ocean-overlay);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-add-btn {
+    border-radius: 9999px;
+    padding: 6px 16px;
+    box-shadow: 0 3px 12px rgba(var(--ocean-accent-rgb), 0.35);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-target-capsule,
+.ocean-dashboard[data-theme="material"] .ocean-col-card,
+.ocean-dashboard[data-theme="material"] .ocean-note-row {
+    border-radius: 18px;
+    border: none;
+    background: var(--ocean-overlay);
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-dot {
+    border-radius: 12px;
+}
+
+.ocean-dashboard[data-theme="material"] .ocean-act-btn {
+    border-radius: 18px;
+    border: none;
+}
+
+/* ── 3. 🌬️ ZEN MINIMALIST (Borderless, Hairline Dividers & Wabi-Sabi Flow) ── */
+.ocean-dashboard[data-theme="zen"] .ocean-header {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ocean-border);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 16px 4px 24px 4px;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-header::before {
+    display: none;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-card {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ocean-border);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 14px 4px;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-stat-cube {
+    background: transparent;
+    border: none;
+    border-left: 2px solid var(--ocean-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-target-capsule,
+.ocean-dashboard[data-theme="zen"] .ocean-col-card {
+    background: transparent;
+    border: 1px solid var(--ocean-border);
+    border-radius: 6px;
+    box-shadow: none;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-tag-pill {
+    background: transparent;
+    border: 1px solid var(--ocean-border);
+    border-radius: 4px;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-dot {
+    border-radius: 50%;
+}
+
+.ocean-dashboard[data-theme="zen"] .ocean-act-btn {
+    background: transparent;
+    border: 1px solid var(--ocean-border);
+    border-radius: 6px;
+}
+
+/* ── 4. 🌆 SYNTHWAVE '84 (Warm Pastel Retro & Zero Radius) ──────────────── */
+.ocean-dashboard[data-theme="synthwave"] .ocean-header {
+    border-radius: 0px !important;
+    box-shadow: 0 4px 18px rgba(244, 114, 182, 0.12), inset 0 0 20px rgba(192, 132, 252, 0.05);
+    border: 1px solid var(--ocean-border) !important;
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-card {
+    border-radius: 0px !important;
+    box-shadow: 0 2px 10px rgba(192, 132, 252, 0.08);
+    border: 1px solid var(--ocean-border) !important;
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-target-capsule,
+.ocean-dashboard[data-theme="synthwave"] .ocean-col-card,
+.ocean-dashboard[data-theme="synthwave"] .ocean-note-row {
+    border-radius: 0px !important;
+    border: 1px solid rgba(125, 211, 252, 0.3) !important;
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-tag-pill {
+    border-radius: 0px !important;
+    border: 1px solid rgba(253, 224, 71, 0.35) !important;
+    font-family: var(--ocean-font-mono);
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-stat-cube {
+    border-radius: 0px !important;
+    border: 1px solid var(--ocean-border) !important;
+    box-shadow: 0 2px 8px rgba(244, 114, 182, 0.1);
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-dot {
+    border-radius: 0px !important;
+}
+
+.ocean-dashboard[data-theme="synthwave"] .ocean-act-btn {
+    border-radius: 0px !important;
+    border: 1px solid rgba(125, 211, 252, 0.3) !important;
+}
+
+/* ── 5. ⚡ TAILWIND SLATE (High-Density 1px Grid & Sharp Geometry) ───────── */
+.ocean-dashboard[data-theme="tailwind"] .ocean-header {
+    border-radius: 10px;
+    border: 1px solid var(--ocean-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-card {
+    border-radius: 8px;
+    border: 1px solid var(--ocean-border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-target-capsule,
+.ocean-dashboard[data-theme="tailwind"] .ocean-col-card,
+.ocean-dashboard[data-theme="tailwind"] .ocean-note-row {
+    border-radius: 6px;
+    border: 1px solid var(--ocean-border);
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-tag-pill {
+    border-radius: 4px;
+    font-family: var(--ocean-font-mono);
+    font-size: 0.72rem;
+    border: 1px solid var(--ocean-border);
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-dot {
+    border-radius: 4px;
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-stat-cube {
+    border-radius: 8px;
+    border: 1px solid var(--ocean-border);
+}
+
+.ocean-dashboard[data-theme="tailwind"] .ocean-act-btn {
+    border-radius: 6px;
+    border: 1px solid var(--ocean-border);
 }
 
 /* Full Width & Container Reset */
