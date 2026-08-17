@@ -17,11 +17,48 @@
 /* ══════════════════════════════════════════════════════════════════════════
    1. THEME: OCEAN DEEP (Default)
    ══════════════════════════════════════════════════════════════════════════ */
+/* Ocean Light */
+body.theme-light .ocean-dashboard[data-theme="ocean"]:not([data-mode="dark"]),
+body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="ocean"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay:not([data-theme]):not([data-mode="dark"]),
+.ocean-dashboard[data-theme="ocean"][data-mode="light"],
+.ocean-dashboard:not([data-theme])[data-mode="light"],
+.ocean-modal-overlay[data-theme="ocean"][data-mode="light"],
+.ocean-modal-overlay:not([data-theme])[data-mode="light"] {
+    --ocean-bg: #f0f9ff;
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f8fafc;
+    --ocean-border: #bae6fd;
+    --ocean-border-hover: #0284c7;
+
+    --ocean-title-gradient: linear-gradient(90deg, #0369a1, #0284c7);
+    --ocean-accent: #0284c7;
+    --ocean-accent-rgb: 2, 132, 199;
+    --ocean-indigo: #4f46e5;
+    --ocean-cyan: #0891b2;
+    --ocean-emerald: #059669;
+    --ocean-amber: #d97706;
+    --ocean-rose: #e11d48;
+
+    --ocean-text: #0f172a;
+    --ocean-muted: #475569;
+    --ocean-faint: #94a3b8;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(2, 132, 199, 0.08);
+    --ocean-radius: 12px;
+    --ocean-radius-sm: 8px;
+}
+
 /* Ocean Dark */
-.ocean-dashboard[data-theme="ocean"][data-mode="dark"],
-.ocean-dashboard:not([data-theme])[data-mode="dark"],
 body.theme-dark .ocean-dashboard[data-theme="ocean"]:not([data-mode="light"]),
 body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="ocean"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay:not([data-theme]):not([data-mode="light"]),
+.ocean-dashboard[data-theme="ocean"][data-mode="dark"],
+.ocean-dashboard:not([data-theme])[data-mode="dark"],
+.ocean-modal-overlay[data-theme="ocean"][data-mode="dark"],
+.ocean-modal-overlay:not([data-theme])[data-mode="dark"],
 :root {
     --ocean-bg: #0a0f1d;
     --ocean-surface: #0f172a;
@@ -47,68 +84,14 @@ body.theme-dark .ocean-dashboard:not([data-theme]):not([data-mode="light"]),
     --ocean-radius-sm: 8px;
 }
 
-/* Ocean Light */
-.ocean-dashboard[data-theme="ocean"][data-mode="light"],
-.ocean-dashboard:not([data-theme])[data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="ocean"]:not([data-mode="dark"]),
-body.theme-light .ocean-dashboard:not([data-theme]):not([data-mode="dark"]) {
-    --ocean-bg: #f0f9ff;
-    --ocean-surface: #ffffff;
-    --ocean-overlay: #f8fafc;
-    --ocean-border: #bae6fd;
-    --ocean-border-hover: #0284c7;
-
-    --ocean-title-gradient: linear-gradient(90deg, #0369a1, #0284c7);
-    --ocean-accent: #0284c7;
-    --ocean-accent-rgb: 2, 132, 199;
-    --ocean-indigo: #4f46e5;
-    --ocean-cyan: #0891b2;
-    --ocean-emerald: #059669;
-    --ocean-amber: #d97706;
-    --ocean-rose: #e11d48;
-
-    --ocean-text: #0f172a;
-    --ocean-muted: #475569;
-    --ocean-faint: #94a3b8;
-    --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(2, 132, 199, 0.08);
-    --ocean-radius: 12px;
-    --ocean-radius-sm: 8px;
-}
-
 /* ══════════════════════════════════════════════════════════════════════════
    2. THEME: ZEN MINIMALIST
    ══════════════════════════════════════════════════════════════════════════ */
-/* Zen Dark */
-.ocean-dashboard[data-theme="zen"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="zen"]:not([data-mode="light"]) {
-    --ocean-bg: #121214;
-    --ocean-surface: #18181b;
-    --ocean-overlay: #232326;
-    --ocean-border: rgba(255, 255, 255, 0.1);
-    --ocean-border-hover: #a3e635;
-
-    --ocean-title-gradient: linear-gradient(90deg, #f4f4f5, #d4d4d8);
-    --ocean-accent: #a3e635;
-    --ocean-accent-rgb: 163, 230, 53;
-    --ocean-indigo: #a1a1aa;
-    --ocean-cyan: #84cc16;
-    --ocean-emerald: #4ade80;
-    --ocean-amber: #eab308;
-    --ocean-rose: #f43f5e;
-
-    --ocean-text: #f4f4f5;
-    --ocean-muted: #a1a1aa;
-    --ocean-faint: #71717a;
-    --ocean-btn-text: #18181b;
-    --ocean-hover-tint: rgba(163, 230, 53, 0.1);
-    --ocean-radius: 8px;
-    --ocean-radius-sm: 6px;
-}
-
 /* Zen Light */
+body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="zen"]:not([data-mode="dark"]),
 .ocean-dashboard[data-theme="zen"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
+.ocean-modal-overlay[data-theme="zen"][data-mode="light"] {
     --ocean-bg: #fafaf9;
     --ocean-surface: #ffffff;
     --ocean-overlay: #f5f5f4;
@@ -133,39 +116,43 @@ body.theme-light .ocean-dashboard[data-theme="zen"]:not([data-mode="dark"]) {
     --ocean-radius-sm: 6px;
 }
 
+/* Zen Dark */
+body.theme-dark .ocean-dashboard[data-theme="zen"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="zen"]:not([data-mode="light"]),
+.ocean-dashboard[data-theme="zen"][data-mode="dark"],
+.ocean-modal-overlay[data-theme="zen"][data-mode="dark"] {
+    --ocean-bg: #121214;
+    --ocean-surface: #18181b;
+    --ocean-overlay: #232326;
+    --ocean-border: rgba(255, 255, 255, 0.1);
+    --ocean-border-hover: #a3e635;
+
+    --ocean-title-gradient: linear-gradient(90deg, #f4f4f5, #d4d4d8);
+    --ocean-accent: #a3e635;
+    --ocean-accent-rgb: 163, 230, 53;
+    --ocean-indigo: #a1a1aa;
+    --ocean-cyan: #84cc16;
+    --ocean-emerald: #4ade80;
+    --ocean-amber: #eab308;
+    --ocean-rose: #f43f5e;
+
+    --ocean-text: #f4f4f5;
+    --ocean-muted: #a1a1aa;
+    --ocean-faint: #71717a;
+    --ocean-btn-text: #18181b;
+    --ocean-hover-tint: rgba(163, 230, 53, 0.1);
+    --ocean-radius: 8px;
+    --ocean-radius-sm: 6px;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    3. THEME: SYNTHWAVE '84 (Warm Pastel Retro & Zero Radius)
    ══════════════════════════════════════════════════════════════════════════ */
-/* Synthwave Dark */
-.ocean-dashboard[data-theme="synthwave"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="synthwave"]:not([data-mode="light"]) {
-    --ocean-bg: #151022;
-    --ocean-surface: #1e1730;
-    --ocean-overlay: #2d2247;
-    --ocean-border: rgba(244, 114, 182, 0.28);
-    --ocean-border-hover: #7dd3fc;
-
-    --ocean-title-gradient: linear-gradient(90deg, #f472b6, #c084fc, #7dd3fc);
-    --ocean-accent: #f472b6;
-    --ocean-accent-rgb: 244, 114, 182;
-    --ocean-indigo: #c084fc;
-    --ocean-cyan: #7dd3fc;
-    --ocean-emerald: #6ee7b7;
-    --ocean-amber: #fde047;
-    --ocean-rose: #fb7185;
-
-    --ocean-text: #f5f3ff;
-    --ocean-muted: #c4b5fd;
-    --ocean-faint: #8b5cf6;
-    --ocean-btn-text: #1e1730;
-    --ocean-hover-tint: rgba(244, 114, 182, 0.1);
-    --ocean-radius: 0px;
-    --ocean-radius-sm: 0px;
-}
-
 /* Synthwave Light */
+body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="synthwave"]:not([data-mode="dark"]),
 .ocean-dashboard[data-theme="synthwave"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]) {
+.ocean-modal-overlay[data-theme="synthwave"][data-mode="light"] {
     --ocean-bg: #faf5ff;
     --ocean-surface: #ffffff;
     --ocean-overlay: #f3e8ff;
@@ -190,39 +177,43 @@ body.theme-light .ocean-dashboard[data-theme="synthwave"]:not([data-mode="dark"]
     --ocean-radius-sm: 0px;
 }
 
+/* Synthwave Dark */
+body.theme-dark .ocean-dashboard[data-theme="synthwave"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="synthwave"]:not([data-mode="light"]),
+.ocean-dashboard[data-theme="synthwave"][data-mode="dark"],
+.ocean-modal-overlay[data-theme="synthwave"][data-mode="dark"] {
+    --ocean-bg: #151022;
+    --ocean-surface: #1e1730;
+    --ocean-overlay: #2d2247;
+    --ocean-border: rgba(244, 114, 182, 0.28);
+    --ocean-border-hover: #7dd3fc;
+
+    --ocean-title-gradient: linear-gradient(90deg, #f472b6, #c084fc, #7dd3fc);
+    --ocean-accent: #f472b6;
+    --ocean-accent-rgb: 244, 114, 182;
+    --ocean-indigo: #c084fc;
+    --ocean-cyan: #7dd3fc;
+    --ocean-emerald: #6ee7b7;
+    --ocean-amber: #fde047;
+    --ocean-rose: #fb7185;
+
+    --ocean-text: #f5f3ff;
+    --ocean-muted: #c4b5fd;
+    --ocean-faint: #8b5cf6;
+    --ocean-btn-text: #1e1730;
+    --ocean-hover-tint: rgba(244, 114, 182, 0.1);
+    --ocean-radius: 0px;
+    --ocean-radius-sm: 0px;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    4. THEME: TAILWIND SLATE
    ══════════════════════════════════════════════════════════════════════════ */
-/* Tailwind Dark */
-.ocean-dashboard[data-theme="tailwind"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="tailwind"]:not([data-mode="light"]) {
-    --ocean-bg: #090d16;
-    --ocean-surface: #0f172a;
-    --ocean-overlay: #1e293b;
-    --ocean-border: #334155;
-    --ocean-border-hover: #6366f1;
-
-    --ocean-title-gradient: linear-gradient(90deg, #f8fafc, #cbd5e1);
-    --ocean-accent: #6366f1;
-    --ocean-accent-rgb: 99, 102, 241;
-    --ocean-indigo: #818cf8;
-    --ocean-cyan: #06b6d4;
-    --ocean-emerald: #10b981;
-    --ocean-amber: #f59e0b;
-    --ocean-rose: #f43f5e;
-
-    --ocean-text: #f8fafc;
-    --ocean-muted: #94a3b8;
-    --ocean-faint: #64748b;
-    --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(99, 102, 241, 0.1);
-    --ocean-radius: 10px;
-    --ocean-radius-sm: 6px;
-}
-
 /* Tailwind Light */
+body.theme-light .ocean-dashboard[data-theme="tailwind"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="tailwind"]:not([data-mode="dark"]),
 .ocean-dashboard[data-theme="tailwind"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="tailwind"]:not([data-mode="dark"]) {
+.ocean-modal-overlay[data-theme="tailwind"][data-mode="light"] {
     --ocean-bg: #f8fafc;
     --ocean-surface: #ffffff;
     --ocean-overlay: #f1f5f9;
@@ -247,42 +238,46 @@ body.theme-light .ocean-dashboard[data-theme="tailwind"]:not([data-mode="dark"])
     --ocean-radius-sm: 6px;
 }
 
+/* Tailwind Dark */
+body.theme-dark .ocean-dashboard[data-theme="tailwind"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="tailwind"]:not([data-mode="light"]),
+.ocean-dashboard[data-theme="tailwind"][data-mode="dark"],
+.ocean-modal-overlay[data-theme="tailwind"][data-mode="dark"] {
+    --ocean-bg: #090d16;
+    --ocean-surface: #0f172a;
+    --ocean-overlay: #1e293b;
+    --ocean-border: #334155;
+    --ocean-border-hover: #6366f1;
+
+    --ocean-title-gradient: linear-gradient(90deg, #f8fafc, #cbd5e1);
+    --ocean-accent: #6366f1;
+    --ocean-accent-rgb: 99, 102, 241;
+    --ocean-indigo: #818cf8;
+    --ocean-cyan: #06b6d4;
+    --ocean-emerald: #10b981;
+    --ocean-amber: #f59e0b;
+    --ocean-rose: #f43f5e;
+
+    --ocean-text: #f8fafc;
+    --ocean-muted: #94a3b8;
+    --ocean-faint: #64748b;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(99, 102, 241, 0.1);
+    --ocean-radius: 10px;
+    --ocean-radius-sm: 6px;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    5. THEME: macOS SEQUOIA
    ══════════════════════════════════════════════════════════════════════════ */
-/* macOS Dark */
-.ocean-dashboard[data-theme="macos"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="macos"]:not([data-mode="light"]) {
-    --ocean-bg: #161618;
-    --ocean-surface: rgba(36, 36, 38, 0.75);
-    --ocean-overlay: rgba(255, 255, 255, 0.08);
-    --ocean-border: rgba(255, 255, 255, 0.14);
-    --ocean-border-hover: rgba(10, 132, 255, 0.6);
-
-    --ocean-title-gradient: linear-gradient(90deg, #ffffff, #d1d5db);
-    --ocean-accent: #0a84ff;
-    --ocean-accent-rgb: 10, 132, 255;
-    --ocean-indigo: #5e5ce6;
-    --ocean-cyan: #64d2ff;
-    --ocean-emerald: #30d158;
-    --ocean-amber: #ffd60a;
-    --ocean-rose: #ff453a;
-
-    --ocean-text: #ffffff;
-    --ocean-muted: #98989d;
-    --ocean-faint: #636366;
-    --ocean-btn-text: #ffffff;
-    --ocean-hover-tint: rgba(10, 132, 255, 0.12);
-    --ocean-radius: 18px;
-    --ocean-radius-sm: 12px;
-}
-
 /* macOS Light */
+body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="macos"]:not([data-mode="dark"]),
 .ocean-dashboard[data-theme="macos"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]) {
+.ocean-modal-overlay[data-theme="macos"][data-mode="light"] {
     --ocean-bg: #f5f5f7;
-    --ocean-surface: rgba(255, 255, 255, 0.88);
-    --ocean-overlay: rgba(0, 0, 0, 0.04);
+    --ocean-surface: #ffffff;
+    --ocean-overlay: #f5f5f7;
     --ocean-border: rgba(0, 0, 0, 0.1);
     --ocean-border-hover: rgba(0, 122, 255, 0.5);
 
@@ -304,39 +299,43 @@ body.theme-light .ocean-dashboard[data-theme="macos"]:not([data-mode="dark"]) {
     --ocean-radius-sm: 12px;
 }
 
+/* macOS Dark */
+body.theme-dark .ocean-dashboard[data-theme="macos"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="macos"]:not([data-mode="light"]),
+.ocean-dashboard[data-theme="macos"][data-mode="dark"],
+.ocean-modal-overlay[data-theme="macos"][data-mode="dark"] {
+    --ocean-bg: #161618;
+    --ocean-surface: #242426;
+    --ocean-overlay: #323236;
+    --ocean-border: rgba(255, 255, 255, 0.14);
+    --ocean-border-hover: rgba(10, 132, 255, 0.6);
+
+    --ocean-title-gradient: linear-gradient(90deg, #ffffff, #d1d5db);
+    --ocean-accent: #0a84ff;
+    --ocean-accent-rgb: 10, 132, 255;
+    --ocean-indigo: #5e5ce6;
+    --ocean-cyan: #64d2ff;
+    --ocean-emerald: #30d158;
+    --ocean-amber: #ffd60a;
+    --ocean-rose: #ff453a;
+
+    --ocean-text: #ffffff;
+    --ocean-muted: #98989d;
+    --ocean-faint: #636366;
+    --ocean-btn-text: #ffffff;
+    --ocean-hover-tint: rgba(10, 132, 255, 0.12);
+    --ocean-radius: 18px;
+    --ocean-radius-sm: 12px;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    6. THEME: MATERIAL YOU (M3)
    ══════════════════════════════════════════════════════════════════════════ */
-/* Material Dark */
-.ocean-dashboard[data-theme="material"][data-mode="dark"],
-body.theme-dark .ocean-dashboard[data-theme="material"]:not([data-mode="light"]) {
-    --ocean-bg: #141218;
-    --ocean-surface: #1d1b20;
-    --ocean-overlay: #2b2930;
-    --ocean-border: #49454f;
-    --ocean-border-hover: #d0bcff;
-
-    --ocean-title-gradient: linear-gradient(90deg, #e6e0e9, #cac4d0);
-    --ocean-accent: #d0bcff;
-    --ocean-accent-rgb: 208, 188, 255;
-    --ocean-indigo: #d0bcff;
-    --ocean-cyan: #a8eff0;
-    --ocean-emerald: #a8f0a0;
-    --ocean-amber: #ffdf9a;
-    --ocean-rose: #ffb4ab;
-
-    --ocean-text: #e6e0e9;
-    --ocean-muted: #cac4d0;
-    --ocean-faint: #79747e;
-    --ocean-btn-text: #381e72;
-    --ocean-hover-tint: rgba(208, 188, 255, 0.12);
-    --ocean-radius: 22px;
-    --ocean-radius-sm: 14px;
-}
-
 /* Material Light */
+body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"]),
+body.theme-light .ocean-modal-overlay[data-theme="material"]:not([data-mode="dark"]),
 .ocean-dashboard[data-theme="material"][data-mode="light"],
-body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"]) {
+.ocean-modal-overlay[data-theme="material"][data-mode="light"] {
     --ocean-bg: #fef7ff;
     --ocean-surface: #f3edf7;
     --ocean-overlay: #ffffff;
@@ -357,6 +356,35 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
     --ocean-faint: #79747e;
     --ocean-btn-text: #ffffff;
     --ocean-hover-tint: rgba(103, 80, 164, 0.08);
+    --ocean-radius: 22px;
+    --ocean-radius-sm: 14px;
+}
+
+/* Material Dark */
+body.theme-dark .ocean-dashboard[data-theme="material"]:not([data-mode="light"]),
+body.theme-dark .ocean-modal-overlay[data-theme="material"]:not([data-mode="light"]),
+.ocean-dashboard[data-theme="material"][data-mode="dark"],
+.ocean-modal-overlay[data-theme="material"][data-mode="dark"] {
+    --ocean-bg: #141218;
+    --ocean-surface: #1d1b20;
+    --ocean-overlay: #2b2930;
+    --ocean-border: #49454f;
+    --ocean-border-hover: #d0bcff;
+
+    --ocean-title-gradient: linear-gradient(90deg, #e6e0e9, #cac4d0);
+    --ocean-accent: #d0bcff;
+    --ocean-accent-rgb: 208, 188, 255;
+    --ocean-indigo: #d0bcff;
+    --ocean-cyan: #a8eff0;
+    --ocean-emerald: #a8f0a0;
+    --ocean-amber: #ffdf9a;
+    --ocean-rose: #ffb4ab;
+
+    --ocean-text: #e6e0e9;
+    --ocean-muted: #cac4d0;
+    --ocean-faint: #79747e;
+    --ocean-btn-text: #381e72;
+    --ocean-hover-tint: rgba(208, 188, 255, 0.12);
     --ocean-radius: 22px;
     --ocean-radius-sm: 14px;
 }
@@ -643,6 +671,15 @@ body.theme-light .ocean-dashboard[data-theme="material"]:not([data-mode="dark"])
     color: var(--ocean-text);
     box-sizing: border-box;
     font-size: 1rem;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Self-contained dark canvas when dark mode is forced inside a light Obsidian theme */
+body.theme-light .ocean-dashboard[data-mode="dark"] {
+    background: var(--ocean-bg);
+    border-radius: var(--ocean-radius);
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .ocean-dashboard * {
@@ -1922,12 +1959,14 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 .ocean-modal {
-    background: var(--background-primary);
+    background: var(--ocean-surface);
+    color: var(--ocean-text);
     border: 1px solid var(--ocean-border);
     border-radius: var(--ocean-radius);
     padding: 26px;
     width: 90%;
     max-width: 460px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
 }
 
 .ocean-modal-title {
