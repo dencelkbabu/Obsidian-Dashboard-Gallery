@@ -1743,7 +1743,6 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
    8. RECENTLY EDITED NOTES
    ────────────────────────────────────────────── */
 .ocean-recent-card {
-    min-height: 360px;
     display: flex;
     flex-direction: column;
 }
@@ -1756,9 +1755,8 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1 1 auto;
-    min-height: 280px;
-    max-height: 380px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto !important;
     padding-right: 6px;
 }
@@ -2498,19 +2496,22 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
         grid-template-columns: 1fr 1fr !important;
     }
 
-    .ocean-col-left,
-    .ocean-col-right {
+    .ocean-col-left>.ocean-tag-card,
+    .ocean-col-right>.ocean-card,
+    .ocean-col-center>.ocean-recent-card,
+    .ocean-col-center>.ocean-scratchpad-card {
         height: auto !important;
+        flex: none !important;
     }
 
     .ocean-card {
         height: auto !important;
-        min-height: fit-content !important;
+        min-height: auto !important;
         max-height: none !important;
     }
 
     .ocean-notes-list {
-        min-height: 280px !important;
+        min-height: 0 !important;
         max-height: 380px !important;
         height: auto !important;
         overflow-y: auto !important;
@@ -2518,21 +2519,21 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     }
 
     .ocean-scratchpad-textarea {
-        height: 300px !important;
+        height: 260px !important;
         max-height: 380px !important;
-        min-height: 220px !important;
+        min-height: 180px !important;
         overflow-y: auto !important;
     }
 
     .ocean-tag-wrap {
-        min-height: 160px !important;
+        min-height: 0 !important;
         max-height: 260px !important;
         overflow-y: auto !important;
         padding-right: 6px !important;
     }
 
     .ocean-jump-list {
-        min-height: 120px !important;
+        min-height: 0 !important;
         max-height: 240px !important;
         overflow-y: auto !important;
     }
@@ -2589,32 +2590,39 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 .ocean-dashboard.ocean-narrow .ocean-col-right {
     height: auto !important;
 }
+.ocean-dashboard.ocean-narrow .ocean-col-left>.ocean-tag-card,
+.ocean-dashboard.ocean-narrow .ocean-col-right>.ocean-card,
+.ocean-dashboard.ocean-narrow .ocean-col-center>.ocean-recent-card,
+.ocean-dashboard.ocean-narrow .ocean-col-center>.ocean-scratchpad-card {
+    height: auto !important;
+    flex: none !important;
+}
 .ocean-dashboard.ocean-narrow .ocean-card {
     height: auto !important;
-    min-height: fit-content !important;
+    min-height: auto !important;
     max-height: none !important;
 }
 .ocean-dashboard.ocean-narrow .ocean-notes-list {
-    min-height: 280px !important;
+    min-height: 0 !important;
     max-height: 380px !important;
     height: auto !important;
     overflow-y: auto !important;
     padding-right: 6px !important;
 }
 .ocean-dashboard.ocean-narrow .ocean-scratchpad-textarea {
-    height: 300px !important;
+    height: 260px !important;
     max-height: 380px !important;
-    min-height: 220px !important;
+    min-height: 180px !important;
     overflow-y: auto !important;
 }
 .ocean-dashboard.ocean-narrow .ocean-tag-wrap {
-    min-height: 160px !important;
+    min-height: 0 !important;
     max-height: 260px !important;
     overflow-y: auto !important;
     padding-right: 6px !important;
 }
 .ocean-dashboard.ocean-narrow .ocean-jump-list {
-    min-height: 120px !important;
+    min-height: 0 !important;
     max-height: 240px !important;
     overflow-y: auto !important;
 }
@@ -2824,7 +2832,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 .is-mobile .ocean-card,
 .is-phone .ocean-card {
     height: auto !important;
-    min-height: fit-content !important;
+    min-height: auto !important;
     max-height: none !important;
     flex: none !important;
     padding: 16px !important;
@@ -2854,7 +2862,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
-    min-height: 140px !important;
+    min-height: 0 !important;
     max-height: 240px !important;
     overflow-y: auto !important;
     padding-right: 4px !important;
@@ -2873,7 +2881,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 .ocean-is-mobile .ocean-notes-list,
 .is-mobile .ocean-notes-list,
 .is-phone .ocean-notes-list {
-    min-height: 260px !important;
+    min-height: 0 !important;
     max-height: 360px !important;
     height: auto !important;
     overflow-y: auto !important;
