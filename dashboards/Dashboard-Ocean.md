@@ -11,7 +11,9 @@ cssclasses:
 
 const { setIcon } = require("obsidian");
 
-// --- ⚙️ PERSISTENCE KEYS ---
+// --- ⚙️ PERSISTENCE ENGINE (VAULT JSON ADAPTER) ---
+const DATA_FILE_PATH = "dashboards/dashboard-ocean-data.json";
+
 const LS = {
     theme: "ocean-theme-preset",
     themeMode: "ocean-theme-mode",
@@ -49,37 +51,152 @@ const defaultSettings = {
     autoResetHabits: true
 };
 
-let masterSettings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}"));
-masterSettings.widgets = Object.assign({}, defaultSettings.widgets, masterSettings.widgets || {});
+const OceanStore = {
+    path: DATA_FILE_PATH,
+    data: null,
+    saveTimer: null,
 
-let currentTheme = localStorage.getItem(LS.theme) || "zen";
-let currentThemeMode = localStorage.getItem(LS.themeMode) || "auto";
+    async init() {
+        let loaded = null;
+        try {
+            const exists = await app.vault.adapter.exists(this.path);
+            if (exists) {
+                const raw = await app.vault.adapter.read(this.path);
+                loaded = JSON.parse(raw);
+            }
+        } catch(e) {
+            console.error("OceanStore read error:", e);
+        }
 
-let bannerTitle = localStorage.getItem(LS.title) || "DASHBOARD OCEAN";
-let bannerSubtitle = localStorage.getItem(LS.subtitle) || "";
+        if (!loaded) {
+            // First time migration from localStorage or initial defaults
+            loaded = {
+                version: "ocean-v2",
+                theme: localStorage.getItem(LS.theme) || "zen",
+                themeMode: localStorage.getItem(LS.themeMode) || "auto",
+                title: localStorage.getItem(LS.title) || "DASHBOARD OCEAN",
+                subtitle: localStorage.getItem(LS.subtitle) || "",
+                settings: Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}")),
+                targets: JSON.parse(localStorage.getItem(LS.targets) || "null") || [
+                    { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
+                    { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
+                    { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
+                ],
+                cards: JSON.parse(localStorage.getItem(LS.cards) || "null") || [
+                    { title: "Project Alpha", subtitle: "Active Workspace & Tasks", emoji: "🚀", link: "" },
+                    { title: "Knowledge Base", subtitle: "Core Notes & Wiki Hub", emoji: "📚", link: "" },
+                    { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
+                    { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
+                ],
+                habits: JSON.parse(localStorage.getItem(LS.habits) || "null") || ["Reading", "Deep Work", "Exercise", "Meditation"],
+                habitChecks: {},
+                habitWeek: localStorage.getItem(LS.habitWeek) || "",
+                pinnedTags: JSON.parse(localStorage.getItem(LS.pinnedTags) || "[]"),
+                pinnedNotes: JSON.parse(localStorage.getItem(LS.pinnedNotes) || "[]"),
+                scratchpad: localStorage.getItem(LS.scratchpad) || ""
+            };
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith("ocean-h-")) {
+                    loaded.habitChecks[k] = localStorage.getItem(k);
+                }
+            }
+
+            await this.persist(loaded);
+
+            // Clean up legacy localStorage keys after successful migration
+            try {
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith("ocean-") && k !== LS.tag && k !== LS.tagSort) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+            } catch(e) {}
+        }
+
+        loaded.settings = Object.assign({}, defaultSettings, loaded.settings || {});
+        loaded.settings.widgets = Object.assign({}, defaultSettings.widgets, loaded.settings.widgets || {});
+        if (!loaded.habitChecks) loaded.habitChecks = {};
+        if (!loaded.targets) loaded.targets = [];
+        if (!loaded.cards) loaded.cards = [];
+        if (!loaded.habits) loaded.habits = [];
+        if (!loaded.pinnedTags) loaded.pinnedTags = [];
+        if (!loaded.pinnedNotes) loaded.pinnedNotes = [];
+
+        this.data = loaded;
+        return this.data;
+    },
+
+    async persist(payload) {
+        try {
+            const dataToSave = payload || this.data;
+            const jsonStr = JSON.stringify(dataToSave, null, 2);
+            const folder = this.path.substring(0, this.path.lastIndexOf("/"));
+            if (folder && !(await app.vault.adapter.exists(folder))) {
+                await app.vault.adapter.mkdir(folder);
+            }
+            await app.vault.adapter.write(this.path, jsonStr);
+        } catch(e) {
+            console.error("OceanStore persist error:", e);
+        }
+    },
+
+    save(immediate = false) {
+        if (immediate) {
+            if (this.saveTimer) clearTimeout(this.saveTimer);
+            this.persist();
+        } else {
+            if (this.saveTimer) clearTimeout(this.saveTimer);
+            this.saveTimer = setTimeout(() => this.persist(), 400);
+        }
+    },
+
+    getHabit(key) {
+        return this.data && this.data.habitChecks ? !!this.data.habitChecks[key] : false;
+    },
+
+    setHabit(key, val) {
+        if (!this.data.habitChecks) this.data.habitChecks = {};
+        if (val) {
+            this.data.habitChecks[key] = "1";
+        } else {
+            delete this.data.habitChecks[key];
+        }
+        this.save(true);
+    },
+
+    clearHabitsForWeek() {
+        if (!this.data.habitChecks) this.data.habitChecks = {};
+        const habits = this.data.habits || [];
+        habits.forEach(h => {
+            for (let day = 1; day <= 7; day++) {
+                delete this.data.habitChecks[`ocean-h-${h}-${day}`];
+            }
+        });
+        this.save(true);
+    }
+};
+
+await OceanStore.init();
+
+let masterSettings = OceanStore.data.settings;
+let currentTheme = OceanStore.data.theme || "zen";
+let currentThemeMode = OceanStore.data.themeMode || "auto";
+
+let bannerTitle = OceanStore.data.title || "DASHBOARD OCEAN";
+let bannerSubtitle = OceanStore.data.subtitle || "";
 let activeTag = localStorage.getItem(LS.tag) || "__all__";
 let tagSortMode = localStorage.getItem(LS.tagSort) || "count"; // "count" or "name"
-let pinnedTags = JSON.parse(localStorage.getItem(LS.pinnedTags) || "[]");
-let pinnedNotes = JSON.parse(localStorage.getItem(LS.pinnedNotes) || "[]");
+let pinnedTags = OceanStore.data.pinnedTags;
+let pinnedNotes = OceanStore.data.pinnedNotes;
 
-const defaultHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
-let savedHabits = JSON.parse(localStorage.getItem(LS.habits)) || defaultHabits;
-localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-
-let savedCards = JSON.parse(localStorage.getItem(LS.cards)) || [
-    { title: "Project Alpha", subtitle: "Active Workspace & Tasks", emoji: "🚀", link: "" },
-    { title: "Knowledge Base", subtitle: "Core Notes & Wiki Hub", emoji: "📚", link: "" },
-    { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
-    { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
-];
-localStorage.setItem(LS.cards, JSON.stringify(savedCards));
-
-let savedTargets = JSON.parse(localStorage.getItem(LS.targets)) || [
-    { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
-    { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
-    { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
-];
-localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+let savedHabits = OceanStore.data.habits;
+let savedCards = OceanStore.data.cards;
+let savedTargets = OceanStore.data.targets;
 
 const container = dv.container.createDiv({ cls: "ocean-dashboard animate-in" });
 container.setAttribute("data-theme", currentTheme);
@@ -289,11 +406,11 @@ const Utils = {
         return `${y}-${m}-${d}-${startDay}`;
     },
     getHabitStats: () => {
-        let totalDots = savedHabits.length * 7;
+        let totalDots = (savedHabits || []).length * 7;
         let activeDots = 0;
-        savedHabits.forEach(h => {
+        (savedHabits || []).forEach(h => {
             for (let i = 1; i <= 7; i++) {
-                if (localStorage.getItem(`ocean-h-${h}-${i}`)) activeDots++;
+                if (OceanStore.getHabit(`ocean-h-${h}-${i}`)) activeDots++;
             }
         });
         const pct = totalDots > 0 ? (activeDots / totalDots) * 100 : 0;
@@ -327,18 +444,16 @@ const Utils = {
 
 // Auto-Reset Check: resets at most once per calendar week
 const currentHabitWeekId = Utils.getWeekId(masterSettings.weekStart || "monday");
-const lastResetWeek = localStorage.getItem(LS.habitWeek);
+const lastResetWeek = OceanStore.data.habitWeek;
 if (masterSettings.autoResetHabits !== false) {
     if (lastResetWeek && lastResetWeek !== currentHabitWeekId) {
-        savedHabits.forEach(h => {
-            for (let day = 1; day <= 7; day++) {
-                localStorage.removeItem(`ocean-h-${h}-${day}`);
-            }
-        });
-        localStorage.setItem(LS.habitWeek, currentHabitWeekId);
+        OceanStore.clearHabitsForWeek();
+        OceanStore.data.habitWeek = currentHabitWeekId;
+        OceanStore.save(true);
         new Notice("🧬 Bio-Metrics weekly tracker reset for the new week!");
     } else if (!lastResetWeek) {
-        localStorage.setItem(LS.habitWeek, currentHabitWeekId);
+        OceanStore.data.habitWeek = currentHabitWeekId;
+        OceanStore.save(true);
     }
 }
 
@@ -774,7 +889,7 @@ function openMasterSettingsModal() {
             pinnedTags: pinnedTags,
             scratchpad: localStorage.getItem(LS.scratchpad) || ""
         };
-        navigator.clipboard.writeText(JSON.stringify(fullBackup, null, 2));
+        navigator.clipboard.writeText(JSON.stringify(OceanStore.data, null, 2));
         new Notice("💾 Copied complete Dashboard configuration to clipboard!");
     };
 
@@ -829,7 +944,7 @@ function openMasterSettingsModal() {
         cancelBtn.onclick = () => importOverlay.remove();
 
         const applyImportBtn = importActions.createEl("button", { cls: "ocean-btn primary", text: "✅ Apply & Import", attr: { style: "flex: 2; min-width: 0;" } });
-        applyImportBtn.onclick = () => {
+        applyImportBtn.onclick = async () => {
             const jsonInput = jsonArea.value.trim();
             if (!jsonInput) {
                 new Notice("⚠️ Please paste valid JSON before importing.");
@@ -838,17 +953,7 @@ function openMasterSettingsModal() {
 
             try {
                 const parsed = JSON.parse(jsonInput);
-                if (parsed.theme) localStorage.setItem(LS.theme, parsed.theme);
-                if (parsed.themeMode) localStorage.setItem(LS.themeMode, parsed.themeMode);
-                if (parsed.settings) localStorage.setItem(LS.settings, JSON.stringify(parsed.settings));
-                if (parsed.title) localStorage.setItem(LS.title, parsed.title);
-                if (parsed.subtitle !== undefined) localStorage.setItem(LS.subtitle, parsed.subtitle);
-                if (parsed.targets) localStorage.setItem(LS.targets, JSON.stringify(parsed.targets));
-                if (parsed.cards) localStorage.setItem(LS.cards, JSON.stringify(parsed.cards));
-                if (parsed.habits) localStorage.setItem(LS.habits, JSON.stringify(parsed.habits));
-                if (parsed.pinnedNotes) localStorage.setItem(LS.pinnedNotes, JSON.stringify(parsed.pinnedNotes));
-                if (parsed.pinnedTags) localStorage.setItem(LS.pinnedTags, JSON.stringify(parsed.pinnedTags));
-                if (parsed.scratchpad !== undefined) localStorage.setItem(LS.scratchpad, parsed.scratchpad);
+                await OceanStore.persist(parsed);
 
                 new Notice("✨ Dashboard configuration successfully imported! Reloading...", 4000);
                 importOverlay.remove();
@@ -877,11 +982,7 @@ function openMasterSettingsModal() {
     // Clear Current Week Habits
     const clearWeekBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Current Week's Checkmarks" });
     clearWeekBtn.onclick = () => {
-        savedHabits.forEach(h => {
-            for (let day = 1; day <= 7; day++) {
-                localStorage.removeItem(`ocean-h-${h}-${day}`);
-            }
-        });
+        OceanStore.clearHabitsForWeek();
         new Notice("🧹 Current week's metric tracker checkmarks cleared!");
     };
 
@@ -889,7 +990,8 @@ function openMasterSettingsModal() {
     const resetHabitsBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "🧬 Reset Metrics to Defaults" });
     resetHabitsBtn.onclick = () => {
         savedHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
-        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+        OceanStore.data.habits = savedHabits;
+        OceanStore.save(true);
         new Notice("🧬 Metric Tracker reset to defaults!");
     };
 
@@ -901,7 +1003,8 @@ function openMasterSettingsModal() {
             { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
             { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
         ];
-        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+        OceanStore.data.targets = savedTargets;
+        OceanStore.save(true);
         new Notice("🎯 Targets reset to default placeholders!");
     };
 
@@ -914,7 +1017,8 @@ function openMasterSettingsModal() {
             { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
             { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
         ];
-        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+        OceanStore.data.cards = savedCards;
+        OceanStore.save(true);
         new Notice("📁 Collection cards reset to default placeholders!");
     };
 
@@ -925,7 +1029,8 @@ function openMasterSettingsModal() {
         attr: { style: "grid-column: 1 / -1;" }
     });
     clearScratchBtn.onclick = () => {
-        localStorage.setItem(LS.scratchpad, "");
+        OceanStore.data.scratchpad = "";
+        OceanStore.save(true);
         new Notice("📝 Scratchpad buffer cleared!");
     };
 
@@ -941,27 +1046,25 @@ function openMasterSettingsModal() {
         text: "🧹 Clear Everything & Start From Scratch",
         attr: { style: "grid-column: 1 / -1; color: #38bdf8; border-color: rgba(56,189,248,0.4);" }
     });
-    cleanSlateBtn.onclick = () => {
+    cleanSlateBtn.onclick = async () => {
         if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and metrics tracker to start completely from a clean blank slate?")) return;
-        localStorage.setItem(LS.theme, "zen");
-        localStorage.setItem(LS.themeMode, "auto");
-        localStorage.setItem(LS.targets, "[]");
-        localStorage.setItem(LS.cards, "[]");
-        localStorage.setItem(LS.habits, "[]");
-        localStorage.setItem(LS.scratchpad, "");
-        localStorage.setItem(LS.pinnedNotes, "[]");
-        localStorage.setItem(LS.pinnedTags, "[]");
-        localStorage.setItem(LS.tag, "__all__");
-        localStorage.setItem(LS.title, "DASHBOARD OCEAN");
-        localStorage.setItem(LS.subtitle, "");
-
-        // Remove all habit day checkboxes
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && k.startsWith("ocean-h-")) keysToRemove.push(k);
-        }
-        keysToRemove.forEach(k => localStorage.removeItem(k));
+        OceanStore.data = {
+            version: "ocean-v2",
+            theme: "zen",
+            themeMode: "auto",
+            title: "DASHBOARD OCEAN",
+            subtitle: "",
+            settings: defaultSettings,
+            targets: [],
+            cards: [],
+            habits: [],
+            habitChecks: {},
+            habitWeek: "",
+            pinnedTags: [],
+            pinnedNotes: [],
+            scratchpad: ""
+        };
+        await OceanStore.persist();
 
         new Notice("🧹 Dashboard wiped clean to a blank slate! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
@@ -979,8 +1082,11 @@ function openMasterSettingsModal() {
         text: "🎯 Reset to Default Placeholders",
         attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4);" }
     });
-    factoryResetBtn.onclick = () => {
+    factoryResetBtn.onclick = async () => {
         if (!confirm("Are you sure you want to reset the dashboard back to the initial sample milestone targets, collection cards, and metric tracker placeholders?")) return;
+        try {
+            await app.vault.adapter.remove(OceanStore.path);
+        } catch(e) {}
         Object.values(LS).forEach(k => localStorage.removeItem(k));
         new Notice("✨ Reset to default placeholders complete! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
@@ -1033,8 +1139,6 @@ function openMasterSettingsModal() {
     saveApplyBtn.onclick = () => {
         currentTheme = tempTheme;
         currentThemeMode = tempThemeMode;
-        localStorage.setItem(LS.theme, currentTheme);
-        localStorage.setItem(LS.themeMode, currentThemeMode);
 
         masterSettings.widgets = tempWidgets;
         masterSettings.gridHeight = parseInt(heightInp.value, 10) || 550;
@@ -1046,9 +1150,13 @@ function openMasterSettingsModal() {
 
         bannerTitle = titleInp.value.trim() || "DASHBOARD OCEAN";
         bannerSubtitle = subInp.value.trim();
-        localStorage.setItem(LS.title, bannerTitle);
-        localStorage.setItem(LS.subtitle, bannerSubtitle);
-        localStorage.setItem(LS.settings, JSON.stringify(masterSettings));
+
+        OceanStore.data.theme = currentTheme;
+        OceanStore.data.themeMode = currentThemeMode;
+        OceanStore.data.settings = masterSettings;
+        OceanStore.data.title = bannerTitle;
+        OceanStore.data.subtitle = bannerSubtitle;
+        OceanStore.save(true);
 
         document.removeEventListener("keydown", escHandler);
         new Notice("✨ Settings & Theme saved! Please press Ctrl + R to reload the dashboard.", 5000);
@@ -1183,7 +1291,8 @@ function renderTargets() {
         delBtn.onclick = (e) => {
             e.stopPropagation();
             savedTargets.splice(idx, 1);
-            localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+            OceanStore.data.targets = savedTargets;
+            OceanStore.save(true);
             renderTargets();
             new Notice(`🗑️ Removed target: ${tg.title}`);
         };
@@ -1241,7 +1350,8 @@ function showTargetModal(targetToEdit = null, idx = null) {
         });
         delModalBtn.onclick = () => {
             savedTargets.splice(idx, 1);
-            localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+            OceanStore.data.targets = savedTargets;
+            OceanStore.save(true);
             if (showTargets && runwayTrack) renderTargets();
             new Notice(`🗑️ Deleted target ${targetToEdit.title}`);
             closeModal();
@@ -1274,7 +1384,8 @@ function showTargetModal(targetToEdit = null, idx = null) {
         } else {
             savedTargets.push(newTarget);
         }
-        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+        OceanStore.data.targets = savedTargets;
+        OceanStore.save(true);
         if (showTargets && runwayTrack) renderTargets();
         closeModal();
     };
@@ -1559,7 +1670,8 @@ if (hasLeft || hasCenter || hasRight) {
                             pinnedTags.push(tag);
                             new Notice(`📌 Pinned ${tag}`);
                         }
-                        localStorage.setItem(LS.pinnedTags, JSON.stringify(pinnedTags));
+                        OceanStore.data.pinnedTags = pinnedTags;
+                        OceanStore.save(true);
                         renderTopicTags();
                     };
                 });
@@ -1656,7 +1768,8 @@ if (hasLeft || hasCenter || hasRight) {
                             pinnedNotes.push(p.file.path);
                             new Notice(`📌 Pinned ${p.file.name}`);
                         }
-                        localStorage.setItem(LS.pinnedNotes, JSON.stringify(pinnedNotes));
+                        OceanStore.data.pinnedNotes = pinnedNotes;
+                        OceanStore.save(true);
                         renderRecentNotes();
                     };
                 });
@@ -1684,7 +1797,7 @@ if (hasLeft || hasCenter || hasRight) {
                 }
             });
 
-            let savedScratchText = localStorage.getItem(LS.scratchpad) || "";
+            let savedScratchText = OceanStore.data.scratchpad || "";
             scratchTextarea.value = savedScratchText;
 
             let saveTimeout = null;
@@ -1693,10 +1806,11 @@ if (hasLeft || hasCenter || hasRight) {
                 saveIndicator.style.color = "#fbbf24";
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(() => {
-                    localStorage.setItem(LS.scratchpad, scratchTextarea.value);
+                    OceanStore.data.scratchpad = scratchTextarea.value;
+                    OceanStore.save(false);
                     saveIndicator.textContent = "● Saved";
                     saveIndicator.style.color = "var(--ocean-muted)";
-                }, 300);
+                }, 400);
             };
 
             copyScratchBtn.onclick = () => {
@@ -1712,7 +1826,8 @@ if (hasLeft || hasCenter || hasRight) {
             clearScratchBtn.onclick = () => {
                 if (!scratchTextarea.value.trim()) return;
                 scratchTextarea.value = "";
-                localStorage.setItem(LS.scratchpad, "");
+                OceanStore.data.scratchpad = "";
+                OceanStore.save(true);
                 new Notice("🧹 Scratchpad cleared");
             };
 
@@ -1787,7 +1902,8 @@ if (hasLeft || hasCenter || hasRight) {
                     delBtn.onclick = (e) => {
                         e.stopPropagation();
                         savedCards.splice(idx, 1);
-                        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                        OceanStore.data.cards = savedCards;
+                        OceanStore.save(true);
                         renderCollectionCards();
                     };
 
@@ -1839,7 +1955,8 @@ if (hasLeft || hasCenter || hasRight) {
                     });
                     delModalBtn.onclick = () => {
                         savedCards.splice(idx, 1);
-                        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                        OceanStore.data.cards = savedCards;
+                        OceanStore.save(true);
                         renderCollectionCards();
                         new Notice(`🗑️ Deleted ${cardToEdit.title}`);
                         closeModal();
@@ -1868,7 +1985,8 @@ if (hasLeft || hasCenter || hasRight) {
                     } else {
                         savedCards.push(newCard);
                     }
-                    localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+                    OceanStore.data.cards = savedCards;
+                    OceanStore.save(true);
                     renderCollectionCards();
                     closeModal();
                 };
@@ -1949,11 +2067,7 @@ if (masterSettings.widgets.habits !== false) {
 
     resetWeekBtn.onclick = () => {
         if (!confirm("Are you sure you want to clear all checkmarks for the current week?")) return;
-        savedHabits.forEach(h => {
-            for (let day = 1; day <= 7; day++) {
-                localStorage.removeItem(`ocean-h-${h}-${day}`);
-            }
-        });
+        OceanStore.clearHabitsForWeek();
         renderHabitsTracker();
         updateConsistencyBar();
         if (typeof updateHeaderGoals === "function") updateHeaderGoals();
@@ -2002,7 +2116,8 @@ if (masterSettings.widgets.habits !== false) {
         cancel.onclick = closeModal;
         delBtn.onclick = () => {
             savedHabits.splice(idx, 1);
-            localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+            OceanStore.data.habits = savedHabits;
+            OceanStore.save(true);
             renderHabitsTracker();
             updateConsistencyBar();
             new Notice(`🗑️ Deleted ${h}`);
@@ -2012,7 +2127,8 @@ if (masterSettings.widgets.habits !== false) {
             const updated = inp.value.trim();
             if (updated) {
                 savedHabits[idx] = updated;
-                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                OceanStore.data.habits = savedHabits;
+                OceanStore.save(true);
                 renderHabitsTracker();
                 updateConsistencyBar();
             }
@@ -2065,7 +2181,8 @@ if (masterSettings.widgets.habits !== false) {
             delBtn.onclick = (e) => {
                 e.stopPropagation();
                 savedHabits.splice(idx, 1);
-                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                OceanStore.data.habits = savedHabits;
+                OceanStore.save(true);
                 renderHabitsTracker();
                 updateConsistencyBar();
                 new Notice(`🗑️ Deleted ${h}`);
@@ -2081,7 +2198,7 @@ if (masterSettings.widgets.habits !== false) {
             for (let day = 1; day <= 7; day++) {
                 const key = `ocean-h-${h}-${day}`;
                 const isToday = day === todayDayIndex;
-                const isActive = !!localStorage.getItem(key);
+                const isActive = OceanStore.getHabit(key);
 
                 const dot = dotGrid.createDiv({
                     cls: "ocean-dot" + (isActive ? " active" : "") + (isToday ? " today" : ""),
@@ -2090,12 +2207,9 @@ if (masterSettings.widgets.habits !== false) {
                 });
 
                 dot.onclick = () => {
-                    dot.classList.toggle("active");
-                    if (localStorage.getItem(key)) {
-                        localStorage.removeItem(key);
-                    } else {
-                        localStorage.setItem(key, "1");
-                    }
+                    const currentActive = OceanStore.getHabit(key);
+                    OceanStore.setHabit(key, !currentActive);
+                    dot.classList.toggle("active", !currentActive);
                     updateConsistencyBar();
                 };
             }
@@ -2133,7 +2247,8 @@ if (masterSettings.widgets.habits !== false) {
             const val = inp.value.trim();
             if (val) {
                 savedHabits.push(val);
-                localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+                OceanStore.data.habits = savedHabits;
+                OceanStore.save(true);
                 renderHabitsTracker();
                 updateConsistencyBar();
             }
