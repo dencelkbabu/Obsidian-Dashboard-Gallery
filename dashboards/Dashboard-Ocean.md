@@ -95,9 +95,12 @@ if (typeof ResizeObserver !== "undefined") {
         for (const entry of entries) {
             const scale = parseFloat(container.style.getPropertyValue("--ocean-scale")) || 1;
             const physicalW = entry.contentRect.width * scale;
-            container.classList.toggle("ocean-narrow", physicalW < 1120);
-            container.classList.toggle("ocean-compact", physicalW < 720);
-            container.classList.toggle("ocean-phone-view", physicalW < 480);
+            const isNarrow = physicalW >= 680 && physicalW < 1120;
+            const isCompact = physicalW < 680;
+            const isPhone = physicalW < 480;
+            container.classList.toggle("ocean-narrow", isNarrow);
+            container.classList.toggle("ocean-compact", isCompact);
+            container.classList.toggle("ocean-phone-view", isPhone);
         }
     });
     ro.observe(container);

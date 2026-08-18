@@ -2847,6 +2847,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 /* Runways on Compact / Split */
+.ocean-dashboard.ocean-compact .ocean-runway-grid,
+.ocean-dashboard.ocean-phone-view .ocean-runway-grid,
+.ocean-dashboard.ocean-is-mobile .ocean-runway-grid,
 .ocean-compact .ocean-runway-grid,
 .ocean-is-mobile .ocean-runway-grid,
 .is-mobile .ocean-runway-grid,
@@ -2855,6 +2858,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     gap: var(--ocean-gap) !important;
 }
 
+.ocean-dashboard.ocean-compact .ocean-targets-track,
+.ocean-dashboard.ocean-phone-view .ocean-targets-track,
+.ocean-dashboard.ocean-is-mobile .ocean-targets-track,
 .ocean-compact .ocean-targets-track,
 .ocean-is-mobile .ocean-targets-track,
 .is-mobile .ocean-targets-track,
@@ -2869,6 +2875,12 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     padding: 2px 4px 6px 2px !important;
 }
 
+.ocean-dashboard.ocean-compact .ocean-target-capsule,
+.ocean-dashboard.ocean-compact .ocean-task-capsule,
+.ocean-dashboard.ocean-phone-view .ocean-target-capsule,
+.ocean-dashboard.ocean-phone-view .ocean-task-capsule,
+.ocean-dashboard.ocean-is-mobile .ocean-target-capsule,
+.ocean-dashboard.ocean-is-mobile .ocean-task-capsule,
 .ocean-compact .ocean-target-capsule,
 .ocean-compact .ocean-task-capsule,
 .ocean-is-mobile .ocean-target-capsule,
@@ -2886,6 +2898,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     flex-shrink: 0 !important;
 }
 
+.ocean-dashboard.ocean-compact .ocean-runway-controls,
+.ocean-dashboard.ocean-phone-view .ocean-runway-controls,
+.ocean-dashboard.ocean-is-mobile .ocean-runway-controls,
 .ocean-compact .ocean-runway-controls,
 .ocean-is-mobile .ocean-runway-controls,
 .is-mobile .ocean-runway-controls,
@@ -2894,6 +2909,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 /* Bento Grid on Compact / Split */
+.ocean-dashboard.ocean-compact .ocean-grid,
+.ocean-dashboard.ocean-phone-view .ocean-grid,
+.ocean-dashboard.ocean-is-mobile .ocean-grid,
 .ocean-compact .ocean-grid,
 .ocean-is-mobile .ocean-grid,
 .is-mobile .ocean-grid,
@@ -3053,6 +3071,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 /* Habits on Compact / Split */
+.ocean-dashboard.ocean-compact .ocean-habit-grid,
+.ocean-dashboard.ocean-phone-view .ocean-habit-grid,
+.ocean-dashboard.ocean-is-mobile .ocean-habit-grid,
 .ocean-compact .ocean-habit-grid,
 .ocean-is-mobile .ocean-habit-grid,
 .is-mobile .ocean-habit-grid,
@@ -3060,6 +3081,9 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     grid-template-columns: 1fr !important;
 }
 
+.ocean-dashboard.ocean-compact .ocean-habit-row,
+.ocean-dashboard.ocean-phone-view .ocean-habit-row,
+.ocean-dashboard.ocean-is-mobile .ocean-habit-row,
 .ocean-compact .ocean-habit-row,
 .ocean-is-mobile .ocean-habit-row,
 .is-mobile .ocean-habit-row,
