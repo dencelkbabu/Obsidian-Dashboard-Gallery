@@ -789,31 +789,22 @@ function openMasterSettingsModal() {
 
         const importModal = importOverlay.createDiv({ cls: "ocean-modal", attr: { style: "max-width: 580px; width: 92%;" } });
         Utils.bindModalBackdropClose(importOverlay, () => importOverlay.remove());
-        const importHdr = importModal.createDiv({ cls: "ocean-modal-hdr" });
+        const importHdr = importModal.createDiv({ cls: "ocean-settings-hdr" });
         importHdr.createDiv({ cls: "ocean-modal-title", text: "📥 Import Dashboard JSON" });
-        const closeImportBtn = importHdr.createDiv({ cls: "ocean-modal-close", text: "✕" });
+        const closeImportBtn = importHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
         closeImportBtn.onclick = () => importOverlay.remove();
 
-        const importBody = importModal.createDiv({ cls: "ocean-modal-body", attr: { style: "display:flex; flex-direction:column; gap:12px;" } });
-        importBody.createDiv({
-            text: "Paste your exported Dashboard Ocean JSON configuration below, or click 'Paste from Clipboard':",
-            attr: { style: "font-size:0.85rem; color:var(--ocean-muted); line-height:1.4;" }
-        });
-
-        const jsonArea = importBody.createEl("textarea", {
-            cls: "ocean-modal-input",
-            attr: {
-                placeholder: "{\n  \"version\": \"ocean-v2\",\n  \"targets\": [...]\n}",
-                style: "height: 200px; font-family: var(--ocean-font-mono); font-size: 0.8rem; line-height: 1.4; resize: vertical; width: 100%; white-space: pre;"
-            }
-        });
-
-        const importActions = importModal.createDiv({ cls: "ocean-modal-actions", attr: { style: "display:flex; justify-content:space-between; align-items:center; margin-top:16px;" } });
+        const importBody = importModal.createDiv({ cls: "ocean-modal-body", attr: { style: "display:flex; flex-direction:column; gap:10px;" } });
         
-        const pasteBtn = importActions.createEl("button", {
+        const pasteRow = importBody.createDiv({ attr: { style: "display:flex; justify-content:space-between; align-items:center; gap:8px;" } });
+        pasteRow.createDiv({
+            text: "Paste your exported JSON below:",
+            attr: { style: "font-size:0.82rem; color:var(--ocean-muted); line-height:1.4;" }
+        });
+        const pasteBtn = pasteRow.createEl("button", {
             cls: "ocean-btn",
             text: "📋 Paste from Clipboard",
-            attr: { style: "font-size:0.8rem;" }
+            attr: { style: "font-size:0.78rem; padding:6px 12px; white-space:nowrap; flex-shrink:0;" }
         });
 
         pasteBtn.onclick = async () => {
@@ -825,11 +816,19 @@ function openMasterSettingsModal() {
             }
         };
 
-        const rightBtns = importActions.createDiv({ attr: { style: "display:flex; gap:8px;" } });
-        const cancelBtn = rightBtns.createEl("button", { cls: "ocean-btn", text: "Cancel" });
+        const jsonArea = importBody.createEl("textarea", {
+            cls: "ocean-modal-input",
+            attr: {
+                placeholder: "{\n  \"version\": \"ocean-v2\",\n  \"targets\": [...]\n}",
+                style: "height: 190px; font-family: var(--ocean-font-mono); font-size: 0.8rem; line-height: 1.4; resize: vertical; width: 100%; white-space: pre; margin-bottom: 0;"
+            }
+        });
+
+        const importActions = importModal.createDiv({ cls: "ocean-modal-btns ocean-import-btns", attr: { style: "display:flex; gap:8px; margin-top:14px;" } });
+        const cancelBtn = importActions.createEl("button", { cls: "ocean-btn", text: "Cancel", attr: { style: "flex: 1; min-width: 0;" } });
         cancelBtn.onclick = () => importOverlay.remove();
 
-        const applyImportBtn = rightBtns.createEl("button", { cls: "ocean-btn primary", text: "✅ Apply & Import" });
+        const applyImportBtn = importActions.createEl("button", { cls: "ocean-btn primary", text: "✅ Apply & Import", attr: { style: "flex: 2; min-width: 0;" } });
         applyImportBtn.onclick = () => {
             const jsonInput = jsonArea.value.trim();
             if (!jsonInput) {
