@@ -22,6 +22,7 @@ const LS = {
     pinnedTags: "ocean-pinned-tags",
     pinnedNotes: "ocean-pinned-notes",
     habits: "ocean-habits",
+    habitWeek: "ocean-last-habit-week",
     cards: "ocean-cards",
     targets: "ocean-targets-v2",
     scratchpad: "ocean-scratchpad-v1",
@@ -43,7 +44,9 @@ const defaultSettings = {
     gridHeight: 550,
     fontSize: 16,
     recentLimit: 50,
-    tagLimit: 35
+    tagLimit: 35,
+    weekStart: "monday",
+    autoResetHabits: true
 };
 
 let masterSettings = Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem(LS.settings) || "{}"));
@@ -268,6 +271,23 @@ const Utils = {
                 .slice(0, limit);
         } catch (e) { return []; }
     },
+    getWeekId: (startDay = "monday") => {
+        const now = new Date();
+        const day = now.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+        let offset = 0;
+        if (startDay === "sunday") {
+            offset = day;
+        } else if (startDay === "saturday") {
+            offset = (day + 1) % 7;
+        } else { // monday
+            offset = (day + 6) % 7;
+        }
+        const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
+        const y = startOfWeek.getFullYear();
+        const m = String(startOfWeek.getMonth() + 1).padStart(2, "0");
+        const d = String(startOfWeek.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}-${startDay}`;
+    },
     getHabitStats: () => {
         let totalDots = savedHabits.length * 7;
         let activeDots = 0;
@@ -304,6 +324,23 @@ const Utils = {
         return el;
     }
 };
+
+// Auto-Reset Check: resets at most once per calendar week
+const currentHabitWeekId = Utils.getWeekId(masterSettings.weekStart || "monday");
+const lastResetWeek = localStorage.getItem(LS.habitWeek);
+if (masterSettings.autoResetHabits !== false) {
+    if (lastResetWeek && lastResetWeek !== currentHabitWeekId) {
+        savedHabits.forEach(h => {
+            for (let day = 1; day <= 7; day++) {
+                localStorage.removeItem(`ocean-h-${h}-${day}`);
+            }
+        });
+        localStorage.setItem(LS.habitWeek, currentHabitWeekId);
+        new Notice("🧬 Bio-Metrics weekly tracker reset for the new week!");
+    } else if (!lastResetWeek) {
+        localStorage.setItem(LS.habitWeek, currentHabitWeekId);
+    }
+}
 
 // ══════════════════════════════════════════════
 const header = container.createDiv({ cls: "ocean-header" });
@@ -443,7 +480,7 @@ notesCube.createDiv({ cls: "ocean-stat-lab", text: "Notes" });
 
 const goalsCube = statsCont.createDiv({
     cls: "ocean-stat-cube",
-    attr: { title: "Weekly Bio-Metrics Consistency (Click to jump to habits)", style: "cursor: pointer;" }
+    attr: { title: "Weekly Bio-Metrics Tracker (Click to jump to metrics)", style: "cursor: pointer;" }
 });
 const goalsTopRow = goalsCube.createDiv({ cls: "ocean-stat-top-row" });
 goalsTopRow.createDiv({ cls: "ocean-stat-star", text: "🎯" });
@@ -512,7 +549,7 @@ function openMasterSettingsModal() {
         { key: "scratchpad", icon: "📝", name: "Persistent Scratchpad", desc: "Middle column auto-saving temporary notepad" },
         { key: "collections", icon: "🗂️", name: "Collection Cards Directory", desc: "Right column custom bookmark cards to workspaces" },
         { key: "actions", icon: "⚡", name: "System Quick Actions", desc: "Right column Obsidian command launcher buttons" },
-        { key: "habits", icon: "🧬", name: "Bio-Metrics Habit Tracker", desc: "Bottom weekly habit consistency bar and 7-day checkboxes" }
+        { key: "habits", icon: "🧬", name: "Bio-Metrics Tracker", desc: "Bottom weekly metric tracking bar and 7-day checkboxes" }
     ];
 
     const widgetGrid = widgetsPanel.createDiv({ cls: "ocean-settings-toggle-grid" });
@@ -691,11 +728,41 @@ function openMasterSettingsModal() {
     generalPanel.createDiv({ text: "Max Topic Tags to Load:", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
     const tagLimitInp = generalPanel.createEl("input", { cls: "ocean-modal-input", attr: { type: "number", value: String(masterSettings.tagLimit || 35), min: "10", max: "100", step: "5" } });
 
+    generalPanel.createDiv({ text: "First Day of the Week (Weekly Metrics Tracker):", attr: { style: "font-size:0.75rem; font-weight:700; color:var(--ocean-muted); margin-bottom:4px; margin-top:10px;" } });
+    const weekStartSelect = generalPanel.createEl("select", { cls: "ocean-modal-input" });
+    [
+        { val: "monday", label: "Monday (Default, ISO 8601)" },
+        { val: "sunday", label: "Sunday" },
+        { val: "saturday", label: "Saturday" }
+    ].forEach(opt => {
+        const optionEl = weekStartSelect.createEl("option", { value: opt.val, text: opt.label });
+        if ((masterSettings.weekStart || "monday") === opt.val) optionEl.selected = true;
+    });
+
+    const autoResetRow = generalPanel.createDiv({ attr: { style: "display:flex; align-items:center; gap:8px; margin-top:12px;" } });
+    const autoResetChk = autoResetRow.createEl("input", { attr: { type: "checkbox" } });
+    autoResetChk.checked = masterSettings.autoResetHabits !== false;
+    autoResetRow.createEl("label", { text: "Automatically reset weekly metrics tracker at start of each new week", attr: { style: "font-size:0.82rem; color:var(--ocean-text); cursor:pointer;" } });
+    autoResetRow.onclick = (e) => {
+        if (e.target !== autoResetChk) autoResetChk.checked = !autoResetChk.checked;
+    };
+
     // TAB 4: DATA & BACKUP
     const dataPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
     dataPanel.createDiv({ cls: "ocean-settings-desc", text: "Reset individual component caches or backup/restore your dashboard configuration." });
 
     const dataBtnGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
+
+    // Clear Current Week Habits
+    const clearWeekBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Current Week's Metric Tracking checkmarks" });
+    clearWeekBtn.onclick = () => {
+        savedHabits.forEach(h => {
+            for (let day = 1; day <= 7; day++) {
+                localStorage.removeItem(`ocean-h-${h}-${day}`);
+            }
+        });
+        new Notice("🧹 Current week's metric tracker checkmarks cleared!");
+    };
 
     // Reset Targets
     const resetTargetsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🎯 Reset Targets to Placeholders" });
@@ -727,7 +794,7 @@ function openMasterSettingsModal() {
     resetHabitsBtn.onclick = () => {
         savedHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
         localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-        new Notice("🧬 Habit tracker reset to defaults!");
+        new Notice("🧬 Metric Tracker reset to defaults!");
     };
 
     // Clear Scratchpad
@@ -857,7 +924,7 @@ function openMasterSettingsModal() {
         attr: { style: "grid-column: 1 / -1; color: #38bdf8; border-color: rgba(56,189,248,0.4); margin-top:8px;" }
     });
     cleanSlateBtn.onclick = () => {
-        if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and habits to start completely from a clean blank slate?")) return;
+        if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and metrics tracker to start completely from a clean blank slate?")) return;
         localStorage.setItem(LS.theme, "zen");
         localStorage.setItem(LS.themeMode, "auto");
         localStorage.setItem(LS.targets, "[]");
@@ -895,7 +962,7 @@ function openMasterSettingsModal() {
         attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4); margin-top:4px;" }
     });
     factoryResetBtn.onclick = () => {
-        if (!confirm("Are you sure you want to reset the dashboard back to the initial sample milestone targets, collection cards, and habit placeholders?")) return;
+        if (!confirm("Are you sure you want to reset the dashboard back to the initial sample milestone targets, collection cards, and metric tracker placeholders?")) return;
         Object.values(LS).forEach(k => localStorage.removeItem(k));
         new Notice("✨ Reset to default placeholders complete! Please press Ctrl + R to reload the dashboard.", 5000);
         overlay.remove();
@@ -956,6 +1023,8 @@ function openMasterSettingsModal() {
         masterSettings.fontSize = tempFontSize;
         masterSettings.recentLimit = parseInt(limitInp.value, 10) || 50;
         masterSettings.tagLimit = parseInt(tagLimitInp.value, 10) || 35;
+        masterSettings.weekStart = weekStartSelect.value;
+        masterSettings.autoResetHabits = autoResetChk.checked;
 
         bannerTitle = titleInp.value.trim() || "DASHBOARD OCEAN";
         bannerSubtitle = subInp.value.trim();
@@ -1854,9 +1923,24 @@ if (masterSettings.widgets.habits !== false) {
     const habitsCard = container.createDiv({ cls: "ocean-card ocean-habits-card" });
     goalsCube.onclick = () => habitsCard.scrollIntoView({ behavior: "smooth" });
     const habHdr = habitsCard.createDiv({ cls: "ocean-card-hdr" });
-    habHdr.createDiv({ cls: "ocean-card-title", text: "🧬 BIO-METRICS (WEEKLY CONSISTENCY)" });
+    habHdr.createDiv({ cls: "ocean-card-title", text: "🧬 BIO-METRICS (WEEKLY TRACKING)" });
 
-    const addHabitBtn = habHdr.createDiv({ cls: "ocean-add-btn", text: "+ ADD HABIT" });
+    const habHdrBtns = habHdr.createDiv({ attr: { style: "display:flex; gap:8px; align-items:center;" } });
+    const resetWeekBtn = habHdrBtns.createDiv({ cls: "ocean-add-btn", text: "🧹 RESET WEEK", attr: { title: "Clear current week checkmarks" } });
+    const addHabitBtn = habHdrBtns.createDiv({ cls: "ocean-add-btn", text: "+ ADD METRIC" });
+
+    resetWeekBtn.onclick = () => {
+        if (!confirm("Are you sure you want to clear all checkmarks for the current week?")) return;
+        savedHabits.forEach(h => {
+            for (let day = 1; day <= 7; day++) {
+                localStorage.removeItem(`ocean-h-${h}-${day}`);
+            }
+        });
+        renderHabitsTracker();
+        updateConsistencyBar();
+        if (typeof updateHeaderGoals === "function") updateHeaderGoals();
+        new Notice("🧹 Current week's metric tracking cleared!");
+    };
 
     const barWrap = habitsCard.createDiv({ cls: "ocean-consistency-bar-wrap" });
     const barFill = barWrap.createDiv({ cls: "ocean-consistency-bar-fill" });
@@ -1877,7 +1961,7 @@ if (masterSettings.widgets.habits !== false) {
 
         // Header with Title & Close '✕'
         const modalHdr = modal.createDiv({ cls: "ocean-settings-hdr" });
-        modalHdr.createDiv({ cls: "ocean-modal-title", text: `Edit Habit: ${h}` });
+        modalHdr.createDiv({ cls: "ocean-modal-title", text: `Edit Metric: ${h}` });
         const closeBtn = modalHdr.createDiv({ cls: "ocean-settings-close", text: "✕", attr: { title: "Close (Esc)" } });
 
         const closeModal = () => {
@@ -1923,12 +2007,32 @@ if (masterSettings.widgets.habits !== false) {
         habitGrid.innerHTML = "";
         if (savedHabits.length === 0) {
             habitGrid.createDiv({
-                text: "No weekly metrics tracked yet. Click + ADD HABIT to start building consistency!",
+                text: "No weekly metrics tracked yet. Click + ADD METRIC to start tracking!",
                 attr: { style: "font-size:0.82rem; color:var(--ocean-muted); padding:16px 6px; grid-column: 1 / -1; text-align:center; line-height:1.4;" }
             });
             updateConsistencyBar();
             return;
         }
+
+        const weekStart = masterSettings.weekStart || "monday";
+        let DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+        let DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        let todayDayIndex = 1;
+
+        const nowDay = new Date().getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+        if (weekStart === "sunday") {
+            DAYS = ["S", "M", "T", "W", "T", "F", "S"];
+            DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            todayDayIndex = nowDay + 1;
+        } else if (weekStart === "saturday") {
+            DAYS = ["S", "S", "M", "T", "W", "T", "F"];
+            DAY_NAMES = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+            todayDayIndex = ((nowDay + 1) % 7) + 1;
+        } else {
+            // Monday default
+            todayDayIndex = ((nowDay + 6) % 7) + 1;
+        }
+
         savedHabits.forEach((h, idx) => {
             const row = habitGrid.createDiv({ cls: "ocean-habit-row" });
             
@@ -1936,8 +2040,8 @@ if (masterSettings.widgets.habits !== false) {
             leftWrap.createDiv({ cls: "ocean-habit-title", text: h });
 
             const actions = leftWrap.createDiv({ cls: "ocean-habit-actions" });
-            const editBtn = actions.createDiv({ cls: "ocean-habit-act-btn", text: "✎", attr: { title: "Edit Habit" } });
-            const delBtn = actions.createDiv({ cls: "ocean-habit-act-btn del", text: "✕", attr: { title: "Delete Habit" } });
+            const editBtn = actions.createDiv({ cls: "ocean-habit-act-btn", text: "✎", attr: { title: "Edit Metric" } });
+            const delBtn = actions.createDiv({ cls: "ocean-habit-act-btn del", text: "✕", attr: { title: "Delete Metric" } });
 
             editBtn.onclick = (e) => { e.stopPropagation(); openEditHabitModal(h, idx); };
             delBtn.onclick = (e) => {
@@ -1955,9 +2059,6 @@ if (masterSettings.widgets.habits !== false) {
                 openEditHabitModal(h, idx);
             };
 
-            const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
-            const todayDayIndex = ((new Date().getDay() + 6) % 7) + 1; // 1 = Monday, 7 = Sunday
-
             const dotGrid = row.createDiv({ cls: "ocean-dot-grid" });
             for (let day = 1; day <= 7; day++) {
                 const key = `ocean-h-${h}-${day}`;
@@ -1967,7 +2068,7 @@ if (masterSettings.widgets.habits !== false) {
                 const dot = dotGrid.createDiv({
                     cls: "ocean-dot" + (isActive ? " active" : "") + (isToday ? " today" : ""),
                     text: DAYS[day - 1],
-                    attr: { title: `${isToday ? "Today • " : ""}${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day - 1]}` }
+                    attr: { title: `${isToday ? "Today • " : ""}${DAY_NAMES[day - 1]}` }
                 });
 
                 dot.onclick = () => {

@@ -2056,9 +2056,28 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     border-radius: var(--ocean-radius-sm);
     color: var(--ocean-text);
     font-size: 0.96rem;
+    line-height: 1.4;
     margin-bottom: 14px;
     outline: none;
     font-family: var(--ocean-font-body);
+    box-sizing: border-box;
+}
+
+select.ocean-modal-input {
+    height: auto !important;
+    min-height: 44px !important;
+    padding: 8px 14px !important;
+    line-height: 1.4 !important;
+    cursor: pointer;
+    background-color: var(--ocean-overlay) !important;
+    color: var(--ocean-text) !important;
+    display: block !important;
+}
+
+select.ocean-modal-input option {
+    background-color: var(--ocean-card, #181825) !important;
+    color: var(--ocean-text, #cdd6f4) !important;
+    padding: 8px 12px;
 }
 
 .ocean-modal-input:focus {
