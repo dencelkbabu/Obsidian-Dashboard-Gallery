@@ -1495,12 +1495,15 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     align-items: center;
     gap: 8px;
     line-height: 1.2;
+    min-width: 0;
 }
 
 .ocean-target-date {
     font-size: 0.74rem;
     font-family: var(--ocean-font-mono);
     color: var(--ocean-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .ocean-target-badge {
@@ -1510,6 +1513,8 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     padding: 2px 6px;
     border-radius: 4px;
     letter-spacing: 0.3px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .ocean-target-badge.upcoming {
@@ -2934,12 +2939,16 @@ select.ocean-modal-input option {
 .is-phone .ocean-target-capsule,
 .is-phone .ocean-task-capsule {
     display: flex !important;
+    align-items: center !important;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
     height: auto !important;
     min-height: 56px !important;
+    padding: 10px 14px !important;
+    gap: 12px !important;
     flex-shrink: 0 !important;
+    box-sizing: border-box !important;
 }
 
 .ocean-dashboard.ocean-compact .ocean-runway-controls,
