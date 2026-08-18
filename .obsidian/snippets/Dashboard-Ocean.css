@@ -2381,11 +2381,36 @@ select.ocean-modal-input option {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
+.ocean-settings-section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ocean-accent);
+    margin-top: 16px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ocean-settings-section-title.danger {
+    color: var(--ocean-rose);
+}
+
+.ocean-settings-section-desc {
+    font-size: 0.78rem;
+    color: var(--ocean-muted);
+    margin-bottom: 8px;
+    line-height: 1.35;
+}
+
 .ocean-settings-data-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-top: 6px;
+    margin-bottom: 12px;
 }
 
 @media (max-width: 550px) {

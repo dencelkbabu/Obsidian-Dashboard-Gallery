@@ -749,63 +749,15 @@ function openMasterSettingsModal() {
 
     // TAB 4: DATA & BACKUP
     const dataPanel = contentArea.createDiv({ cls: "ocean-settings-panel" });
-    dataPanel.createDiv({ cls: "ocean-settings-desc", text: "Reset individual component caches or backup/restore your dashboard configuration." });
 
-    const dataBtnGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
+    // ── SECTION 1: BACKUP & PORTABILITY ──
+    dataPanel.createDiv({ cls: "ocean-settings-section-title", text: "📦 BACKUP & PORTABILITY" });
+    dataPanel.createDiv({ cls: "ocean-settings-section-desc", text: "Export or import your complete dashboard configuration across devices." });
 
-    // Clear Current Week Habits
-    const clearWeekBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Current Week's Metric Tracking checkmarks" });
-    clearWeekBtn.onclick = () => {
-        savedHabits.forEach(h => {
-            for (let day = 1; day <= 7; day++) {
-                localStorage.removeItem(`ocean-h-${h}-${day}`);
-            }
-        });
-        new Notice("🧹 Current week's metric tracker checkmarks cleared!");
-    };
-
-    // Reset Targets
-    const resetTargetsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🎯 Reset Targets to Placeholders" });
-    resetTargetsBtn.onclick = () => {
-        savedTargets = [
-            { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
-            { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
-            { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
-        ];
-        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
-        new Notice("🎯 Targets reset to default placeholders!");
-    };
-
-    // Reset Collections
-    const resetCardsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🗂️ Reset Collection Cards to Placeholders" });
-    resetCardsBtn.onclick = () => {
-        savedCards = [
-            { title: "Project Alpha", subtitle: "Active Workspace & Tasks", emoji: "🚀", link: "" },
-            { title: "Knowledge Base", subtitle: "Core Notes & Wiki Hub", emoji: "📚", link: "" },
-            { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
-            { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
-        ];
-        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
-        new Notice("🗂️ Collection cards reset to default placeholders!");
-    };
-
-    // Reset Habits
-    const resetHabitsBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧬 Reset Habit Tracker to Defaults" });
-    resetHabitsBtn.onclick = () => {
-        savedHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
-        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
-        new Notice("🧬 Metric Tracker reset to defaults!");
-    };
-
-    // Clear Scratchpad
-    const clearScratchBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Persistent Scratchpad" });
-    clearScratchBtn.onclick = () => {
-        localStorage.setItem(LS.scratchpad, "");
-        new Notice("🧹 Scratchpad buffer cleared!");
-    };
+    const backupGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
 
     // Export Settings JSON
-    const exportBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn primary", text: "💾 Export Config JSON (Copy)" });
+    const exportBtn = backupGrid.createEl("button", { cls: "ocean-btn primary", text: "💾 Export Config JSON (Copy)" });
     exportBtn.onclick = () => {
         const fullBackup = {
             version: "ocean-v2",
@@ -827,7 +779,7 @@ function openMasterSettingsModal() {
     };
 
     // Import Settings JSON with in-app Modal (Fixes Electron prompt() not supported error)
-    const importBtn = dataBtnGrid.createEl("button", { cls: "ocean-btn", text: "📥 Import Config JSON" });
+    const importBtn = backupGrid.createEl("button", { cls: "ocean-btn", text: "📥 Import Config JSON" });
     importBtn.onclick = () => {
         const importOverlay = document.body.createDiv({ cls: "ocean-modal-overlay" });
         importOverlay.setAttribute("data-theme", currentTheme);
@@ -917,11 +869,78 @@ function openMasterSettingsModal() {
         };
     };
 
+    // ── SECTION 2: COMPONENT RESET & MAINTENANCE ──
+    dataPanel.createDiv({ cls: "ocean-settings-section-title", text: "🧹 COMPONENT RESET & MAINTENANCE" });
+    dataPanel.createDiv({ cls: "ocean-settings-section-desc", text: "Clear temporary caches or restore default placeholder cards." });
+
+    const maintenanceGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
+
+    // Clear Current Week Habits
+    const clearWeekBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "🧹 Clear Current Week's Checkmarks" });
+    clearWeekBtn.onclick = () => {
+        savedHabits.forEach(h => {
+            for (let day = 1; day <= 7; day++) {
+                localStorage.removeItem(`ocean-h-${h}-${day}`);
+            }
+        });
+        new Notice("🧹 Current week's metric tracker checkmarks cleared!");
+    };
+
+    // Reset Habits
+    const resetHabitsBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "🧬 Reset Metrics to Defaults" });
+    resetHabitsBtn.onclick = () => {
+        savedHabits = ["Reading", "Deep Work", "Exercise", "Meditation"];
+        localStorage.setItem(LS.habits, JSON.stringify(savedHabits));
+        new Notice("🧬 Metric Tracker reset to defaults!");
+    };
+
+    // Reset Targets
+    const resetTargetsBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "🎯 Reset Targets to Defaults" });
+    resetTargetsBtn.onclick = () => {
+        savedTargets = [
+            { title: "Project Launch Milestone", date: "2026-10-15", emoji: "🚀", link: "" },
+            { title: "Certification Exam", date: "2026-12-31", emoji: "🎯", link: "" },
+            { title: "Quarterly Review", date: "2027-03-31", emoji: "📈", link: "" }
+        ];
+        localStorage.setItem(LS.targets, JSON.stringify(savedTargets));
+        new Notice("🎯 Targets reset to default placeholders!");
+    };
+
+    // Reset Collections
+    const resetCardsBtn = maintenanceGrid.createEl("button", { cls: "ocean-btn", text: "📁 Reset Cards to Defaults" });
+    resetCardsBtn.onclick = () => {
+        savedCards = [
+            { title: "Project Alpha", subtitle: "Active Workspace & Tasks", emoji: "🚀", link: "" },
+            { title: "Knowledge Base", subtitle: "Core Notes & Wiki Hub", emoji: "📚", link: "" },
+            { title: "Reading List", subtitle: "Books, Papers & Articles", emoji: "📖", link: "" },
+            { title: "Daily Journal", subtitle: "Thoughts & Reflections", emoji: "📅", link: "" }
+        ];
+        localStorage.setItem(LS.cards, JSON.stringify(savedCards));
+        new Notice("📁 Collection cards reset to default placeholders!");
+    };
+
+    // Clear Scratchpad
+    const clearScratchBtn = maintenanceGrid.createEl("button", {
+        cls: "ocean-btn",
+        text: "📝 Clear Persistent Scratchpad",
+        attr: { style: "grid-column: 1 / -1;" }
+    });
+    clearScratchBtn.onclick = () => {
+        localStorage.setItem(LS.scratchpad, "");
+        new Notice("📝 Scratchpad buffer cleared!");
+    };
+
+    // ── SECTION 3: DANGER ZONE (GLOBAL RESET) ──
+    dataPanel.createDiv({ cls: "ocean-settings-section-title danger", text: "⚠️ DANGER ZONE" });
+    dataPanel.createDiv({ cls: "ocean-settings-section-desc", text: "Permanent global actions affecting the entire dashboard configuration." });
+
+    const dangerGrid = dataPanel.createDiv({ cls: "ocean-settings-data-grid" });
+
     // 1. Clear Everything & Start from Scratch (Clean Slate)
-    const cleanSlateBtn = dataBtnGrid.createEl("button", {
+    const cleanSlateBtn = dangerGrid.createEl("button", {
         cls: "ocean-btn",
         text: "🧹 Clear Everything & Start From Scratch",
-        attr: { style: "grid-column: 1 / -1; color: #38bdf8; border-color: rgba(56,189,248,0.4); margin-top:8px;" }
+        attr: { style: "grid-column: 1 / -1; color: #38bdf8; border-color: rgba(56,189,248,0.4);" }
     });
     cleanSlateBtn.onclick = () => {
         if (!confirm("Are you sure you want to clear all custom widgets, cards, targets, scratchpad, and metrics tracker to start completely from a clean blank slate?")) return;
@@ -956,10 +975,10 @@ function openMasterSettingsModal() {
     };
 
     // 2. Factory Reset to Default Placeholders
-    const factoryResetBtn = dataBtnGrid.createEl("button", {
+    const factoryResetBtn = dangerGrid.createEl("button", {
         cls: "ocean-btn",
         text: "🎯 Reset to Default Placeholders",
-        attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4); margin-top:4px;" }
+        attr: { style: "grid-column: 1 / -1; color: var(--ocean-rose); border-color: rgba(244,63,94,0.4);" }
     });
     factoryResetBtn.onclick = () => {
         if (!confirm("Are you sure you want to reset the dashboard back to the initial sample milestone targets, collection cards, and metric tracker placeholders?")) return;
