@@ -31,11 +31,11 @@ if (Test-Path $RepoSnippets) {
     }
 }
 
-# 2. Sync Dashboard Markdown Notes (Repo -> Vault)
+# 2. Sync Dashboard Markdown Notes and Data JSON (Repo -> Vault)
 if (Test-Path $RepoDashboards) {
-    Get-ChildItem -Path "$RepoDashboards\Dashboard-*.md" | ForEach-Object {
+    Get-ChildItem -Path "$RepoDashboards\Dashboard-*.md", "$RepoDashboards\*dashboard*-data.json" | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $VaultDashboards -Force
-        Write-Host "  ✔ Deployed Dashboard: $($_.Name)" -ForegroundColor Green
+        Write-Host "  ✔ Deployed File: $($_.Name)" -ForegroundColor Green
     }
 }
 

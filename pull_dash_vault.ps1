@@ -28,11 +28,11 @@ if (Test-Path $VaultSnippets) {
     }
 }
 
-# 2. Pull Dashboard Notes (Vault -> Repo)
+# 2. Pull Dashboard Notes and Data JSON (Vault -> Repo)
 if (Test-Path $VaultDashboards) {
-    Get-ChildItem -Path "$VaultDashboards\Dashboard-*.md" | ForEach-Object {
+    Get-ChildItem -Path "$VaultDashboards\Dashboard-*.md", "$VaultDashboards\*dashboard*-data.json" | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $RepoDashboards -Force
-        Write-Host "  ✔ Pulled Dashboard: $($_.Name)" -ForegroundColor Green
+        Write-Host "  ✔ Pulled File: $($_.Name)" -ForegroundColor Green
     }
 }
 
