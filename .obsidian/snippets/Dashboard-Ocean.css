@@ -1008,6 +1008,8 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     align-items: center;
     justify-content: space-between;
     min-height: 26px;
+    gap: 8px;
+    flex-wrap: nowrap;
 }
 
 .ocean-targets-track {
@@ -1049,17 +1051,26 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 .ocean-target-capsule:hover .ocean-target-actions,
 .ocean-task-capsule:hover .ocean-task-actions {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .ocean-target-actions,
 .ocean-task-actions {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     gap: 4px;
     opacity: 0;
+    pointer-events: none;
+    background: var(--ocean-card, #181825);
+    padding: 3px 6px;
+    border-radius: 6px;
+    box-shadow: -8px 0 14px var(--ocean-card, #181825);
     transition: opacity 0.15s ease;
-    flex-shrink: 0;
-    margin-left: 6px;
+    z-index: 5;
 }
 
 .ocean-col-card-btn,
@@ -1683,15 +1694,25 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
 }
 
 .ocean-col-card-actions {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     gap: 4px;
     opacity: 0;
+    pointer-events: none;
+    background: var(--ocean-card, #181825);
+    padding: 3px 6px;
+    border-radius: 6px;
+    box-shadow: -8px 0 14px var(--ocean-card, #181825);
     transition: opacity 0.15s ease;
-    flex-shrink: 0;
+    z-index: 5;
 }
 
 .ocean-col-card:hover .ocean-col-card-actions {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .ocean-col-card-btn {
@@ -1720,6 +1741,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
 
 .ocean-col-card-sub {
@@ -1728,6 +1750,7 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
 
 .ocean-add-btn {
@@ -1742,6 +1765,11 @@ body.theme-light .ocean-dashboard:not([data-mode="dark"]) .ocean-clock-time,
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ocean-add-btn:hover {
@@ -3053,7 +3081,18 @@ select.ocean-modal-input option {
     font-size: 0.76rem !important;
 }
 
-/* Notes list */
+/* Notes list & Full-Width Search */
+.ocean-compact .ocean-search-input,
+.ocean-is-mobile .ocean-search-input,
+.is-mobile .ocean-search-input,
+.is-phone .ocean-search-input {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    margin-top: 6px !important;
+}
+
 .ocean-compact .ocean-notes-list,
 .ocean-is-mobile .ocean-notes-list,
 .is-mobile .ocean-notes-list,
@@ -3062,6 +3101,7 @@ select.ocean-modal-input option {
     max-height: 360px !important;
     height: auto !important;
     overflow-y: auto !important;
+    padding-top: 4px !important;
     padding-right: 6px !important;
 }
 
